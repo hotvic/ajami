@@ -12,11 +12,11 @@ libnopt_a_SOURCES	= interface.c interface.h
 libnopt_a_CFLAGS	= -g @JAMIN_CFLAGS@
 
 jamin_CFLAGS		= @CFLAGS_OPT@ @JAMIN_CFLAGS@
-jamin_LDADD		= libnopt.a @PACKAGE_LIBS@ @JAMIN_LIBS@
+jamin_LDADD		    = libnopt.a @PACKAGE_LIBS@ @JAMIN_LIBS@
 
 bin_PROGRAMS		= jamin @OSC_PROGS@
 EXTRA_PROGRAMS		= jamin-scene
-man_MANS		= jamin.1
+man_MANS		    = jamin.1
 
 jamin_SOURCES = \
 	callbacks.c callbacks.h callbacks_help.h \
