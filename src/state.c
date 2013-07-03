@@ -532,7 +532,7 @@ void s_save_session (const gchar *fname)
     xmlSetCompressMode(5);
     doc = xmlNewDoc("1.0");
     rootnode = xmlNewDocRawNode(doc, NULL, "jam-param-list", NULL);
-    xmlSetProp(rootnode, "version", VERSION);
+    xmlSetProp(rootnode, "version", PACKAGE_VERSION);
     xmlDocSetRootElement(doc, rootnode);
     node = xmlNewText("\n");
     xmlAddChild(rootnode, node);
@@ -1117,7 +1117,7 @@ void s_update_title()
 
     tmp = g_strdup (s_get_session_filename ());
     base = basename (tmp);
-    title = g_strdup_printf ("%s - %s - " VERSION, title_name, base);
+    title = g_strdup_printf ("%s - %s - " PACKAGE_VERSION, title_name, base);
     g_free (tmp);
     gtk_window_set_title ((GtkWindow *) main_window, title);
     g_free (title);

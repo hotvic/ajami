@@ -14,16 +14,18 @@
  *  $Id: main.h,v 1.11 2013/02/09 15:47:30 kotau Exp $
  */
 
+#include "config.h"
+
 #ifndef MAIN_H
 #define MAIN_H
 
 /* JAMin configuration file names
  *
- * JAMIN_DIR		per-user subdirectory of $HOME
- * JAMIN_UI		GTK rc file in JAMIN_DIR or JAMIN_EXAMPLES_DIR
- * JAMIN_DEFAULT	basename of default session file
- * JAMIN_DATA_DIR	installed data (pixmaps, etc.)
- * JAMIN_PIXMAP_DIR	installed images
+ * JAMIN_DIR		    per-user subdirectory of $HOME
+ * JAMIN_UI		        GTK rc file in JAMIN_DIR or JAMIN_EXAMPLES_DIR
+ * JAMIN_DEFAULT	    basename of default session file
+ * JAMIN_DATA_DIR	    installed data (pixmaps, etc.)
+ * JAMIN_PIXMAP_DIR	    installed images
  * JAMIN_EXAMPLES_DIR	installed examples
  * GTK_VERSION_GE       check if GTK version is greater or equal to a given version number
  */

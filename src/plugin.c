@@ -14,6 +14,8 @@
  *  $Id: plugin.c,v 1.4 2008/02/08 13:20:56 esaracco Exp $
  */
 
+#include "config.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

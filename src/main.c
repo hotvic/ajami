@@ -14,9 +14,7 @@
  *  $Id: main.c,v 1.72 2013/02/09 15:47:29 kotau Exp $
  */
 
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif
+#include "config.h"
 
 #ifdef HAVE_OSC
 #include <lo/lo.h>
@@ -87,7 +85,7 @@ int main(int argc, char *argv[])
     textdomain(GETTEXT_PACKAGE);
 #endif
 
-    printf(PACKAGE " " VERSION "\n");
+    printf(PACKAGE " " PACKAGE_VERSION "\n");
     g_print(_("(C) 2003-2013 J. Depner, S. Harris, J. O'Quin, R. Parker"
 	      " and P. Shirkey\n"));
     g_print(_("This is free software, and you are welcome to redistribute it\n" 

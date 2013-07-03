@@ -1,0 +1,17 @@
+// define package
+#define PACKAGE "@PACKAGE@"
+
+// G3JAMin Version
+#define PACKAGE_VERSION "@G3JAMin_VERSION@"
+
+// compile with OSC
+#cmakedefine HAS_OSC
+
+// datadir, e.g. /usr/share
+#define PACKAGE_DATA_DIR "@PACKAGE_DATA_DIR@"
+
+// libdir, e.g /usr/lib
+#define PACKAGE_LIB_DIR "@PACKAGE_LIB_DIR@"
+
+// only support for fftw3f, fftw3 isn't supported
+#define FFTW_TYPE float

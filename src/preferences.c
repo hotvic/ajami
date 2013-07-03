@@ -481,7 +481,7 @@ void pref_write_jamin_defaults ()
      
   if ((fp = fopen (file, "w")) != NULL)
     {
-      fprintf (fp, "JAMin defaults file V%s\n",  VERSION);
+      fprintf (fp, "JAMin defaults file V%s\n",  PACKAGE_VERSION);
 
       fprintf (fp, "[LOW BAND COMPRESSOR COLOR]  = %hu %hu %hu\n",
                color[LOW_BAND_COLOR].red, 
