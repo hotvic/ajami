@@ -36,7 +36,7 @@ set (PACKAGE_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 
 configure_file (
     "${PROJECT_SOURCE_DIR}/src/config.h.in"
-    "${PROJECT_BINARY_DIR}/src/config.h"
+    "${PROJECT_BINARY_DIR}/config.h"
 )
 
 
@@ -49,7 +49,7 @@ link_directories (
 )
 include_directories (
     "${PROJECT_SOURCE_DIR}/src"
-    "${PROJECT_BINARY_DIR}/src"
+    "${PROJECT_BINARY_DIR}"
     ${JACK_INCLUDE_DIRS}
     ${FFTW_INCLUDE_DRIS}
     ${XML_INCLUDE_DIRS}
@@ -114,3 +114,7 @@ add_executable (g3jamin-scene
 target_link_libraries (g3jamin-scene
     ${OSC_LIBRARIES}
 )
+
+
+# install
+install (TARGETS g3jamin g3jamin-scene DESTINATION bin)

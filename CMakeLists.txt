@@ -5,4 +5,4 @@ project (G3JAMin)
 # version
 set (G3JAMin_VERSION 0.98.9)
 
-subdirs (src)
+subdirs (src man data) #controller)

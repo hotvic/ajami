@@ -1,5 +1,6 @@
-.TH JAMIN "1" 0.98.8 "June 2007" "Audio"
+.TH G3JAMIN "1" @PACKAGE_VERSION@ "Jul 2013" "Audio"
 .SH "NAME"
+g3jamin \- fork of JAMin
 jamin \- JACK Audio Mastering interface
 
 .SH "SYNOPSIS"
@@ -9,17 +10,17 @@ outport2\fR ]]
 \fBjamin-scene\fR \fI<scene-num>\fR
 
 .SH "DESCRIPTION"
-The \fBjamin\fR command invokes JAMin, the JACK Audio Mastering
+The \fBg3jamin\fR command invokes G3JAMin, the JACK Audio Mastering
 interface which is based on the JACK Audio Connection Kit,
-<\fBhttp://jackit.sourceforge.net\fR>.
+<\fBhttps://github.com/hotvic/g3jamin\fR>.
 
-JAMin is designed for professional stereo audio mastering.  It
+G3JAMin is designed for professional stereo audio mastering.  It
 provides of a number of tools: a 1024-band hand-drawn EQ with
 parametric controls, a 31-band graphic EQ, 3-band compressor, 3-band
 stereo width control, lookahead limiter, boost, and other features.
 
-For the latest JAMin information, see
-<\fBhttp://jamin.sourceforge.net\fR>.
+For the latest G3JAMin information, see
+<\fBhttps://github.com/hotvic/g3jamin\fR>.
 
 .SH "OPTIONS"
 .TP 
@@ -60,7 +61,7 @@ sustained sounds in the bass range).
 .br 
 Don't automatically connect any JACK output ports.  
 
-Without this option, JAMin will connect to \fIoutport1\fR and
+Without this option, G3JAMin will connect to \fIoutport1\fR and
 \fIoutport2\fR if they were explicitly listed on the command line.  If
 not, it connects to the first two physical output ports with the
 string ":playback" in their names.
@@ -94,26 +95,26 @@ Print version and copyright information, then quit.
 .SH FILES
 .TP
 .B ~/.jamin
-Directory containing per-user JAMin data.  Created automatically if
+Directory containing per-user G3JAMin data.  Created automatically if
 it does not already exist.
 .TP
 .B ~/.jamin/jamin_ui
 Default resource file for GTK user interface customization, used when
-the \fB\-r\fR command option is not specified.  JAMin provides a
+the \fB\-r\fR command option is not specified.  G3JAMin provides a
 default resource file in ${prefix}/share/jamin/examples/jamin_ui.  To
-customize that file, copy it to ~/.jamin/jamin_ui and make changes.
+customize that file, copy it to ~/.g3jamin/jamin_ui and make changes.
 .TP
-.B ~/.jamin/*.jam
+.B ~/.g3jamin/*.jam
 Normal location for user-defined session files.  They can be stored
 elsewhere, if desired.
 .TP
-.B ~/.jamin/default.jam
+.B ~/.g3jamin/default.jam
 If this session file exists, it is loaded by default on startup, except
 when overridden by the \fB\-f\fR option.
 
 .SH IPC
 .PP
-If JAMin has been built with OSC support enabled it responds to UDP OSC
+If G3JAMin has been built with OSC support enabled it responds to UDP OSC
 messages on port 4444.
 .PP
 Messages to /jamin/scene with a numerical argument cause the scene number to
@@ -122,7 +123,7 @@ change. A commaind line tool (\fBjamin-scene\fR) and LADSPA Plugin
 
 .SH "EXAMPLES"
 .PP 
-Since \fBjamin\fR is not a standalone program we generally need other
+Since \fBg3jamin\fR is not a standalone program we generally need other
 programs to provide input audio and receive the mastered output.  This
 example uses \fBalsaplayer\fR with output going to the first two ALSA
 playback ports:
@@ -166,7 +167,7 @@ these ports.
 .IP 
 \fBqjackctl &\fR
 .br 
-\fBjamin &\fR
+\fBg3jamin &\fR
 .br 
 \fBardour\fR
 
@@ -193,9 +194,11 @@ these ports.
 .br 
 .BR ardour(1)
 .SH "BUGS"
-Please send bug reports to <\fBjamin\-devel@lists.sourceforge.net\fR>.
+Please send bug reports to <\fBvictoraur.santos@gmail.com\fR>.
 .SH "AUTHORS"
-Steve Harris is the principal JAMin author and team leader.  Other
+The G3JAMin Athor(s) are Victor Aurélio.
+
+The JAMin Author(s) are Steve Harris is the principal JAMin author and team leader.  Other
 developers include: Jan Depner, Jack O'Quin, Ron Parker, Emmanuel
 Saracco, and Patrick Shirkey.  Alexandre Prokoudine and Yuri N.
 Sedunov developed the translation infrastructure.  Alexandre also

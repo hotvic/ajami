@@ -13,7 +13,7 @@
       #include <pthread.h>
       #include <lo/lo.h>
 
-      #include "../src/constants.h"
+      #include "constants.h"
 
       #define EXITV -999
 
