@@ -29,8 +29,8 @@
  * JAMIN_EXAMPLES_DIR	installed examples
  * GTK_VERSION_GE       check if GTK version is greater or equal to a given version number
  */
-#define JAMIN_DIR ".jamin"
-#define JAMIN_UI "jamin_ui"
+#define JAMIN_DIR ".g3jamin"
+#define JAMIN_UI "g3jamin_ui"
 #define JAMIN_DEFAULT "default.jam"
 #define JAMIN_DATA_DIR PACKAGE_DATA_DIR "/jamin"
 #define JAMIN_PIXMAP_DIR JAMIN_DATA_DIR "/pixmaps/"

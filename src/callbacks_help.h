@@ -71,7 +71,7 @@ Many thanks to all of the authors of these packages!\n")
 char help_help[] = {N_(
 "    The File menu has the standard options available.  Save and Save As \
 allow you to save the scenes and settings for a session to a .jam file.  \
-By default these are saved in the $HOME/.jamin directory but may be saved \
+By default these are saved in the $HOME/.g3jamin directory but may be saved \
 anywhere.\n\
     The Edit menu has undo and redo options for changes to the settings.  \
 It also has the Preferences entry to bring up the Preferences dialog.  \
@@ -108,7 +108,7 @@ low and mid frequency drivers in a speaker system.  This is sometimes nice for \
 mastering.  The delays will not bgo into effect unless the Delay buttons under \
 the low and mid band compressor control areas are selected.\n\n\
     Colors : Set the colors for most of JAMin's displays.  These colors \
-are saved in the file $HOME/.jamin/jamin-defaults.  This is done whenever you \
+are saved in the file $HOME/.g3jamin/jamin-defaults.  This is done whenever you \
 exit from JAMin.  You can actually edit this file and change the colors by \
 hand.  They are just RGB values in the 0-65535 range but it's much easier to \
 use the GUI ;-).\n\n\

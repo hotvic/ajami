@@ -190,7 +190,7 @@ static void set_configuration_files(void)
 	jamin_dir = g_strdup_printf("%s/%s/", home_dir, JAMIN_DIR);
 	if ((dtest = opendir(jamin_dir))) {
 	    closedir(dtest);
-	} else {			/* no ~/.jamin directory */
+	} else {			/* no ~/.g3jamin directory */
 	    if (errno == ENOTDIR) {
 		fprintf(stderr, "%s exists, but its not a directory\n",
 			jamin_dir);

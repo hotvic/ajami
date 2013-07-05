@@ -162,7 +162,7 @@ void preferences_init()
 	visual = gdk_visual_get_system ();
 
   /*  Set all of the colors to the defaults in case someone has edited the
-      ~/.jamin/jamin-defaults file and removed (or hosed) one or more of the
+      ~/.g3jamin/jamin-defaults file and removed (or hosed) one or more of the
       entries.  */
 
   pref_reset_all_colors ();
