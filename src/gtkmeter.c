@@ -263,9 +263,7 @@ gtk_meter_new (GtkAdjustment *adjustment, gint direction, gint sides, gfloat min
 {
 	GtkMeter *meter;
 	GtkMeterPrivate *priv;
-//  printf("in gtk_meter_new\n");
 
- // if (!adjustment)
     adjustment = (GtkAdjustment*) gtk_adjustment_new (0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
 	GObject *newObject = g_object_new (GTK_TYPE_METER, NULL);
@@ -280,7 +278,7 @@ gtk_meter_new (GtkAdjustment *adjustment, gint direction, gint sides, gfloat min
 	priv->iec_lower = iec_scale(min);
 	priv->iec_upper = iec_scale(max);
 				
-	return newObject;
+	return GTK_WIDGET (newObject);
 }
 
 GtkAdjustment*

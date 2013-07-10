@@ -29,30 +29,25 @@ static const char *resource_file;	/* GTK resource file, -r option */
 /* Name associated with -r option, NULL if none */
 void resource_file_name(const char *name)
 {
-    if (name)
-	resource_file = name;
-    else
-	resource_file = JAMIN_EXAMPLES_DIR JAMIN_UI;
+    if (name) resource_file = name;
+    else resource_file = JAMIN_EXAMPLES_DIR JAMIN_UI;
 }
 
 void resource_file_parse(void)
 {
     if (resource_file) {
-
-	/* use resource file specified with -r option */
-	printf("Using GTK resource file %s\n", resource_file);
-	gtk_rc_parse(resource_file);
-
+        /* use resource file specified with -r option */
+        printf("Using GTK CSS file %s\n", resource_file);
+        gtk_rc_parse(resource_file);
     } else if (jamin_dir) {
+	    char rcfile[PATH_MAX];
+	    int fd;
 
-	char rcfile[PATH_MAX];
-	int fd;
-
-	/* look for a user-defined GTK rc file, and parse it */
-	snprintf(rcfile, PATH_MAX, "%s%s", jamin_dir, JAMIN_UI);
-	if ((fd = open(rcfile, O_RDONLY)) >= 0) {
-	    close(fd);
-	    gtk_rc_parse(rcfile);
-	}
+	    /* look for a user-defined GTK rc file, and parse it */
+	    snprintf(rcfile, PATH_MAX, "%s%s", jamin_dir, JAMIN_UI);
+	    if ((fd = open(rcfile, O_RDONLY)) >= 0) {
+	        close(fd);
+	        gtk_rc_parse(rcfile);
+	    }
     }
 }

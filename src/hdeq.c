@@ -150,7 +150,7 @@ static cairo_t 		   *EQ_cr, *comp_cr[3];
 static cairo_surface_t *EQ_surface, *comp_surface[3];
 static PangoContext    *comp_pc[3], *EQ_pc;
 static GtkAdjustment   *l_low2mid_adj;
-static GdkColor 	   *color;
+static GdkRGBA  	   *color;
 static float           EQ_curve_range_x, EQ_curve_range_y, EQ_curve_width,
                        EQ_curve_height, EQ_xinterp[EQ_INTERP + 1], EQ_start, 
                        EQ_end, EQ_interval, EQ_yinterp[EQ_INTERP + 1], 
@@ -410,18 +410,18 @@ void hdeq_low2mid_set (GtkRange *range)
     /*  Draw the last spectrum curve if the update frequency is not 0.  */
 
     if (get_spectrum_freq ())
-      {
+    {
         /*  Set the foreground color for drawing the spectrum curve.  */
 
-       // gdk_gc_set_foreground (EQ_gc, get_color (HDEQ_SPECTRUM_COLOR));
-		color = get_color (HDEQ_SPECTRUM_COLOR);
-	//	cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
+        // gdk_gc_set_foreground (EQ_gc, get_color (HDEQ_SPECTRUM_COLOR));
+        color = get_color (HDEQ_SPECTRUM_COLOR);
+        //	cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
 		
-	// cr = gdk_cairo_create (widget->window);	
-	//cairo_rectangle (cr, 0, length, width-1, 2);
-	//cairo_set_source_rgba (cr, 0.5,0.5,0.5, 1.0); 
-	//cairo_fill (cr);
-	//  cairo_destroy(cr);  
+        // cr = gdk_cairo_create (widget->window);	
+        //cairo_rectangle (cr, 0, length, width-1, 2);
+        //cairo_set_source_rgba (cr, 0.5,0.5,0.5, 1.0); 
+        //cairo_fill (cr);
+        //  cairo_destroy(cr);  
 		
 		
         for (i = 0 ; i < EQ_INTERP ; i++)
@@ -2785,9 +2785,9 @@ void comp_curve_box_motion (int i, GdkEventMotion  *event)
 
 void comp_box_leave (int i)
 {
-    gtk_widget_modify_fg ((GtkWidget *) l_comp_lbl[i], GTK_STATE_NORMAL, 
+    gtk_widget_override_color ((GtkWidget *) l_comp_lbl[i], GTK_STATE_FLAG_NORMAL, 
                           get_color (TEXT_COLOR));
-    gtk_widget_modify_fg ((GtkWidget *) l_c_curve_lbl[i], GTK_STATE_NORMAL, 
+    gtk_widget_override_color ((GtkWidget *) l_c_curve_lbl[i], GTK_STATE_FLAG_NORMAL, 
                           get_color (TEXT_COLOR));
 }
 
@@ -2797,9 +2797,9 @@ void comp_box_leave (int i)
 
 void comp_box_enter (int i)
 {
-    gtk_widget_modify_fg ((GtkWidget *) l_comp_lbl[i], GTK_STATE_NORMAL, 
+    gtk_widget_override_color ((GtkWidget *) l_comp_lbl[i], GTK_STATE_FLAG_NORMAL, 
                           get_color (LOW_BAND_COLOR + i));
-    gtk_widget_modify_fg ((GtkWidget *) l_c_curve_lbl[i], GTK_STATE_NORMAL, 
+    gtk_widget_override_color ((GtkWidget *) l_c_curve_lbl[i], GTK_STATE_FLAG_NORMAL, 
                           get_color (LOW_BAND_COLOR + i));
 }
 

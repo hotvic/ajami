@@ -41,8 +41,8 @@
 
 
 void preferences_init();
-GdkColor *get_color (int color_id);
-void set_color (GdkColor *color, unsigned short red, unsigned short green, 
+GdkRGBA *get_color (int color_id);
+void set_color (GdkRGBA *color, unsigned short red, unsigned short green, 
                 unsigned short blue);
 void popup_pref_dialog (int updown);
 void popup_color_dialog (int id);

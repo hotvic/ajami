@@ -670,8 +670,7 @@ on_release_val_label_realize           (GtkWidget       *widget,
 {
     GtkRequisition size;
 
-    gtk_widget_size_request(widget, &size);
- //   gtk_widget_set_usize(widget, size.width, -1);
+    gtk_widget_get_preferred_size(widget, &size, NULL);
 }
 
 void
@@ -2847,12 +2846,11 @@ on_global_bypass_toggled               (GtkToggleButton *togglebutton,
 
   process_set_global_bypass (state);
 
-  if ( togglebutton == lookup_widget(presets_window, "checkbutton1")) 
+  if ( togglebutton == GTK_TOGGLE_BUTTON (lookup_widget(presets_window, "checkbutton1"))) 
   {
-	  togglebutton1 = lookup_widget(main_window, "global_bypass");
-	  
+	  togglebutton1 = GTK_TOGGLE_BUTTON (lookup_widget(main_window, "global_bypass"));  
   } else {
-	  togglebutton1 = lookup_widget(presets_window, "checkbutton1");
+	  togglebutton1 = GTK_TOGGLE_BUTTON (lookup_widget(presets_window, "checkbutton1"));
 	  
   }
 
@@ -3305,10 +3303,9 @@ on_eButton1_button_press_event         (GtkWidget       *widget,
 	else 
 		global_main_gui = 1;
 	
-//	g_print("cllbk: clicked");
-	presets_ui_show_main (widget);
+	presets_ui_show_main (GTK_BUTTON (widget));
 	
-  return FALSE;
+    return FALSE;
 }
 
 
@@ -3323,10 +3320,9 @@ on_eButton2_button_press_event         (GtkWidget       *widget,
 	else 
 		global_multiout_gui = 1;
 	
-//	g_print("cllbk: clicked");
-	presets_ui_show_multiout (widget);
+	presets_ui_show_multiout (GTK_BUTTON (widget));
 	
-  return FALSE;
+    return FALSE;
 }
 
 void

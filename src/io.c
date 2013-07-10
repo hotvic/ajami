@@ -736,7 +736,6 @@ gboolean check_file (char *optarg)
  */
 jack_client_t *io_jack_open()
 {
-#ifdef HAVE_JACK_CLIENT_OPEN
     jack_status_t status;
 
     if (server_name) {
@@ -758,15 +757,6 @@ jack_client_t *io_jack_open()
 	client_name = strdup(jack_get_client_name(client));
 	g_print(_("%s: unique name `%s' assigned\n"), PACKAGE, client_name);
     }
-
-#else /* !HAVE_JACK_CLIENT_OPEN */
-
-    client = jack_client_new(client_name);
-    if (client == NULL) {
-	g_print(_("%s: Cannot contact JACK server, is it running?\n"), PACKAGE);
-    }
-
-#endif /* HAVE_JACK_CLIENT_OPEN */
 
     return client;
 

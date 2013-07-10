@@ -215,18 +215,9 @@ void process_init(float fs)
     plan_cr = fftwf_plan_r2r_1d(BINS, comp_tmp, real, FFTW_HC2R, FFTW_MEASURE);
 
 
-	/*	Use Kaiser-Bessel window for best results - Code taken from mplayer */
-		kbd_window_init(5.0, &window, BINS, 50);
-		
-    /* Calculate window*/
-//   for (i = 0; i < BINS; i++) {
+    /*	Use Kaiser-Bessel window for best results - Code taken from mplayer */
+    kbd_window_init(5.0, (float *) &window, BINS, 50);
 
-//     window[i] = -0.5f * cosf(2.0f * M_PI * (float) i / (float) BINS) + 0.5f; 
-/* root raised cosine window - aparently sounds worse ...
-	window[i] = sqrtf(0.5f + -0.5 * cosf(2.0f * M_PI * (float) i /
-			  (float) BINS));
-*/
-//   }
 
     plugin_init();
     comp_plugin = plugin_load("sc4_1882.so");

@@ -463,62 +463,62 @@ void repaint_gang_labels ()
     {
       if (gang_at[i])
         {
-          gtk_widget_modify_fg ((GtkWidget *) lab_at[i], GTK_STATE_NORMAL, 
+          gtk_widget_override_color ((GtkWidget *) lab_at[i], GTK_STATE_FLAG_NORMAL, 
                                 get_color (GANG_HIGHLIGHT_COLOR));
         }
       else
         {
-          gtk_widget_modify_fg ((GtkWidget *) lab_at[i], GTK_STATE_NORMAL, 
+          gtk_widget_override_color ((GtkWidget *) lab_at[i], GTK_STATE_FLAG_NORMAL, 
                                 get_color (TEXT_COLOR));
         }
       if (gang_re[i])
         {
-          gtk_widget_modify_fg ((GtkWidget *) lab_re[i], GTK_STATE_NORMAL, 
+          gtk_widget_override_color ((GtkWidget *) lab_re[i], GTK_STATE_FLAG_NORMAL, 
                                 get_color (GANG_HIGHLIGHT_COLOR));
         }
       else
         {
-          gtk_widget_modify_fg ((GtkWidget *) lab_re[i], GTK_STATE_NORMAL, 
+          gtk_widget_override_color ((GtkWidget *) lab_re[i], GTK_STATE_FLAG_NORMAL, 
                                 get_color (TEXT_COLOR));
         }
       if (gang_th[i])
         {
-          gtk_widget_modify_fg ((GtkWidget *) lab_th[i], GTK_STATE_NORMAL, 
+          gtk_widget_override_color ((GtkWidget *) lab_th[i], GTK_STATE_FLAG_NORMAL, 
                                 get_color (GANG_HIGHLIGHT_COLOR));
         }
       else
         {
-          gtk_widget_modify_fg ((GtkWidget *) lab_th[i], GTK_STATE_NORMAL, 
+          gtk_widget_override_color ((GtkWidget *) lab_th[i], GTK_STATE_FLAG_NORMAL, 
                                 get_color (TEXT_COLOR));
         }
       if (gang_ra[i])
         {
-          gtk_widget_modify_fg ((GtkWidget *) lab_ra[i], GTK_STATE_NORMAL, 
+          gtk_widget_override_color ((GtkWidget *) lab_ra[i], GTK_STATE_FLAG_NORMAL, 
                                 get_color (GANG_HIGHLIGHT_COLOR));
         }
       else
         {
-          gtk_widget_modify_fg ((GtkWidget *) lab_ra[i], GTK_STATE_NORMAL, 
+          gtk_widget_override_color ((GtkWidget *) lab_ra[i], GTK_STATE_FLAG_NORMAL, 
                                 get_color (TEXT_COLOR));
         }
       if (gang_kn[i])
         {
-          gtk_widget_modify_fg ((GtkWidget *) lab_kn[i], GTK_STATE_NORMAL, 
+          gtk_widget_override_color ((GtkWidget *) lab_kn[i], GTK_STATE_FLAG_NORMAL, 
                                 get_color (GANG_HIGHLIGHT_COLOR));
         }
       else
         {
-          gtk_widget_modify_fg ((GtkWidget *) lab_kn[i], GTK_STATE_NORMAL, 
+          gtk_widget_override_color ((GtkWidget *) lab_kn[i], GTK_STATE_FLAG_NORMAL, 
                                 get_color (TEXT_COLOR));
         }
       if (gang_ma[i])
         {
-          gtk_widget_modify_fg ((GtkWidget *) lab_ma[i], GTK_STATE_NORMAL, 
+          gtk_widget_override_color ((GtkWidget *) lab_ma[i], GTK_STATE_FLAG_NORMAL, 
                                 get_color (GANG_HIGHLIGHT_COLOR));
         }
       else
         {
-          gtk_widget_modify_fg ((GtkWidget *) lab_ma[i], GTK_STATE_NORMAL, 
+          gtk_widget_override_color ((GtkWidget *) lab_ma[i], GTK_STATE_FLAG_NORMAL, 
                                 get_color (TEXT_COLOR));
         }
     }
@@ -530,14 +530,14 @@ void comp_gang_at (int band)
   if (gang_at[band])
     {
       gang_at[band] = FALSE;
-      gtk_widget_modify_fg ((GtkWidget *) lab_at[band], GTK_STATE_NORMAL, 
+      gtk_widget_override_color ((GtkWidget *) lab_at[band], GTK_STATE_FLAG_NORMAL, 
                             get_color (TEXT_COLOR));
       prev_value_at[band] = gtk_adjustment_get_value (adj_at[band]);
     }
   else
     {
       gang_at[band] = TRUE;
-      gtk_widget_modify_fg ((GtkWidget *) lab_at[band], GTK_STATE_NORMAL, 
+      gtk_widget_override_color ((GtkWidget *) lab_at[band], GTK_STATE_FLAG_NORMAL, 
                             get_color (GANG_HIGHLIGHT_COLOR));
     }
 }
@@ -547,14 +547,14 @@ void comp_gang_re (int band)
   if (gang_re[band])
     {
       gang_re[band] = FALSE;
-      gtk_widget_modify_fg ((GtkWidget *) lab_re[band], GTK_STATE_NORMAL, 
+      gtk_widget_override_color ((GtkWidget *) lab_re[band], GTK_STATE_FLAG_NORMAL, 
                             get_color (TEXT_COLOR));
       prev_value_re[band] = gtk_adjustment_get_value (adj_re[band]);
     }
   else
     {
       gang_re[band] = TRUE;
-      gtk_widget_modify_fg ((GtkWidget *) lab_re[band], GTK_STATE_NORMAL, 
+      gtk_widget_override_color ((GtkWidget *) lab_re[band], GTK_STATE_FLAG_NORMAL, 
                             get_color (GANG_HIGHLIGHT_COLOR));
     }
 }
@@ -564,14 +564,14 @@ void comp_gang_th (int band)
   if (gang_th[band])
     {
       gang_th[band] = FALSE;
-      gtk_widget_modify_fg ((GtkWidget *) lab_th[band], GTK_STATE_NORMAL, 
+      gtk_widget_override_color ((GtkWidget *) lab_th[band], GTK_STATE_FLAG_NORMAL, 
                             get_color (TEXT_COLOR));
       prev_value_th[band] = gtk_adjustment_get_value (adj_th[band]);
     }
   else
     {
       gang_th[band] = TRUE;
-      gtk_widget_modify_fg ((GtkWidget *) lab_th[band], GTK_STATE_NORMAL, 
+      gtk_widget_override_color ((GtkWidget *) lab_th[band], GTK_STATE_FLAG_NORMAL, 
                             get_color (GANG_HIGHLIGHT_COLOR));
     }
 }
@@ -581,14 +581,14 @@ void comp_gang_ra (int band)
   if (gang_ra[band])
     {
       gang_ra[band] = FALSE;
-      gtk_widget_modify_fg ((GtkWidget *) lab_ra[band], GTK_STATE_NORMAL, 
+      gtk_widget_override_color ((GtkWidget *) lab_ra[band], GTK_STATE_FLAG_NORMAL, 
                             get_color (TEXT_COLOR));
       prev_value_ra[band] = gtk_adjustment_get_value (adj_ra[band]);
     }
   else
     {
       gang_ra[band] = TRUE;
-      gtk_widget_modify_fg ((GtkWidget *) lab_ra[band], GTK_STATE_NORMAL, 
+      gtk_widget_override_color ((GtkWidget *) lab_ra[band], GTK_STATE_FLAG_NORMAL, 
                             get_color (GANG_HIGHLIGHT_COLOR));
     }
 }
@@ -597,14 +597,14 @@ void comp_gang_kn (int band)
   if (gang_kn[band])
     {
       gang_kn[band] = FALSE;
-      gtk_widget_modify_fg ((GtkWidget *) lab_kn[band], GTK_STATE_NORMAL, 
+      gtk_widget_override_color ((GtkWidget *) lab_kn[band], GTK_STATE_FLAG_NORMAL, 
                             get_color (TEXT_COLOR));
       prev_value_kn[band] = gtk_adjustment_get_value (adj_kn[band]);
     }
   else
     {
       gang_kn[band] = TRUE;
-      gtk_widget_modify_fg ((GtkWidget *) lab_kn[band], GTK_STATE_NORMAL, 
+      gtk_widget_override_color ((GtkWidget *) lab_kn[band], GTK_STATE_FLAG_NORMAL, 
                             get_color (GANG_HIGHLIGHT_COLOR));
     }
 }
@@ -614,14 +614,14 @@ void comp_gang_ma (int band)
   if (gang_ma[band])
     {
       gang_ma[band] = FALSE;
-      gtk_widget_modify_fg ((GtkWidget *) lab_ma[band], GTK_STATE_NORMAL, 
+      gtk_widget_override_color ((GtkWidget *) lab_ma[band], GTK_STATE_FLAG_NORMAL, 
                             get_color (TEXT_COLOR));
       prev_value_ma[band] = gtk_adjustment_get_value (adj_ma[band]);
     }
   else
     {
       gang_ma[band] = TRUE;
-      gtk_widget_modify_fg ((GtkWidget *) lab_ma[band], GTK_STATE_NORMAL, 
+      gtk_widget_override_color ((GtkWidget *) lab_ma[band], GTK_STATE_FLAG_NORMAL, 
                             get_color (GANG_HIGHLIGHT_COLOR));
     }
 }

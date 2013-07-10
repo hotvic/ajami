@@ -55,8 +55,7 @@ the color you want (fuschia, puce, chartreuse, whatever) just press OK.\n"
 
 static GtkWidget         *pref_dialog, *color_dialog, *colorsel;
 static GdkVisual 		 *visual = NULL; 
-//static GdkColormap       *colormap = NULL;
-static GdkColor          color[COLORS];
+static GdkRGBA           color[COLORS];
 static int               color_id;
 static GtkComboBox       *l_limiter_combo, *l_SpectrumComboBox, *l_ColorsComboBox;
 static GtkSpinButton     *l_hdeq_lower_gain, *l_hdeq_upper_gain, *l_crossfade_time, 
@@ -326,7 +325,7 @@ void pref_set_all_values ()
 }
 
 
-GdkColor *get_color (int color_id)
+GdkRGBA *get_color (int color_id)
 {
   return (&color[color_id]);
 }
@@ -334,15 +333,12 @@ GdkColor *get_color (int color_id)
 
 /*  Generic color setting.  */
 
-void set_color (GdkColor *color, unsigned short red, unsigned short green, 
+void set_color (GdkRGBA *color, unsigned short red, unsigned short green, 
                 unsigned short blue)
 {
   color->red = red;
   color->green = green;
   color->blue = blue;
-
- // gdk_colormap_alloc_color (colormap, color, FALSE, TRUE);
-//  gtk_widget_modify_bg(visual, , &color);
 }
 
 
@@ -371,7 +367,7 @@ void popup_pref_dialog (int updown)
 
 void popup_color_dialog (int id)
 {
-  GdkColor *ptr;
+  GdkRGBA *ptr;
 
 
   /*  We don't want to do this until after the colors combo box has been set the first time.  */
@@ -383,7 +379,7 @@ void popup_color_dialog (int id)
       ptr = &color[id];
 
 
-      gtk_color_selection_set_current_color ((GtkColorSelection *) colorsel, ptr);
+      gtk_color_chooser_set_rgba (GTK_COLOR_CHOOSER (colorsel), ptr);
 
 
       gtk_widget_show (color_dialog);
@@ -433,11 +429,10 @@ void pref_force_color_change ()
 
 static void color_ok_callback (GtkWidget *w, gpointer user_data)
 {
-  GdkColor l_color;
+  GdkRGBA l_color;
 
 
-  gtk_color_selection_get_current_color ((GtkColorSelection *) colorsel, 
-                                         &l_color);
+  gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (colorsel), &l_color);
 
   set_color (&color[color_id], l_color.red, l_color.green, l_color.blue);
 

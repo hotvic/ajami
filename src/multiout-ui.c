@@ -37,7 +37,7 @@
 void multiout_ui_build (GtkWidget *window)
 {
 
-  GtkWidget *hbox = GTK_BUTTON(lookup_widget(multiout_window, "hbox_w4_1"));
+  GtkWidget *hbox = GTK_WIDGET (lookup_widget(multiout_window, "hbox_w4_1"));
  // ClutterColor stage_color = { 0x00, 0x00, 0x00, 0xff }; /* Black */
 
  // gtk_clutter_init (NULL, NULL);
