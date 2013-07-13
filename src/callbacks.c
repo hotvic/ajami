@@ -604,34 +604,6 @@ make_meter (gchar *widget_name, gchar *string1, gchar *string2,
 }
 
 
-GtkWidget*
-make_mscale (gchar *widget_name, gchar *string1, gchar *string2,
-                gint int1, gint int2)
-{
-    int sides = 0;
-    GtkWidget *ret;
-
- /*   if (string1 && strstr(string1, "left")) {
-	sides |= GTK_METERSCALE_LEFT;
-    }
-    if (string1 && strstr(string1, "right")) {
-	sides |= GTK_METERSCALE_RIGHT;
-    }
-    if (string1 && strstr(string1, "top")) {
-	sides |= GTK_METERSCALE_TOP;
-    }
-    if (string1 && strstr(string1, "bottom")) {
-	sides |= GTK_METERSCALE_BOTTOM;
-    }
-
-    ret = gtk_meterscale_new(sides, int1, int2);
-
-    return ret;
-    
-*/ 
-}
-
-
 void
 on_autobutton_1_toggled                  (GtkToggleButton *togglebutton,
                                         gpointer         user_data)

@@ -1147,24 +1147,12 @@ create_window1 (void)
   gtk_widget_show (inmeter_l);
   gtk_box_pack_start (GTK_BOX (inmeter_hbox), inmeter_l, TRUE, TRUE, 0);
   gtk_widget_set_size_request (inmeter_l, 15, 0);
-//  GTK_WIDGET_UNSET_FLAGS (inmeter_l, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (inmeter_l, GTK_CAN_DEFAULT);
 
-/*  custom15 = make_mscale ("custom15", "left right", "", -60, 6);
-  gtk_widget_set_name (custom15, "custom15");
-  gtk_widget_show (custom15);
-  gtk_box_pack_start (GTK_BOX (inmeter_hbox), custom15, TRUE, TRUE, 0);
-  gtk_widget_set_size_request (custom15, 10, 0);
-//  GTK_WIDGET_UNSET_FLAGS (custom15, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (custom15, GTK_CAN_DEFAULT);
-*/
   inmeter_r = make_meter ("inmeter_r", "", "", -60, 6);
   gtk_widget_set_name (inmeter_r, "inmeter_r");
   gtk_widget_show (inmeter_r);
   gtk_box_pack_start (GTK_BOX (inmeter_hbox), inmeter_r, TRUE, TRUE, 0);
   gtk_widget_set_size_request (inmeter_r, 15, 0);
-//  GTK_WIDGET_UNSET_FLAGS (inmeter_r, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (inmeter_r, GTK_CAN_DEFAULT);
 
   pan_label = gtk_label_new (_("pan_label"));
   gtk_widget_set_name (pan_label, "pan_label");
@@ -2413,25 +2401,13 @@ create_window1 (void)
   gtk_widget_show (comp_le_1);
   gtk_box_pack_start (GTK_BOX (vbox_l), comp_le_1, FALSE, TRUE, 0);
   gtk_widget_set_size_request (comp_le_1, 0, 12);
-//  GTK_WIDGET_UNSET_FLAGS (comp_le_1, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (comp_le_1, GTK_CAN_DEFAULT);
   gtk_widget_set_tooltip_text (comp_le_1, _("Level"));
 
-/*  custom_1_l = make_mscale ("custom_1_l", "top bottom", "", -40, 0);
-  gtk_widget_set_name (custom_1_l, "custom_1_l");
-  gtk_widget_show (custom_1_l);
-  gtk_box_pack_start (GTK_BOX (vbox_l), custom_1_l, FALSE, TRUE, 0);
-  gtk_widget_set_size_request (custom_1_l, 0, 10);
-//  GTK_WIDGET_UNSET_FLAGS (custom_1_l, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (custom_1_l, GTK_CAN_DEFAULT);
-*/
   comp_ga_1 = make_meter ("comp_ga_1", "left", "", -40, 0);
   gtk_widget_set_name (comp_ga_1, "comp_ga_1");
   gtk_widget_show (comp_ga_1);
   gtk_box_pack_start (GTK_BOX (vbox_l), comp_ga_1, FALSE, TRUE, 0);
   gtk_widget_set_size_request (comp_ga_1, 0, 12);
-//  GTK_WIDGET_UNSET_FLAGS (comp_ga_1, GTK_CAN_FOCUS);
-// GTK_WIDGET_UNSET_FLAGS (comp_ga_1, GTK_CAN_DEFAULT);
   gtk_widget_set_tooltip_text (comp_ga_1, _("Gain"));
 
   low_band_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
@@ -2716,25 +2692,13 @@ create_window1 (void)
   gtk_widget_show (comp_le_2);
   gtk_box_pack_start (GTK_BOX (vbox_m), comp_le_2, FALSE, TRUE, 0);
   gtk_widget_set_size_request (comp_le_2, 0, 12);
-//  GTK_WIDGET_UNSET_FLAGS (comp_le_2, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (comp_le_2, GTK_CAN_DEFAULT);
   gtk_widget_set_tooltip_text ( comp_le_2, _("Level"));
 
-/*  custom_1_m = make_mscale ("custom_1_m", "top bottom", "", -40, 0);
-  gtk_widget_set_name (custom_1_m, "custom_1_m");
-  gtk_widget_show (custom_1_m);
-  gtk_box_pack_start (GTK_BOX (vbox_m), custom_1_m, FALSE, TRUE, 0);
-  gtk_widget_set_size_request (custom_1_m, 0, 10);
-//  GTK_WIDGET_UNSET_FLAGS (custom_1_m, GTK_CAN_FOCUS);
- // GTK_WIDGET_UNSET_FLAGS (custom_1_m, GTK_CAN_DEFAULT);
-*/
   comp_ga_2 = make_meter ("comp_ga_2", "left", "", -40, 0);
   gtk_widget_set_name (comp_ga_2, "comp_ga_2");
   gtk_widget_show (comp_ga_2);
   gtk_box_pack_start (GTK_BOX (vbox_m), comp_ga_2, FALSE, TRUE, 0);
   gtk_widget_set_size_request (comp_ga_2, 0, 12);
-//  GTK_WIDGET_UNSET_FLAGS (comp_ga_2, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (comp_ga_2, GTK_CAN_DEFAULT);
   gtk_widget_set_tooltip_text (comp_ga_2, _("Gain"));
 
   mid_band_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
@@ -3019,25 +2983,13 @@ create_window1 (void)
   gtk_widget_show (comp_le_3);
   gtk_box_pack_start (GTK_BOX (vbox_h), comp_le_3, FALSE, TRUE, 0);
   gtk_widget_set_size_request (comp_le_3, 0, 12);
- // GTK_WIDGET_UNSET_FLAGS (comp_le_3, GTK_CAN_FOCUS);
- // GTK_WIDGET_UNSET_FLAGS (comp_le_3, GTK_CAN_DEFAULT);
   gtk_widget_set_tooltip_text ( comp_le_3, _("Level"));
 
-/*  custom_1_h = make_mscale ("custom_1_h", "top bottom", "", -40, 0);
-  gtk_widget_set_name (custom_1_h, "custom_1_h");
-  gtk_widget_show (custom_1_h);
-  gtk_box_pack_start (GTK_BOX (vbox_h), custom_1_h, FALSE, TRUE, 0);
-  gtk_widget_set_size_request (custom_1_h, 0, 10);
- // GTK_WIDGET_UNSET_FLAGS (custom_1_h, GTK_CAN_FOCUS);
- // GTK_WIDGET_UNSET_FLAGS (custom_1_h, GTK_CAN_DEFAULT);
-*/
   comp_ga_3 = make_meter ("comp_ga_3", "left", "", -40, 0);
   gtk_widget_set_name (comp_ga_3, "comp_ga_3");
   gtk_widget_show (comp_ga_3);
   gtk_box_pack_start (GTK_BOX (vbox_h), comp_ga_3, FALSE, TRUE, 0);
   gtk_widget_set_size_request (comp_ga_3, 0, 12);
-//  GTK_WIDGET_UNSET_FLAGS (comp_ga_3, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (comp_ga_3, GTK_CAN_DEFAULT);
   gtk_widget_set_tooltip_text (comp_ga_3, _("Gain"));
 
   high_band_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
@@ -3174,21 +3126,11 @@ create_window1 (void)
   gtk_container_add (GTK_CONTAINER (lim_in_meter_eventbox), vbox158);
   gtk_container_set_border_width (GTK_CONTAINER (vbox158), 1);
 
-/*  custom19 = make_mscale ("custom19", "bottom", "", -40, 6);
-  gtk_widget_set_name (custom19, "custom19");
-  gtk_widget_show (custom19);
-  gtk_box_pack_start (GTK_BOX (vbox158), custom19, TRUE, TRUE, 0);
-  gtk_widget_set_size_request (custom19, 0, 12);
-//GTK_WIDGET_UNSET_FLAGS (custom19, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (custom19, GTK_CAN_DEFAULT);
-*/
   lim_in_meter = make_meter ("lim_in_meter", "right", "", -40, 6);
   gtk_widget_set_name (lim_in_meter, "lim_in_meter");
   gtk_widget_show (lim_in_meter);
   gtk_box_pack_start (GTK_BOX (vbox158), lim_in_meter, TRUE, TRUE, 0);
   gtk_widget_set_size_request (lim_in_meter, 0, 12);
-// GTK_WIDGET_UNSET_FLAGS (lim_in_meter, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (lim_in_meter, GTK_CAN_DEFAULT);
 
   table15 = gtk_grid_new ();
   gtk_widget_set_name (table15, "table15");
@@ -3275,24 +3217,12 @@ create_window1 (void)
   gtk_widget_show (lim_att_meter);
   gtk_box_pack_start (GTK_BOX (vbox159), lim_att_meter, TRUE, TRUE, 0);
   gtk_widget_set_size_request (lim_att_meter, 0, 12);
-//  GTK_WIDGET_UNSET_FLAGS (lim_att_meter, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (lim_att_meter, GTK_CAN_DEFAULT);
 
-/*  custom20 = make_mscale ("custom20", "top bottom", "", -20, 0);
-  gtk_widget_set_name (custom20, "custom20");
-  gtk_widget_show (custom20);
-  gtk_box_pack_start (GTK_BOX (vbox159), custom20, TRUE, TRUE, 0);
-  gtk_widget_set_size_request (custom20, 0, 10);
-//  GTK_WIDGET_UNSET_FLAGS (custom20, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (custom20, GTK_CAN_DEFAULT);
-*/
   lim_out_meter = make_meter ("lim_out_meter", "right", "", -20, 0);
   gtk_widget_set_name (lim_out_meter, "lim_out_meter");
   gtk_widget_show (lim_out_meter);
   gtk_box_pack_start (GTK_BOX (vbox159), lim_out_meter, TRUE, TRUE, 0);
   gtk_widget_set_size_request (lim_out_meter, 0, 12);
-//  GTK_WIDGET_UNSET_FLAGS (lim_out_meter, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (lim_out_meter, GTK_CAN_DEFAULT);
 
   hbox80 = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_set_name (hbox80, "hbox80");
@@ -3446,40 +3376,24 @@ create_window1 (void)
   gtk_widget_show (rmsmeter_l);
   gtk_box_pack_start (GTK_BOX (outmeter_hbox), rmsmeter_l, FALSE, TRUE, 1);
   gtk_widget_set_size_request (rmsmeter_l, 10, 0);
-//  GTK_WIDGET_UNSET_FLAGS (rmsmeter_l, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (rmsmeter_l, GTK_CAN_DEFAULT);
 
   outmeter_l = make_meter ("outmeter_l", "up", "", -60, 6);
   gtk_widget_set_name (outmeter_l, "outmeter_l");
   gtk_widget_show (outmeter_l);
   gtk_box_pack_start (GTK_BOX (outmeter_hbox), outmeter_l, TRUE, TRUE, 0);
   gtk_widget_set_size_request (outmeter_l, 15, 0);
-//  GTK_WIDGET_UNSET_FLAGS (outmeter_l, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (outmeter_l, GTK_CAN_DEFAULT);
 
-/*  custom21 = make_mscale ("custom21", "left right", "", -60, 6);
-  gtk_widget_set_name (custom21, "custom21");
-  gtk_widget_show (custom21);
-  gtk_box_pack_start (GTK_BOX (outmeter_hbox), custom21, TRUE, TRUE, 0);
-  gtk_widget_set_size_request (custom21, 10, 0);
-//  GTK_WIDGET_UNSET_FLAGS (custom21, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (custom21, GTK_CAN_DEFAULT);
-*/
   outmeter_r = make_meter ("outmeter_r", "up", "", -60, 6);
   gtk_widget_set_name (outmeter_r, "outmeter_r");
   gtk_widget_show (outmeter_r);
   gtk_box_pack_start (GTK_BOX (outmeter_hbox), outmeter_r, TRUE, TRUE, 0);
   gtk_widget_set_size_request (outmeter_r, 15, 0);
-//  GTK_WIDGET_UNSET_FLAGS (outmeter_r, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (outmeter_r, GTK_CAN_DEFAULT);
 
   rmsmeter_r = make_meter ("rmsmeter_r", "up", "", -60, 6);
   gtk_widget_set_name (rmsmeter_r, "rmsmeter_r");
   gtk_widget_show (rmsmeter_r);
   gtk_box_pack_start (GTK_BOX (outmeter_hbox), rmsmeter_r, FALSE, TRUE, 1);
   gtk_widget_set_size_request (rmsmeter_r, 10, 0);
-//  GTK_WIDGET_UNSET_FLAGS (rmsmeter_r, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (rmsmeter_r, GTK_CAN_DEFAULT);
 
   global_bypass_event_box = gtk_event_box_new ();
   gtk_widget_set_name (global_bypass_event_box, "global_bypass_event_box");
@@ -6492,24 +6406,12 @@ create_window3 (void)
   gtk_widget_show (presets_inmeter_l);
   gtk_box_pack_start (GTK_BOX (hbox83), presets_inmeter_l, TRUE, TRUE, 0);
   gtk_widget_set_size_request (presets_inmeter_l, 15, 0);
-//  GTK_WIDGET_UNSET_FLAGS (presets_inmeter_l, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (presets_inmeter_l, GTK_CAN_DEFAULT);
 
-/*  custom23 = make_mscale ("custom23", "left right", "", -60, 6);
-  gtk_widget_set_name (custom23, "custom23");
-  gtk_widget_show (custom23);
-  gtk_box_pack_start (GTK_BOX (hbox83), custom23, TRUE, TRUE, 0);
-  gtk_widget_set_size_request (custom23, 10, 0);
-//  GTK_WIDGET_UNSET_FLAGS (custom23, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (custom23, GTK_CAN_DEFAULT);
-*/
   presets_inmeter_r = make_meter ("presets_inmeter_r", "", "", -60, 6);
   gtk_widget_set_name (presets_inmeter_r, "presets_inmeter_r");
   gtk_widget_show (presets_inmeter_r);
   gtk_box_pack_start (GTK_BOX (hbox83), presets_inmeter_r, TRUE, TRUE, 0);
   gtk_widget_set_size_request (presets_inmeter_r, 15, 0);
- // GTK_WIDGET_UNSET_FLAGS (presets_inmeter_r, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (presets_inmeter_r, GTK_CAN_DEFAULT);
 
   presets_pan_label = gtk_label_new (_("pan_label"));
   gtk_widget_set_name (presets_pan_label, "presets_pan_label");
@@ -6615,24 +6517,12 @@ create_window3 (void)
   gtk_widget_show (presets_outmeter_l);
   gtk_box_pack_start (GTK_BOX (hbox85), presets_outmeter_l, TRUE, TRUE, 0);
   gtk_widget_set_size_request (presets_outmeter_l, 15, 0);
-//  GTK_WIDGET_UNSET_FLAGS (presets_outmeter_l, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (presets_outmeter_l, GTK_CAN_DEFAULT);
 
-/*  custom26 = make_mscale ("custom26", "left right", "", -60, 6);
-  gtk_widget_set_name (custom26, "custom26");
-  gtk_widget_show (custom26);
-  gtk_box_pack_start (GTK_BOX (hbox85), custom26, TRUE, TRUE, 0);
-  gtk_widget_set_size_request (custom26, 10, 0);
-//  GTK_WIDGET_UNSET_FLAGS (custom26, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (custom26, GTK_CAN_DEFAULT);
-*/
   presets_outmeter_r = make_meter ("presets_outmeter_r", "up", "", -60, 6);
   gtk_widget_set_name (presets_outmeter_r, "presets_outmeter_r");
   gtk_widget_show (presets_outmeter_r);
   gtk_box_pack_start (GTK_BOX (hbox85), presets_outmeter_r, TRUE, TRUE, 0);
   gtk_widget_set_size_request (presets_outmeter_r, 15, 0);
-//  GTK_WIDGET_UNSET_FLAGS (presets_outmeter_r, GTK_CAN_FOCUS);
-//  GTK_WIDGET_UNSET_FLAGS (presets_outmeter_r, GTK_CAN_DEFAULT);
   
   global_bypass_event_box_presets = gtk_event_box_new ();
   gtk_widget_set_name (global_bypass_event_box_presets, "global_bypass_event_box_presets");
