@@ -2,7 +2,7 @@
 #define PACKAGE "@PACKAGE@"
 
 // G3JAMin Version
-#define PACKAGE_VERSION "@G3JAMin_VERSION@"
+#define PACKAGE_VERSION "@VERSION@"
 
 // compile with OSC
 #cmakedefine HAS_OSC

@@ -1,8 +1,15 @@
 cmake_minimum_required (VERSION 2.6)
 
+# cmake module path
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
+# gettext module
+set (GettextTranslate_ALL ON)
+include (GettextTranslate)
+
 project (G3JAMin)
 
 # version
-set (G3JAMin_VERSION 0.98.9)
+set (VERSION 0.98.9)
 
-subdirs (src man data) #controller)
+subdirs (po src man data) #controller)

@@ -530,11 +530,11 @@ void s_save_session (const gchar *fname)
     curr_scene = get_current_scene ();
 
     xmlSetCompressMode(5);
-    doc = xmlNewDoc("1.0");
-    rootnode = xmlNewDocRawNode(doc, NULL, "jam-param-list", NULL);
-    xmlSetProp(rootnode, "version", PACKAGE_VERSION);
+    doc = xmlNewDoc((const unsigned char *) "1.0");
+    rootnode = xmlNewDocRawNode(doc, NULL, (const xmlChar *) "jam-param-list", NULL);
+    xmlSetProp(rootnode, (const xmlChar *) "version", (const xmlChar *) PACKAGE_VERSION);
     xmlDocSetRootElement(doc, rootnode);
-    node = xmlNewText("\n");
+    node = xmlNewText((const xmlChar *) "\n");
     xmlAddChild(rootnode, node);
 
 
@@ -582,10 +582,10 @@ void s_save_session (const gchar *fname)
     /* Save current active state */
 
     for (i=0; i<S_SIZE; i++) {
-	node = xmlNewDocRawNode(doc, NULL, "parameter", NULL);
+	node = xmlNewDocRawNode(doc, NULL, (const xmlChar *) "parameter", NULL);
 	snprintf(tmp, 255, "%g", s_value[i]);
-	xmlSetProp(node, "name", s_symbol[i]);
-	xmlSetProp(node, "value", tmp);
+	xmlSetProp(node, (const xmlChar *) "name", (const xmlChar *) s_symbol[i]);
+	xmlSetProp(node, (const xmlChar *) "value", (const xmlChar *) tmp);
 	xmlAddChild(rootnode, node);
 	node = xmlNewText("\n");
 	xmlAddChild(rootnode, node);

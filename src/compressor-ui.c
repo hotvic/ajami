@@ -226,7 +226,7 @@ void re_changed(int id, float value)
 
 
   compressors[i].release = value;
-  comp_curve_update;
+  (void) comp_curve_update;
 }
 
 void th_changed(int id, float value)

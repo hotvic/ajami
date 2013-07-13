@@ -796,7 +796,7 @@ static void meterscale_draw_notch_label(GtkMeter *meterscale, float db,
 //	pl = pango_layout_new(pc);
 //	g_object_unref (pc);
 	
-/*	snprintf(text, 3, "%.0f", fabs(db));
+	snprintf(text, 3, "%.0f", fabs(db));
 	pl = gtk_widget_create_pango_layout(widget,text);
 	
 //	pango_layout_set_text(pl, text, -1);
