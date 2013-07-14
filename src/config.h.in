@@ -7,6 +7,12 @@
 // compile with OSC
 #cmakedefine HAS_OSC
 
+// gettext
+#cmakedefine ENABLE_NLS
+
+#define GETTEXT_PACKAGE "g3jamin"
+#define PACKAGE_LOCALE_DIR "@PACKAGE_DATA_DIR@/locale"
+
 // datadir, e.g. /usr/share
 #define PACKAGE_DATA_DIR "@PACKAGE_DATA_DIR@"
 

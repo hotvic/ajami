@@ -478,72 +478,72 @@ void pref_write_jamin_defaults ()
     {
       fprintf (fp, "JAMin defaults file V%s\n",  PACKAGE_VERSION);
 
-      fprintf (fp, "[LOW BAND COMPRESSOR COLOR]  = %hu %hu %hu\n",
+      fprintf (fp, "[LOW BAND COMPRESSOR COLOR]  = %f %f %f\n",
                color[LOW_BAND_COLOR].red, 
                color[LOW_BAND_COLOR].green,
                color[LOW_BAND_COLOR].blue);
 
-      fprintf (fp, "[MID BAND COMPRESSOR COLOR]  = %hu %hu %hu\n",
+      fprintf (fp, "[MID BAND COMPRESSOR COLOR]  = %f %f %f\n",
                color[MID_BAND_COLOR].red, 
                color[MID_BAND_COLOR].green,
                color[MID_BAND_COLOR].blue);
 
-      fprintf (fp, "[HIGH BAND COMPRESSOR COLOR] = %hu %hu %hu\n",
+      fprintf (fp, "[HIGH BAND COMPRESSOR COLOR] = %f %f %f\n",
                color[HIGH_BAND_COLOR].red, 
                color[HIGH_BAND_COLOR].green,
                color[HIGH_BAND_COLOR].blue);
 
-      fprintf (fp, "[GANG HIGHLIGHT COLOR]       = %hu %hu %hu\n",
+      fprintf (fp, "[GANG HIGHLIGHT COLOR]       = %f %f %f\n",
                color[GANG_HIGHLIGHT_COLOR].red, 
                color[GANG_HIGHLIGHT_COLOR].green,
                color[GANG_HIGHLIGHT_COLOR].blue);
 
-      fprintf (fp, "[PARAMETRIC HANDLE COLOR]    = %hu %hu %hu\n",
+      fprintf (fp, "[PARAMETRIC HANDLE COLOR]    = %f %f %f\n",
                color[HANDLE_COLOR].red, 
                color[HANDLE_COLOR].green,
                color[HANDLE_COLOR].blue);
 
-      fprintf (fp, "[HDEQ CURVE COLOR]           = %hu %hu %hu\n",
+      fprintf (fp, "[HDEQ CURVE COLOR]           = %f %f %f\n",
                color[HDEQ_CURVE_COLOR].red, 
                color[HDEQ_CURVE_COLOR].green,
                color[HDEQ_CURVE_COLOR].blue);
 
-      fprintf (fp, "[HDEQ SPECTRUM COLOR]        = %hu %hu %hu\n",
+      fprintf (fp, "[HDEQ SPECTRUM COLOR]        = %f %f %f\n",
                color[HDEQ_SPECTRUM_COLOR].red, 
                color[HDEQ_SPECTRUM_COLOR].green,
                color[HDEQ_SPECTRUM_COLOR].blue);
 
-      fprintf (fp, "[HDEQ GRID COLOR]            = %hu %hu %hu\n",
+      fprintf (fp, "[HDEQ GRID COLOR]            = %f %f %f\n",
                color[HDEQ_GRID_COLOR].red, 
                color[HDEQ_GRID_COLOR].green,
                color[HDEQ_GRID_COLOR].blue);
 
-      fprintf (fp, "[HDEQ BACKGROUND COLOR]      = %hu %hu %hu\n",
+      fprintf (fp, "[HDEQ BACKGROUND COLOR]      = %f %f %f\n",
                color[HDEQ_BACKGROUND_COLOR].red, 
                color[HDEQ_BACKGROUND_COLOR].green,
                color[HDEQ_BACKGROUND_COLOR].blue);
 
-      fprintf (fp, "[TEXT COLOR]                 = %hu %hu %hu\n",
+      fprintf (fp, "[TEXT COLOR]                 = %f %f %f\n",
                color[TEXT_COLOR].red, 
                color[TEXT_COLOR].green,
                color[TEXT_COLOR].blue);
 
-      fprintf (fp, "[METER NORMAL COLOR]         = %hu %hu %hu\n",
+      fprintf (fp, "[METER NORMAL COLOR]         = %f %f %f\n",
                color[METER_NORMAL_COLOR].red, 
                color[METER_NORMAL_COLOR].green,
                color[METER_NORMAL_COLOR].blue);
 
-      fprintf (fp, "[METER WARNING COLOR]        = %hu %hu %hu\n",
+      fprintf (fp, "[METER WARNING COLOR]        = %f %f %f\n",
                color[METER_WARNING_COLOR].red, 
                color[METER_WARNING_COLOR].green,
                color[METER_WARNING_COLOR].blue);
 
-      fprintf (fp, "[METER OVER COLOR]           = %hu %hu %hu\n",
+      fprintf (fp, "[METER OVER COLOR]           = %f %f %f\n",
                color[METER_OVER_COLOR].red, 
                color[METER_OVER_COLOR].green,
                color[METER_OVER_COLOR].blue);
 
-      fprintf (fp, "[METER PEAK COLOR]           = %hu %hu %hu\n",
+      fprintf (fp, "[METER PEAK COLOR]           = %f %f %f\n",
                color[METER_PEAK_COLOR].red, 
                color[METER_PEAK_COLOR].green,
                color[METER_PEAK_COLOR].blue);

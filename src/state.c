@@ -587,7 +587,7 @@ void s_save_session (const gchar *fname)
 	xmlSetProp(node, (const xmlChar *) "name", (const xmlChar *) s_symbol[i]);
 	xmlSetProp(node, (const xmlChar *) "value", (const xmlChar *) tmp);
 	xmlAddChild(rootnode, node);
-	node = xmlNewText("\n");
+	node = xmlNewText((xmlChar *) "\n");
 	xmlAddChild(rootnode, node);
     }
 
@@ -596,36 +596,36 @@ void s_save_session (const gchar *fname)
 
     for (j=0; j<NUM_SCENES; j++) {
 	s_state *st = get_scene(j);
-	sc_node = xmlNewDocRawNode(doc, NULL, "scene", NULL);
+	sc_node = xmlNewDocRawNode(doc, NULL, (xmlChar *) "scene", NULL);
 	snprintf(tmp, 255, "%d", j);
-	xmlSetProp(sc_node, "number", tmp);
+	xmlSetProp(sc_node, (xmlChar *) "number", (xmlChar *) tmp);
 	if (!st) {
 	    xmlAddChild(rootnode, sc_node);
-	    node = xmlNewText("\n");
+	    node = xmlNewText((xmlChar *) "\n");
 	    xmlAddChild(rootnode, node);
 	    continue;
 	}
-	xmlSetProp(sc_node, "name", get_scene_name(j));
+	xmlSetProp(sc_node, (xmlChar *) "name", (xmlChar *) get_scene_name(j));
 	if (curr_scene == j) {
-	    xmlSetProp(sc_node, "active", "true");
-	    xmlSetProp(sc_node, "changed", "false");
+	    xmlSetProp(sc_node, (xmlChar *) "active", (xmlChar *) "true");
+	    xmlSetProp(sc_node, (xmlChar *) "changed", (xmlChar *) "false");
 	} else if (curr_scene == changed_scene_no(j)) {
-	    xmlSetProp(sc_node, "active", "true");
-	    xmlSetProp(sc_node, "changed", "true");
+	    xmlSetProp(sc_node, (xmlChar *) "active", (xmlChar *) "true");
+	    xmlSetProp(sc_node, (xmlChar *) "changed", (xmlChar *) "true");
 	}
-	node = xmlNewText("\n");
+	node = xmlNewText((xmlChar *) "\n");
 	xmlAddChild(sc_node, node);
 	xmlAddChild(rootnode, sc_node);
-	node = xmlNewText("\n");
+	node = xmlNewText((xmlChar *) "\n");
 	xmlAddChild(rootnode, node);
 
 	for (i=0; i<S_SIZE; i++) {
-	    node = xmlNewDocRawNode(doc, NULL, "parameter", NULL);
+	    node = xmlNewDocRawNode(doc, NULL, (xmlChar *) "parameter", NULL);
 	    snprintf(tmp, 255, "%g", st->value[i]);
-	    xmlSetProp(node, "name", s_symbol[i]);
-	    xmlSetProp(node, "value", tmp);
+	    xmlSetProp(node, (xmlChar *) "name", (xmlChar *) s_symbol[i]);
+	    xmlSetProp(node, (xmlChar *) "value", (xmlChar *) tmp);
 	    xmlAddChild(sc_node, node);
-	    node = xmlNewText("\n");
+	    node = xmlNewText((xmlChar *) "\n");
 	    xmlAddChild(sc_node, node);
 	}
     }
@@ -849,21 +849,23 @@ void s_startElement(void *user_data, const xmlChar *name, const xmlChar **attrs)
     int active = 0;
     int changed = 0;
 
-    if (!strcmp(name, "jam-param-list")) {
+    if (!strcmp((const char *) name, "jam-param-list")) {
 	return;
     }
 
-    if (!strcmp(name, "scene")) {
+    if (!strcmp((const char *) name, "scene")) {
 	const char *sname = NULL;
 
 	for (p=attrs; p && *p; p+=2) {
-	    if (!strcmp(*p, "name")) {
-		sname = *(p+1);
-	    } else if (!strcmp(*p, "number")) {
-		gp->scene = atoi(*(p+1));
-	    } else if (!strcmp(*p, "active") && !strcmp(*(p+1), "true")) {
+	    if (!strcmp((const char *) *p, "name")) {
+		sname = (const char *) *(p+1);
+	    } else if (!strcmp((const char *) *p, "number")) {
+		gp->scene = atoi((const char *) *(p+1));
+	    } else if (!strcmp((const char *) *p, "active") &&
+                       !strcmp((const char *) *(p+1), "true")) {
 		active = 1;
-	    } else if (!strcmp(*p, "changed") && !strcmp(*(p+1), "true")) {
+	    } else if (!strcmp((const char *) *p, "changed") &&
+                       !strcmp((const char *) *(p+1), "true")) {
 		changed = 1;
 	    }
 	}
@@ -890,15 +892,15 @@ void s_startElement(void *user_data, const xmlChar *name, const xmlChar **attrs)
     }
 
     /* if its a global setting */
-    if (!strcmp(name, "global")) {
+    if (!strcmp((const char *) name, "global")) {
 	/* find the name, value and index attributes */
 	for (p=attrs; p && *p; p+=2) {
-	    if (!strcmp(*p, "name")) {
-		symbol = *(p+1);
-	    } else if (!strcmp(*p, "value")) {
-		value = *(p+1);
-	    } else if (!strcmp(*p, "index")) {
-		index = *(p+1);
+	    if (!strcmp((const char *) *p, "name")) {
+		symbol = (const char *) *(p+1);
+	    } else if (!strcmp((const char *) *p, "value")) {
+		value = (const char *) *(p+1);
+	    } else if (!strcmp((const char *) *p, "index")) {
+		index = (const char *) *(p+1);
 	    }
 	}
 
@@ -982,7 +984,7 @@ void s_startElement(void *user_data, const xmlChar *name, const xmlChar **attrs)
     }
 
     /* Check its a parameter element */
-    if (strcmp(name, "parameter")) {
+    if (strcmp((const char *) name, "parameter")) {
 	errstr = g_strdup_printf("Unhandled element: %s\n", name);
 	message (GTK_MESSAGE_WARNING, errstr);
 	free(errstr);
@@ -990,10 +992,10 @@ void s_startElement(void *user_data, const xmlChar *name, const xmlChar **attrs)
 
     /* Find the name and value attributes */
     for (p=attrs; p && *p; p+=2) {
-	if (!strcmp(*p, "name")) {
-	    symbol = *(p+1);
-	} else if (!strcmp(*p, "value")) {
-	    value = *(p+1);
+	if (!strcmp((const char *) *p, "name")) {
+	    symbol = (const char *) *(p+1);
+	} else if (!strcmp((const char *) *p, "value")) {
+	    value = (const char *) *(p+1);
 	}
     }
 
@@ -1152,45 +1154,45 @@ float s_get_crossfade_time()
 void s_save_global_int(xmlDocPtr doc, char *symbol, int value)
 {
     xmlNodePtr root = xmlDocGetRootElement(doc);
-    xmlNodePtr node = xmlNewDocRawNode(doc, NULL, "global", NULL);
+    xmlNodePtr node = xmlNewDocRawNode(doc, NULL, (xmlChar *) "global", NULL);
     char tmp[256];
 
     snprintf(tmp, 255, "%d", value);
-    xmlSetProp(node, "name", symbol);
-    xmlSetProp(node, "value", tmp);
+    xmlSetProp(node, (xmlChar *) "name", (xmlChar *) symbol);
+    xmlSetProp(node, (xmlChar *) "value", (xmlChar *) tmp);
     xmlAddChild(root, node);
-    node = xmlNewText("\n");
+    node = xmlNewText((xmlChar *) "\n");
     xmlAddChild(root, node);
 }
 
 void s_save_global_float(xmlDocPtr doc, char *symbol, float value)
 {
     xmlNodePtr root = xmlDocGetRootElement(doc);
-    xmlNodePtr node = xmlNewDocRawNode(doc, NULL, "global", NULL);
+    xmlNodePtr node = xmlNewDocRawNode(doc, NULL, (xmlChar *) "global", NULL);
     char tmp[256];
 
     snprintf(tmp, 255, "%f", value);
-    xmlSetProp(node, "name", symbol);
-    xmlSetProp(node, "value", tmp);
+    xmlSetProp(node, (xmlChar *) "name", (xmlChar *) symbol);
+    xmlSetProp(node, (xmlChar *) "value", (xmlChar *) tmp);
     xmlAddChild(root, node);
-    node = xmlNewText("\n");
+    node = xmlNewText((xmlChar *) "\n");
     xmlAddChild(root, node);
 }
 
 void s_save_global_gang(xmlDocPtr doc, char *p, int band, gboolean value)
 {
     xmlNodePtr root = xmlDocGetRootElement(doc);
-    xmlNodePtr node = xmlNewDocRawNode(doc, NULL, "global", NULL);
+    xmlNodePtr node = xmlNewDocRawNode(doc, NULL, (xmlChar *) "global", NULL);
     char tmp[256];
 
     snprintf(tmp, 255, "gang_%s", p);
-    xmlSetProp(node, "name", tmp);
+    xmlSetProp(node, (xmlChar *) "name", (xmlChar *) tmp);
     snprintf(tmp, 255, "%d", band);
-    xmlSetProp(node, "index", tmp);
+    xmlSetProp(node, (xmlChar *) "index", (xmlChar *) tmp);
     snprintf(tmp, 255, "%d", value);
-    xmlSetProp(node, "value", tmp);
+    xmlSetProp(node, (xmlChar *) "value", (xmlChar *) tmp);
     xmlAddChild(root, node);
-    node = xmlNewText("\n");
+    node = xmlNewText((xmlChar *) "\n");
     xmlAddChild(root, node);
 }
 

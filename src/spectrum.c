@@ -53,7 +53,7 @@ void bind_spectrum()
 
     root = lookup_widget(main_window, "spectrum_hbox");
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_box_pack_start(GTK_BOX(root), hbox, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(root), hbox, TRUE, TRUE, 0);
     gtk_widget_show(hbox);
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
