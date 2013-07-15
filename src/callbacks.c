@@ -565,42 +565,32 @@ GtkWidget*
 make_meter (gchar *widget_name, gchar *string1, gchar *string2,
                 gint int1, gint int2)
 {
+    GtkOrientation dir;
+    gboolean invert;
     GtkWidget *ret;
-    gint dir = GTK_METER_UP;
-    int sides = GTK_METERSCALE_TOP;
-    GtkAdjustment *adjustment = (GtkAdjustment*) gtk_adjustment_new (0.0,
-                    (float)int1, (float)int2, 0.0, 0.0, 0.0);
 
     if (!string1 || !strcmp(string1, "up")) {
-        dir = GTK_METER_UP;
+        dir = GTK_ORIENTATION_VERTICAL;
+        invert = TRUE;
     } else if (!strcmp(string1, "down")) {
-        dir = GTK_METER_DOWN;
+        dir = GTK_ORIENTATION_VERTICAL;
+        invert = FALSE;
     } else if (!strcmp(string1, "left")) {
-        dir = GTK_METER_LEFT;
+        dir = GTK_ORIENTATION_HORIZONTAL;
+        invert = TRUE;
     } else if (!strcmp(string1, "right")) {
-        dir = GTK_METER_RIGHT;
-    }
-  
-
-    if (string1 && strstr(string1, "left")) {
-        sides = GTK_METERSCALE_LEFT;
-    }
-    if (string1 && strstr(string1, "right")) {
-        sides = GTK_METERSCALE_RIGHT;
-    }
-    if (string1 && strstr(string1, "top")) {
-        sides = GTK_METERSCALE_TOP;
-    }
-    if (string1 && strstr(string1, "bottom")) {
-        sides = GTK_METERSCALE_BOTTOM;
+        dir = GTK_ORIENTATION_HORIZONTAL;
+        invert = FALSE;
+    } else {
+        dir = GTK_ORIENTATION_VERTICAL;
+        invert = TRUE;
     }
 
-    ret = gtk_meter_new(adjustment, dir, sides, int1, int2);
-    gtk_meter_set_adjustment(GTK_METER (ret), adjustment);
+    ret = gtk_meter_new(dir);
+    gtk_meter_set_extreme_values(GTK_LEVEL_BAR (ret), int1, int2);
+    gtk_level_bar_set_inverted(GTK_LEVEL_BAR (ret), invert);
 
-    return ret;
-
-  
+    return ret; 
 }
 
 

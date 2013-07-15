@@ -53,8 +53,7 @@ static GtkAdjustment *adj_kn[XO_BANDS];
 static GtkAdjustment *adj_ma[XO_BANDS];
 static int auto_gain[XO_BANDS];
 
-static GtkMeter *le_meter[XO_BANDS], *ga_meter[XO_BANDS];
-static GtkAdjustment *le_meter_adj[XO_BANDS], *ga_meter_adj[XO_BANDS];
+static GtkWidget *le_meter[XO_BANDS], *ga_meter[XO_BANDS];
 
 
 /*  Variables used for ganging the compressor controls.  */
@@ -123,12 +122,10 @@ void bind_compressors()
 
     for (i=0; i<XO_BANDS; i++) {
 	snprintf(name, 255, "comp_le_%d", i+1);
-	le_meter[i] = GTK_METER(lookup_widget(main_window, name));
-	le_meter_adj[i] = gtk_meter_get_adjustment(le_meter[i]);
+	le_meter[i] = lookup_widget(main_window, name);
 
 	snprintf(name, 255, "comp_ga_%d", i+1);
-	ga_meter[i] = GTK_METER(lookup_widget(main_window, name));
-	ga_meter_adj[i] = gtk_meter_get_adjustment(ga_meter[i]);
+	ga_meter[i] = lookup_widget(main_window, name);
 
 	connect_scale(at, i, attack, S_COMP_ATTACK(i));
 	connect_scale(re, i, release, S_COMP_RELEASE(i));
@@ -262,7 +259,7 @@ void th_changed(int id, float value)
               } else {
 				comp_curve_update(j);
               }
-              gtk_meter_set_warn_point(le_meter[j], new_value);
+              gtk_meter_set_warn_point(GTK_LEVEL_BAR (le_meter[j]), new_value + 40.0);
             }
         }
     }
@@ -276,57 +273,54 @@ void th_changed(int id, float value)
   } else {
 	comp_curve_update(i);
   }
-  gtk_meter_set_warn_point(le_meter[i], value);
+  gtk_meter_set_warn_point(GTK_LEVEL_BAR (le_meter[i]), value + 40);
 }
 
 void ra_changed(int id, float value)
 {
-  int          i, j;
-  gdouble      diff, new_value;
+    int          i, j;
+    gdouble      diff, new_value;
 
 
-  i = id - S_COMP_RATIO(0);
+    i = id - S_COMP_RATIO(0);
 
-  if (!suspend_gang && gang_ra[i])
-    {
-      diff = value - prev_value_ra[i];
+    if (!suspend_gang && gang_ra[i]) {
+        diff = value - prev_value_ra[i];
 
-      for (j = 0 ; j < XO_BANDS ; j++)
-        {
-          if (i != j && gang_ra[j])
-            {
-              new_value = gtk_adjustment_get_value (adj_ra[j]);
-              new_value += diff;
-              if (new_value >= range_ra[0][j] && new_value <= range_ra[1][j])
+        for (j = 0 ; j < XO_BANDS ; j++) {
+            if (i != j && gang_ra[j]) {
+                new_value = gtk_adjustment_get_value (adj_ra[j]);
+                new_value += diff;
+                if (new_value >= range_ra[0][j] && new_value <= range_ra[1][j])
                 {
-                  g_signal_handler_block (adj_ra[j], sig_hand_ra[j]);
+                    g_signal_handler_block (adj_ra[j], sig_hand_ra[j]);
 
-                  gtk_adjustment_set_value (adj_ra[j], new_value);
-                  compressors[j].ratio = new_value;
-                  prev_value_ra[j] = new_value;
+                    gtk_adjustment_set_value (adj_ra[j], new_value);
+                    compressors[j].ratio = new_value;
+                    prev_value_ra[j] = new_value;
 
-                  g_signal_handler_unblock (adj_ra[j], sig_hand_ra[j]);
+                    g_signal_handler_unblock (adj_ra[j], sig_hand_ra[j]);
                 }
-              if (auto_gain[j]) {
-                calc_auto_gain(j);
-              } else {
-				comp_curve_update(j);
-              }
-              gtk_meter_set_warn_point(le_meter[j], new_value);
+                if (auto_gain[j]) {
+                    calc_auto_gain(j);
+                } else {
+		    comp_curve_update(j);
+                } 
+                gtk_meter_set_warn_point(GTK_LEVEL_BAR (le_meter[j]), new_value);
             }
         }
     }
-                  
-  prev_value_ra[i] = value;
+
+    prev_value_ra[i] = value;
 
 
-  compressors[i].ratio = value;
-  if (auto_gain[i]) {
-    calc_auto_gain(i);
-  } else {
-	comp_curve_update(i);
-  }
-  gtk_meter_set_warn_point(le_meter[i], value);
+    compressors[i].ratio = value;
+    if (auto_gain[i]) {
+        calc_auto_gain(i);
+    } else {
+        comp_curve_update(i);
+    }
+    gtk_meter_set_warn_point(GTK_LEVEL_BAR (le_meter[i]), value);
 }
 
 void kn_changed(int id, float value)
@@ -434,8 +428,8 @@ void compressor_meters_update()
     int i;
 
     for (i=0; i<XO_BANDS; i++) {
-	 gtk_adjustment_set_value(le_meter_adj[i], compressors[i].amplitude);
-	 gtk_adjustment_set_value(ga_meter_adj[i], compressors[i].gain_red);
+        gtk_level_bar_set_value(GTK_LEVEL_BAR (le_meter[i]), compressors[i].amplitude + 40.0);
+        gtk_level_bar_set_value(GTK_LEVEL_BAR (ga_meter[i]), compressors[i].gain_red * -1.0);
     }
 }
 

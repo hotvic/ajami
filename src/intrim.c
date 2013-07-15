@@ -26,8 +26,7 @@
 #include "state.h"
 #include "db.h"
 
-static GtkMeter *in_meter[4], *out_meter[4], *rms_meter[2];
-static GtkAdjustment *in_meter_adj[4], *out_meter_adj[4], *rms_meter_adj[2];
+static GtkWidget *in_meter[4], *out_meter[4], *rms_meter[2];
 static GtkLabel	*pan_label[2];
 static GtkEntry *out_meter_text[2], *rms_meter_text[2];
 static float inmeter_warn_level, outmeter_warn_level, rmsmeter_warn_level;
@@ -45,45 +44,35 @@ float in_pan_gain[2] = {1.0f, 1.0f};
 void bind_intrim()
 {
 	
-	in_meter[0] = GTK_METER(lookup_widget(main_window, "inmeter_l"));
-    in_meter[1] = GTK_METER(lookup_widget(main_window, "inmeter_r"));
-	in_meter[2] = GTK_METER(lookup_widget(presets_window, "presets_inmeter_l"));
-    in_meter[3] = GTK_METER(lookup_widget(presets_window, "presets_inmeter_r"));
-    in_meter_adj[0] = gtk_meter_get_adjustment(in_meter[0]);
-    in_meter_adj[1] = gtk_meter_get_adjustment(in_meter[1]);
-	in_meter_adj[2] = gtk_meter_get_adjustment(in_meter[2]);
-    in_meter_adj[3] = gtk_meter_get_adjustment(in_meter[3]);
-    gtk_adjustment_set_value(in_meter_adj[0], -60.0);
-    gtk_adjustment_set_value(in_meter_adj[1], -60.0);
-    gtk_adjustment_set_value(in_meter_adj[2], -60.0);
-    gtk_adjustment_set_value(in_meter_adj[3], -60.0);
+    in_meter[0] = lookup_widget(main_window, "inmeter_l");
+    in_meter[1] = lookup_widget(main_window, "inmeter_r");
+    in_meter[2] = lookup_widget(presets_window, "presets_inmeter_l");
+    in_meter[3] = lookup_widget(presets_window, "presets_inmeter_r");
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (in_meter[0]), 0.0);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (in_meter[1]), 0.0);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (in_meter[2]), 0.0);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (in_meter[3]), 0.0);
 
-    out_meter[0] = GTK_METER(lookup_widget(main_window, "outmeter_l"));
-    out_meter[1] = GTK_METER(lookup_widget(main_window, "outmeter_r"));
-    out_meter[2] = GTK_METER(lookup_widget(presets_window, "presets_outmeter_l"));
-    out_meter[3] = GTK_METER(lookup_widget(presets_window, "presets_outmeter_r"));	
-    out_meter_adj[0] = gtk_meter_get_adjustment(out_meter[0]);
-    out_meter_adj[1] = gtk_meter_get_adjustment(out_meter[1]);
-	out_meter_adj[2] = gtk_meter_get_adjustment(out_meter[2]);
-    out_meter_adj[3] = gtk_meter_get_adjustment(out_meter[3]);
-    gtk_adjustment_set_value(out_meter_adj[0], -60.0);
-    gtk_adjustment_set_value(out_meter_adj[1], -60.0);
-    gtk_adjustment_set_value(out_meter_adj[2], -60.0);
-    gtk_adjustment_set_value(out_meter_adj[3], -60.0);
+    out_meter[0] = lookup_widget(main_window, "outmeter_l");
+    out_meter[1] = lookup_widget(main_window, "outmeter_r");
+    out_meter[2] = lookup_widget(presets_window, "presets_outmeter_l");
+    out_meter[3] = lookup_widget(presets_window, "presets_outmeter_r");	
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (out_meter[0]), 0.0);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (out_meter[1]), 0.0);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (out_meter[2]), 0.0);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (out_meter[3]), 0.0);
     out_meter_text[0] = GTK_ENTRY (lookup_widget (main_window, "out_meter_text_l"));
     out_meter_text[1] = GTK_ENTRY (lookup_widget (main_window, "out_meter_text_r"));
 
-    rms_meter[0] = GTK_METER(lookup_widget(main_window, "rmsmeter_l"));
-    rms_meter[1] = GTK_METER(lookup_widget(main_window, "rmsmeter_r"));
-    rms_meter_adj[0] = gtk_meter_get_adjustment(rms_meter[0]);
-    rms_meter_adj[1] = gtk_meter_get_adjustment(rms_meter[1]);
-    gtk_adjustment_set_value(rms_meter_adj[0], -60.0);
-    gtk_adjustment_set_value(rms_meter_adj[1], -60.0);
+    rms_meter[0] = lookup_widget(main_window, "rmsmeter_l");
+    rms_meter[1] = lookup_widget(main_window, "rmsmeter_r");
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (rms_meter[0]), 0.0);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (rms_meter[1]), 0.0);
     rms_meter_text[0] = GTK_ENTRY (lookup_widget (main_window, "rms_meter_text_l"));
     rms_meter_text[1] = GTK_ENTRY (lookup_widget (main_window, "rms_meter_text_r"));
 
     pan_label[0] = GTK_LABEL(lookup_widget(main_window, "pan_label"));
-	pan_label[1] = GTK_LABEL(lookup_widget(presets_window, "presets_pan_label"));
+    pan_label[1] = GTK_LABEL(lookup_widget(presets_window, "presets_pan_label"));
     update_pan_label(0.0);
 
 
@@ -124,10 +113,10 @@ void inpan_cb(int id, float value)
 
 void in_meter_value(float amp[])
 {
-    gtk_adjustment_set_value(in_meter_adj[0], lin2db(amp[0]));
-    gtk_adjustment_set_value(in_meter_adj[1], lin2db(amp[1]));
-	gtk_adjustment_set_value(in_meter_adj[2], lin2db(amp[0]));
-    gtk_adjustment_set_value(in_meter_adj[3], lin2db(amp[1]));
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (in_meter[0]), lin2db(amp[0]) + 60.0);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (in_meter[1]), lin2db(amp[1]) + 60.0);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (in_meter[2]), lin2db(amp[0]) + 60.0);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (in_meter[3]), lin2db(amp[1]) + 60.0);
     amp[0] = 0.0f;
     amp[1] = 0.0f;
 }
@@ -140,21 +129,22 @@ void out_meter_value(float amp[])
     lamp[0] = lin2db (amp[0]);
     lamp[1] = lin2db (amp[1]);
 
-    gtk_adjustment_set_value(out_meter_adj[0], lamp[0]);
-    gtk_adjustment_set_value(out_meter_adj[1], lamp[1]);
-	gtk_adjustment_set_value(out_meter_adj[2], lin2db(amp[0]));
-    gtk_adjustment_set_value(out_meter_adj[3], lin2db(amp[1]));
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (out_meter[0]), lamp[0] + 60.0);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (out_meter[1]), lamp[1] + 60.0);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (out_meter[2]), lin2db(amp[0]) + 60.0);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (out_meter[3]), lin2db(amp[1]) + 60.0);
 
     if (out_meter_peak_pref)
-      {
-        lamp[0] = gtk_meter_get_peak (out_meter[0]);
-        lamp[1] = gtk_meter_get_peak (out_meter[1]);
-      }
+    {
+        // unimplemented yet
+        //lamp[0] = gtk_meter_get_peak (out_meter[0]);
+        //lamp[1] = gtk_meter_get_peak (out_meter[1]);
+    }
     else
-      {
+    {
         if (lamp[0] < -60.0) lamp[0] = -60.0;
         if (lamp[1] < -60.0) lamp[1] = -60.0;
-      }
+    }
 
     snprintf (tmp, 255, "%.1f", lamp[0]);
     gtk_entry_set_text (out_meter_text[0], tmp);
@@ -173,13 +163,14 @@ void rms_meter_value(float amp[])
     lamp[0] = lin2db (amp[0]);
     lamp[1] = lin2db (amp[1]);
 
-    gtk_adjustment_set_value(rms_meter_adj[0], lamp[0]);
-    gtk_adjustment_set_value(rms_meter_adj[1], lamp[1]);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (rms_meter[0]), lamp[0] + 60.0);
+    gtk_level_bar_set_value(GTK_LEVEL_BAR (rms_meter[1]), lamp[1] + 60.0);
 
     if (rms_meter_peak_pref)
       {
-        lamp[0] = gtk_meter_get_peak (rms_meter[0]);
-        lamp[1] = gtk_meter_get_peak (rms_meter[1]);
+        // unimplemented yet
+        //lamp[0] = gtk_meter_get_peak (rms_meter[0]);
+        //lamp[1] = gtk_meter_get_peak (rms_meter[1]);
       }
     else
       {
@@ -233,42 +224,45 @@ void update_pan_label(float balance)
 
 void intrim_inmeter_reset_peak ()
 {
-  gtk_meter_reset_peak (in_meter[0]);
-  gtk_meter_reset_peak (in_meter[1]);
+    // unimplemented yet
+    //gtk_meter_reset_peak (in_meter[0]);
+    //gtk_meter_reset_peak (in_meter[1]);
 }
 
 void intrim_outmeter_reset_peak ()
 {
-  gtk_meter_reset_peak (out_meter[0]);
-  gtk_meter_reset_peak (out_meter[1]);
+    // unimplemented yet
+    //gtk_meter_reset_peak (out_meter[0]);
+    //gtk_meter_reset_peak (out_meter[1]);
 }
 
 void intrim_rmsmeter_reset_peak ()
 {
-  gtk_meter_reset_peak (rms_meter[0]);
-  gtk_meter_reset_peak (rms_meter[1]);
+    // unimplemented yet
+    //gtk_meter_reset_peak (rms_meter[0]);
+    //gtk_meter_reset_peak (rms_meter[1]);
 }
 
 void intrim_inmeter_set_warn (float level)
 {
-  inmeter_warn_level = level;
+    inmeter_warn_level = level;
 
-  gtk_meter_set_warn_point (in_meter[0], level);
-  gtk_meter_set_warn_point (in_meter[1], level);
+    gtk_meter_set_warn_point(GTK_LEVEL_BAR (in_meter[0]), level + 60.0);
+    gtk_meter_set_warn_point(GTK_LEVEL_BAR (in_meter[1]), level + 60.0);
 }
 
 void intrim_outmeter_set_warn (float level)
 {
-  outmeter_warn_level = level;
-  gtk_meter_set_warn_point (out_meter[0], level);
-  gtk_meter_set_warn_point (out_meter[1], level);
+    outmeter_warn_level = level;
+    gtk_meter_set_warn_point(GTK_LEVEL_BAR (out_meter[0]), level + 60.0);
+    gtk_meter_set_warn_point(GTK_LEVEL_BAR (out_meter[1]), level + 60.0);
 }
 
 void intrim_rmsmeter_set_warn (float level)
 {
-  rmsmeter_warn_level = level;
-  gtk_meter_set_warn_point (rms_meter[0], level);
-  gtk_meter_set_warn_point (rms_meter[1], level);
+    rmsmeter_warn_level = level;
+    gtk_meter_set_warn_point(GTK_LEVEL_BAR (rms_meter[0]), level + 60.0);
+    gtk_meter_set_warn_point(GTK_LEVEL_BAR (rms_meter[1]), level + 60.0);
 }
 
 float intrim_inmeter_get_warn ()

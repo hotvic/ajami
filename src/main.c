@@ -72,6 +72,23 @@ int scene_handler(const char *path, const char *types, lo_arg **argv, int argc,
                  void *data, void *user_data);
 #endif
 
+/* --- CSS ------ */
+const gchar css_bar[] =
+".level-bar.fill-block.level-low {"
+"    background-color: green;"
+"}"
+".level-bar.fill-block.level-warn {"
+"    background-color: yellow;"
+"}"
+".level-bar.fill-block.level-over {"
+"    background-color: red;"
+"}";
+
+GtkCssProvider * css_provider;
+GdkScreen * screen;
+/* --- CSS ----- */
+
+
 int main(int argc, char *argv[])
 {
 #ifdef HAVE_OSC
@@ -93,20 +110,28 @@ int main(int argc, char *argv[])
 
     set_configuration_files();
 
-	gtk_init(&argc, &argv);
+    gtk_init(&argc, &argv);
 
-	io_init(argc, argv);
+    io_init(argc, argv);
 	    
-	resource_file_parse();
+    resource_file_parse();
 
-	state_init();
+    state_init();
 
-	add_pixmap_directory(JAMIN_PIXMAP_DIR);
-	add_pixmap_directory("pixmaps");
-	preferences_init();
-	main_window = create_window1();
-	presets_window = create_window3();
-	multiout_window = create_window4();
+    add_pixmap_directory(JAMIN_PIXMAP_DIR);
+    add_pixmap_directory("pixmaps");
+    preferences_init();
+    main_window = create_window1();
+    presets_window = create_window3();
+    multiout_window = create_window4();
+
+    /* CSS */
+    css_provider = gtk_css_provider_new();
+    screen = gdk_screen_get_default();
+    gtk_css_provider_load_from_data(css_provider, css_bar, -1, NULL);
+    gtk_style_context_add_provider_for_screen(screen,
+                                              GTK_STYLE_PROVIDER (css_provider),
+                                              GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 	
 #ifdef FILTER_TUNING
     GtkWidget *ft = create_filter_tuning();
@@ -114,31 +139,31 @@ int main(int argc, char *argv[])
 #endif
 
     
-	/* Bind the ui widgets to adjustments */
-	bind_geq();
-	bind_hdeq();
+    /* Bind the ui widgets to adjustments */
+    bind_geq();
+    bind_hdeq();
 	
 
-	/* Show Preset or Main window  - commandline toggle "-g" */
-	//g_print(_("11: show_gui = %i\n"), show_gui);
+    /* Show Preset or Main window  - commandline toggle "-g" */
+    //g_print(_("11: show_gui = %i\n"), show_gui);
 
-	if(gui_mode != 2){ // Daemon mode
-	    if(gui_mode == 1){ // Presets
-			gtk_widget_show(presets_window);
-	    }else{ // Default
-			gtk_widget_show(main_window);
-	    }   
-	}
-	/* Bind the ui widgets to adjustments */
-	iomenu_bind(main_window);
-	bind_intrim();
-	bind_limiter(); 
-	bind_compressors();
-	bind_spectrum();
-	bind_stereo();
-	bind_scenes(); 
+    if(gui_mode != 2){ // Daemon mode
+	if(gui_mode == 1){ // Presets
+	    gtk_widget_show(presets_window);
+	} else { // Default
+	    gtk_widget_show(main_window);
+	}   
+    }
+    /* Bind the ui widgets to adjustments */
+    iomenu_bind(main_window);
+    bind_intrim();
+    bind_limiter(); 
+    bind_compressors();
+    bind_spectrum();
+    bind_stereo();
+    bind_scenes(); 
 
-	s_clear_history();
+    s_clear_history();
 
     /* Create OSC server */
 

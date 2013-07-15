@@ -22,7 +22,6 @@
 #include "main.h"
 #include "process.h"
 #include "gtkmeter.h"
-//#include "gtkmeterscale.h"
 #include "db.h"
 
 static char *band_lbls[BANDS] = {
@@ -32,7 +31,7 @@ static char *band_lbls[BANDS] = {
 };
 
 GtkWidget *make_mini_label(const char *text);
-static GtkAdjustment *adjustment[BANDS];
+static GtkWidget *meters[BANDS];
 
 static int bin_bands[BINS];
 static int band_bin[BANDS];
@@ -59,10 +58,7 @@ void bind_spectrum()
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
     gtk_widget_show(vbox);
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
- //   mscale = gtk_meterscale_new(GTK_METERSCALE_RIGHT, LOWER_SPECTRUM_DB, 
- //                               UPPER_SPECTRUM_DB);
-//    gtk_widget_show(mscale);
- //   gtk_box_pack_start(GTK_BOX(vbox), mscale, TRUE, TRUE, 0);
+
     label = make_mini_label(" ");
     gtk_widget_show(label);
     gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, TRUE, 0);
@@ -72,14 +68,13 @@ void bind_spectrum()
 	gtk_widget_show(vbox);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 
-	adjustment[i] = GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 
-	    LOWER_SPECTRUM_DB, UPPER_SPECTRUM_DB, 0.0, 0.0, 0.0));
-        meter = gtk_meter_new(adjustment[i], 
-            GTK_METER_UP, GTK_METERSCALE_TOP,
-            LOWER_SPECTRUM_DB, UPPER_SPECTRUM_DB);
-	gtk_meter_set_adjustment(GTK_METER(meter), adjustment[i]);
-	gtk_widget_show(meter);
-	gtk_box_pack_start(GTK_BOX(vbox), meter, TRUE, TRUE, 0);
+	meters[i] = gtk_meter_new(GTK_ORIENTATION_VERTICAL);
+        gtk_meter_set_extreme_values(GTK_LEVEL_BAR (meters[i]), 0.0, 63.0);
+        gtk_level_bar_set_inverted (GTK_LEVEL_BAR (meters[i]), TRUE);
+        gtk_meter_set_warn_point(GTK_LEVEL_BAR (meters[i]), 60.0);
+
+	gtk_widget_show(meters[i]);
+	gtk_box_pack_start(GTK_BOX(vbox), meters[i], TRUE, TRUE, 0);
 
 	label = make_mini_label(band_lbls[i]);
 	gtk_widget_show(label);
@@ -89,10 +84,7 @@ void bind_spectrum()
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
     gtk_widget_show(vbox);
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
- //   mscale = gtk_meterscale_new(GTK_METERSCALE_LEFT, LOWER_SPECTRUM_DB, 
- //                               UPPER_SPECTRUM_DB);
- //   gtk_widget_show(mscale);
- //   gtk_box_pack_start(GTK_BOX(vbox), mscale, TRUE, TRUE, 0);
+
     label = make_mini_label(" ");
     gtk_widget_show(label);
     gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, TRUE, 0);
@@ -157,8 +149,8 @@ gboolean spectrum_update(gpointer data)
           levels[i] = (single_levels[band_bin[i]] +
                        single_levels[band_bin[i]+1]) * 0.5;
         }
-//        printf("spectrum: setting adj %i \n", i);
-        gtk_adjustment_set_value(adjustment[i], lin2db(levels[i]));
+        //printf("spectrum: setting adj %i in %f \n", i, lin2db(levels[i]));
+        gtk_level_bar_set_value(GTK_LEVEL_BAR (meters[i]), lin2db(levels[i]) + 63.0);
       }
     }
     else if (page == 0) { // hdeq tab

@@ -1142,13 +1142,13 @@ create_window1 (void)
   gtk_widget_show (inmeter_hbox);
   gtk_container_add (GTK_CONTAINER (inmeter_eventbox), inmeter_hbox);
 
-  inmeter_l = make_meter ("inmeter_l", "", "", -60, 6);
+  inmeter_l = make_meter ("inmeter_l", "", "", 0, 66);
   gtk_widget_set_name (inmeter_l, "inmeter_l");
   gtk_widget_show (inmeter_l);
   gtk_box_pack_start (GTK_BOX (inmeter_hbox), inmeter_l, TRUE, TRUE, 0);
   gtk_widget_set_size_request (inmeter_l, 15, 0);
 
-  inmeter_r = make_meter ("inmeter_r", "", "", -60, 6);
+  inmeter_r = make_meter ("inmeter_r", "", "", 0, 66);
   gtk_widget_set_name (inmeter_r, "inmeter_r");
   gtk_widget_show (inmeter_r);
   gtk_box_pack_start (GTK_BOX (inmeter_hbox), inmeter_r, TRUE, TRUE, 0);
@@ -2396,14 +2396,14 @@ create_window1 (void)
   gtk_scale_set_draw_value (GTK_SCALE (comp_ma_1), FALSE);
   gtk_range_set_inverted (GTK_RANGE (comp_ma_1), TRUE);
 
-  comp_le_1 = make_meter ("comp_le_1", "right", "", -40, 0);
+  comp_le_1 = make_meter ("comp_le_1", "right", "", 0, 40);
   gtk_widget_set_name (comp_le_1, "comp_le_1");
   gtk_widget_show (comp_le_1);
   gtk_box_pack_start (GTK_BOX (vbox_l), comp_le_1, FALSE, TRUE, 0);
   gtk_widget_set_size_request (comp_le_1, 0, 12);
   gtk_widget_set_tooltip_text (comp_le_1, _("Level"));
 
-  comp_ga_1 = make_meter ("comp_ga_1", "left", "", -40, 0);
+  comp_ga_1 = make_meter ("comp_ga_1", "left", "", 0, 40);
   gtk_widget_set_name (comp_ga_1, "comp_ga_1");
   gtk_widget_show (comp_ga_1);
   gtk_box_pack_start (GTK_BOX (vbox_l), comp_ga_1, FALSE, TRUE, 0);
@@ -2687,14 +2687,14 @@ create_window1 (void)
   gtk_scale_set_draw_value (GTK_SCALE (comp_ma_2), FALSE);
   gtk_range_set_inverted (GTK_RANGE (comp_ma_2), TRUE);
 
-  comp_le_2 = make_meter ("comp_le_2", "right", "", -40, 0);
+  comp_le_2 = make_meter ("comp_le_2", "right", "", 0, 40);
   gtk_widget_set_name (comp_le_2, "comp_le_2");
   gtk_widget_show (comp_le_2);
   gtk_box_pack_start (GTK_BOX (vbox_m), comp_le_2, FALSE, TRUE, 0);
   gtk_widget_set_size_request (comp_le_2, 0, 12);
   gtk_widget_set_tooltip_text ( comp_le_2, _("Level"));
 
-  comp_ga_2 = make_meter ("comp_ga_2", "left", "", -40, 0);
+  comp_ga_2 = make_meter ("comp_ga_2", "left", "", 0, 40);
   gtk_widget_set_name (comp_ga_2, "comp_ga_2");
   gtk_widget_show (comp_ga_2);
   gtk_box_pack_start (GTK_BOX (vbox_m), comp_ga_2, FALSE, TRUE, 0);
@@ -2978,14 +2978,14 @@ create_window1 (void)
   gtk_scale_set_draw_value (GTK_SCALE (comp_ma_3), FALSE);
   gtk_range_set_inverted (GTK_RANGE (comp_ma_3), TRUE);
 
-  comp_le_3 = make_meter ("comp_le_3", "right", "", -40, 0);
+  comp_le_3 = make_meter ("comp_le_3", "right", "", 0, 40);
   gtk_widget_set_name (comp_le_3, "comp_le_3");
   gtk_widget_show (comp_le_3);
   gtk_box_pack_start (GTK_BOX (vbox_h), comp_le_3, FALSE, TRUE, 0);
   gtk_widget_set_size_request (comp_le_3, 0, 12);
   gtk_widget_set_tooltip_text ( comp_le_3, _("Level"));
 
-  comp_ga_3 = make_meter ("comp_ga_3", "left", "", -40, 0);
+  comp_ga_3 = make_meter ("comp_ga_3", "left", "", 0, 40);
   gtk_widget_set_name (comp_ga_3, "comp_ga_3");
   gtk_widget_show (comp_ga_3);
   gtk_box_pack_start (GTK_BOX (vbox_h), comp_ga_3, FALSE, TRUE, 0);
@@ -3126,7 +3126,7 @@ create_window1 (void)
   gtk_container_add (GTK_CONTAINER (lim_in_meter_eventbox), vbox158);
   gtk_container_set_border_width (GTK_CONTAINER (vbox158), 1);
 
-  lim_in_meter = make_meter ("lim_in_meter", "right", "", -40, 6);
+  lim_in_meter = make_meter ("lim_in_meter", "right", "", 0, 46);
   gtk_widget_set_name (lim_in_meter, "lim_in_meter");
   gtk_widget_show (lim_in_meter);
   gtk_box_pack_start (GTK_BOX (vbox158), lim_in_meter, TRUE, TRUE, 0);
@@ -3212,13 +3212,13 @@ create_window1 (void)
   gtk_container_add (GTK_CONTAINER (lim_out_meter_eventbox), vbox159);
   gtk_container_set_border_width (GTK_CONTAINER (vbox159), 1);
 
-  lim_att_meter = make_meter ("lim_att_meter", "left", "", -20, 0);
+  lim_att_meter = make_meter ("lim_att_meter", "left", "", 0, 20);
   gtk_widget_set_name (lim_att_meter, "lim_att_meter");
   gtk_widget_show (lim_att_meter);
   gtk_box_pack_start (GTK_BOX (vbox159), lim_att_meter, TRUE, TRUE, 0);
   gtk_widget_set_size_request (lim_att_meter, 0, 12);
 
-  lim_out_meter = make_meter ("lim_out_meter", "right", "", -20, 0);
+  lim_out_meter = make_meter ("lim_out_meter", "right", "", 0, 20);
   gtk_widget_set_name (lim_out_meter, "lim_out_meter");
   gtk_widget_show (lim_out_meter);
   gtk_box_pack_start (GTK_BOX (vbox159), lim_out_meter, TRUE, TRUE, 0);
@@ -3371,25 +3371,25 @@ create_window1 (void)
   gtk_widget_show (outmeter_hbox);
   gtk_container_add (GTK_CONTAINER (outmeter_eventbox), outmeter_hbox);
 
-  rmsmeter_l = make_meter ("rmsmeter_l", "up", "", -60, 6);
+  rmsmeter_l = make_meter ("rmsmeter_l", "up", "", 0, 66);
   gtk_widget_set_name (rmsmeter_l, "rmsmeter_l");
   gtk_widget_show (rmsmeter_l);
   gtk_box_pack_start (GTK_BOX (outmeter_hbox), rmsmeter_l, FALSE, TRUE, 1);
   gtk_widget_set_size_request (rmsmeter_l, 10, 0);
 
-  outmeter_l = make_meter ("outmeter_l", "up", "", -60, 6);
+  outmeter_l = make_meter ("outmeter_l", "up", "", 0, 66);
   gtk_widget_set_name (outmeter_l, "outmeter_l");
   gtk_widget_show (outmeter_l);
   gtk_box_pack_start (GTK_BOX (outmeter_hbox), outmeter_l, TRUE, TRUE, 0);
   gtk_widget_set_size_request (outmeter_l, 15, 0);
 
-  outmeter_r = make_meter ("outmeter_r", "up", "", -60, 6);
+  outmeter_r = make_meter ("outmeter_r", "up", "", 0, 66);
   gtk_widget_set_name (outmeter_r, "outmeter_r");
   gtk_widget_show (outmeter_r);
   gtk_box_pack_start (GTK_BOX (outmeter_hbox), outmeter_r, TRUE, TRUE, 0);
   gtk_widget_set_size_request (outmeter_r, 15, 0);
 
-  rmsmeter_r = make_meter ("rmsmeter_r", "up", "", -60, 6);
+  rmsmeter_r = make_meter ("rmsmeter_r", "up", "", 0, 66);
   gtk_widget_set_name (rmsmeter_r, "rmsmeter_r");
   gtk_widget_show (rmsmeter_r);
   gtk_box_pack_start (GTK_BOX (outmeter_hbox), rmsmeter_r, FALSE, TRUE, 1);
@@ -6401,13 +6401,13 @@ create_window3 (void)
 //  vumeters[i] = gtk_vumeter_new ();
 //    gtk_box_pack_start(GTK_BOX(hbox), vumeters[i], FALSE /* EXPAND */, FALSE, 0);
 
-  presets_inmeter_l = make_meter ("presets_inmeter_l", "", "", -60, 6);
+  presets_inmeter_l = make_meter ("presets_inmeter_l", "", "", 0, 66);
   gtk_widget_set_name (presets_inmeter_l, "presets_inmeter_l");
   gtk_widget_show (presets_inmeter_l);
   gtk_box_pack_start (GTK_BOX (hbox83), presets_inmeter_l, TRUE, TRUE, 0);
   gtk_widget_set_size_request (presets_inmeter_l, 15, 0);
 
-  presets_inmeter_r = make_meter ("presets_inmeter_r", "", "", -60, 6);
+  presets_inmeter_r = make_meter ("presets_inmeter_r", "", "", 0, 66);
   gtk_widget_set_name (presets_inmeter_r, "presets_inmeter_r");
   gtk_widget_show (presets_inmeter_r);
   gtk_box_pack_start (GTK_BOX (hbox83), presets_inmeter_r, TRUE, TRUE, 0);
@@ -6512,13 +6512,13 @@ create_window3 (void)
   gtk_widget_show (hbox85);
   gtk_container_add (GTK_CONTAINER (eventbox74), hbox85);
 
-  presets_outmeter_l = make_meter ("presets_outmeter_l", "up", "", -60, 6);
+  presets_outmeter_l = make_meter ("presets_outmeter_l", "up", "", 0, 66);
   gtk_widget_set_name (presets_outmeter_l, "presets_outmeter_l");
   gtk_widget_show (presets_outmeter_l);
   gtk_box_pack_start (GTK_BOX (hbox85), presets_outmeter_l, TRUE, TRUE, 0);
   gtk_widget_set_size_request (presets_outmeter_l, 15, 0);
 
-  presets_outmeter_r = make_meter ("presets_outmeter_r", "up", "", -60, 6);
+  presets_outmeter_r = make_meter ("presets_outmeter_r", "up", "", 0, 66);
   gtk_widget_set_name (presets_outmeter_r, "presets_outmeter_r");
   gtk_widget_show (presets_outmeter_r);
   gtk_box_pack_start (GTK_BOX (hbox85), presets_outmeter_r, TRUE, TRUE, 0);
