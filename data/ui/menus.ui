@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<interface domain="@GETTEXT_PACKAGE@">
+  <!-- interface-requires gtk+ 3.0 -->
+  <menu id="appmenu">
+    <section>
+      <attribute name="id">preferences-section</attribute>
+      <item>
+        <attribute name="label" translatable="yes">_Preferences</attribute>
+        <attribute name="action">app.preferences</attribute>
+      </item>
+    </section>
+    <section>
+      <attribute name="id">help-section</attribute>
+      <item>
+        <attribute name="label" translatable="yes">_About</attribute>
+        <attribute name="action">app.about</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Quit</attribute>
+        <attribute name="action">app.quit</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="gearsmenu">
+    <section>
+      <attribute name="id">rom-section</attribute>
+      <item>
+        <attribute name="label" translatable="yes">Open Selected</attribute>
+        <attribute name="action" translatable="yes">win.run-selected</attribute>
+      </item>
+    </section>
+    <section>
+      <attribute name="id">preferences-section</attribute>
+      <item>
+        <attribute name="label" translatable="yes">_Preferences</attribute>
+        <attribute name="action">app.prefs</attribute>
+      </item>
+    </section>
+    <section>
+      <attribute name="id">quit-section</attribute>
+      <item>
+        <attribute name="label" translatable="yes">_Quit</attribute>
+        <attribute name="action">app.quit</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="treeview_menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Move _Left</attribute>
+        <attribute name="action">move-left</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Move _Right</attribute>
+        <attribute name="action">move-right</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>
