@@ -220,7 +220,7 @@ gtk_meter_get_property (GObject      *object,
         g_value_set_object (value, meter->priv->adjustment);
         break;
     case PROP_INVERTED:
-        g_value_set_object (value, meter->priv->inverted);
+        g_value_set_boolean (value, meter->priv->inverted);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
