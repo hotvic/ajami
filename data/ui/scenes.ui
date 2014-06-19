@@ -1,169 +1,270 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<interface domain="@GETTEXT_PACKAGE@">
+<interface domain="g3jamin">
   <requires lib="gtk+" version="3.12"/>
   <template class="G3JAMinScenes" parent="GtkBox">
     <property name="orientation">horizontal</property>
     <property name="height-request">24</property>
+    <property name="hexpand">true</property>
     <child>
       <object class="GtkLabel" id="scenes_label">
         <property name="label" translatable="yes">Scenes</property>
       </object>
     </child>
     <child>
-      <object class="GtkImage" id="scene_1">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_1">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w1">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_2">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_2">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w2">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_3">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_3">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w3">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_4">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_4">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w4">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_5">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_5">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w5">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_6">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_6">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w6">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_7">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_7">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w7">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_8">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_8">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w8">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_9">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_9">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w9">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_10">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_10">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w10">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_11">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_11">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w11">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_12">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_12">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w12">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_13">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_13">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w13">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_14">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_14">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w14">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_15">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_15">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w15">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_16">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_16">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w16">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_17">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_17">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w17">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_18">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_18">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w18">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_19">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_19">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w19">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="scene_20">
-        <property name="resource">/org/g3jamin/pixmaps/LED_green_off.xpm</property>
+      <object class="GtkEventBox" id="scene_20">
+        <signal name="button-press-event" handler="g3jamin_scenes_button_press_event" />
+        <child>
+          <object class="GtkImage" id="scene_w20">
+            <property name="resource">/org/g3jamin/pixmaps/LED_red.xpm</property>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="expand">true</property>

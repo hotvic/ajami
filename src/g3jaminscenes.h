@@ -47,6 +47,14 @@ struct _G3JAMinScenes
 struct _G3JAMinScenesClass
 {
     GtkApplicationWindowClass parent_class;
+
+    /* Signals */
+    void    (* activate)        (G3JAMinScenes *scenes,
+                                 GtkWidget     *scene);
+    void    (* clear)           (G3JAMinScenes *scenes,
+                                 GtkWidget     *scene);
+    void    (* popover_menu)    (G3JAMinScenes *scenes,
+                                 GtkWidget     *scene);
 };
 
 

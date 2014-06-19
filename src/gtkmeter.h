@@ -23,8 +23,6 @@
 #include <gdk/gdk.h>
 
 
-G_BEGIN_DECLS
-
 #define GTK_TYPE_METER            (gtk_meter_get_type ())
 #define GTK_METER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_METER, GtkMeter))
 #define GTK_METER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_METER, GtkMeterClass))
@@ -52,7 +50,7 @@ struct _GtkMeterClass
 };
 
 
-GType          gtk_meter_get_type               (void) G_GNUC_CONST;
+GType          gtk_meter_get_type               (void);
 GtkWidget*     gtk_meter_new                    (GtkOrientation  orientation,
                                                  GtkAdjustment  *adjustment);
 GtkAdjustment* gtk_meter_get_adjustment         (GtkMeter       *meter);
@@ -65,7 +63,5 @@ float          gtk_meter_get_peak               (GtkMeter       *meter);
 void	         gtk_meter_reset_peak             (GtkMeter       *meter);
 void           gtk_meter_set_warn_point         (GtkMeter       *meter,
                                                  gfloat          pt);
-
-G_END_DECLS
 
 #endif /* __GTK_METER */

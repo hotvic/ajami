@@ -113,6 +113,7 @@ enum {
   
   PROP_ORIENTATION,
   PROP_ADJUSTMENT,
+  PROP_INVERTED,
   
   N_PROPERTIES
 };
@@ -135,13 +136,20 @@ gtk_meter_class_init (GtkMeterClass *kclass)
                                     PROP_ORIENTATION,
                                     "orientation");
 
- g_object_class_install_property (object_class,
-                                  PROP_ADJUSTMENT,
-                                  g_param_spec_object ("adjustment",
-                                                       "Adjustment",
-                                                       "The GtkAdjustment that contains the current value of this meter object",
+  g_object_class_install_property (object_class,
+                                   PROP_ADJUSTMENT,
+                                   g_param_spec_object ("adjustment",
+                                                        "Adjustment",
+                                                        "The GtkAdjustment that contains the current value of this meter object",
                                                         GTK_TYPE_ADJUSTMENT,
                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+  g_object_class_install_property (object_class,
+                                   PROP_INVERTED,
+                                   g_param_spec_boolean ("inverted",
+                                                         "Inverted",
+                                                         "If Widget should be drawn inverted",
+                                                         FALSE,
+                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
   g_type_class_add_private (object_class, sizeof (GtkMeterPrivate));
 }
@@ -189,6 +197,10 @@ gtk_meter_set_property (GObject      *object,
     break;
   case PROP_ADJUSTMENT:
     gtk_meter_set_adjustment (meter, g_value_get_object (value));
+    break;
+  case PROP_INVERTED:
+    meter->priv->inverted = g_value_get_boolean (value);
+    gtk_widget_queue_draw (GTK_WIDGET (meter));
     break;
   }
 }
