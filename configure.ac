@@ -2,8 +2,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([G3JAMin], [0.1b], [https://github.com/hotvic/g3jamin/issues])
-AC_CONFIG_SRCDIR([src/g3jamin.c])
+AC_INIT([AJAMI], [0.1b], [https://github.com/hotvic/ajami/issues])
+AC_CONFIG_SRCDIR([src/ajami.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -29,7 +29,7 @@ AC_PATH_PROG(GLIB_COMPILE_RESOURCES, glib-compile-resources)
 
 
 AC_CONFIG_FILES([
-  data/g3jamin.gresource.xml
+  data/ajami.gresource.xml
   src/Makefile
   Makefile
 ])

@@ -1,5 +1,5 @@
 /*
- * This file is part of G3JAMin.
+ * This file is part of AJAMI.
  *
  * Copyright (C) 2014 Victor A. Santos <victoraur.santos@gmail.com>
  *
@@ -18,14 +18,15 @@
  */
 
 
-#include <config.h>
+#include "config.h"
+
 #include <locale.h>
 #include <libintl.h>
 
 #include <gtk/gtk.h>
 
-#include "g3jaminapp.h"
-#include "g3jaminappwindow.h"
+#include "ajami-app.h"
+#include "ajami-appwindow.h"
 
 /* Forward declarations */
 static void         g3jamin_app_class_init      (G3JAMinAppClass *klass);

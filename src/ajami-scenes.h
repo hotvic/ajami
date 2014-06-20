@@ -1,5 +1,5 @@
 /*
- * This file is part of G3JAMin.
+ * This file is part of AJAMI.
  *
  * Copyright (C) 2014 Victor A. Santos <victoraur.santos@gmail.com>
  *
@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __G3JAMINSCENES_H
-#define __G3JAMINSCENES_H
+#ifndef __AJAMISCENES_H
+#define __AJAMISCENES_H
 
 
 #include <gtk/gtk.h>
@@ -63,4 +63,4 @@ GType         g3jamin_scenes_get_type    (void);
 GtkWidget    *g3jamin_scenes_new         (void);
 
 
-#endif /* __G3JAMINSCENES_H */
+#endif /* __AJAMISCENES_H */

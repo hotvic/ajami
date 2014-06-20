@@ -1,5 +1,5 @@
 /*
- * This file is part of G3JAMin.
+ * This file is part of AJAMI.
  *
  * Copyright (C) 2014 Victor A. Santos <victoraur.santos@gmail.com>
  *
@@ -20,7 +20,7 @@
 
 #include <gtk/gtk.h>
 
-#include "g3jaminscenes.h"
+#include "ajami-scenes.h"
 
 
 /* Forward declarations */

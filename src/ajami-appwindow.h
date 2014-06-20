@@ -1,5 +1,5 @@
 /*
- * This file is part of G3JAMin.
+ * This file is part of AJAMI.
  *
  * Copyright (C) 2014 Victor A. Santos <victoraur.santos@gmail.com>
  *
@@ -18,13 +18,13 @@
  */
 
 
-#ifndef __G3JAMINAPPWINDOW_H
-#define __G3JAMINAPPWINDOW_H
+#ifndef __AJAMIAPPWINDOW_H
+#define __AJAMIAPPWINDOW_H
 
 
 #include <gtk/gtk.h>
 
-#include "g3jaminapp.h"
+#include "ajami-app.h"
 
 
 #define G3JAMIN_APP_WINDOW_TYPE (g3jamin_app_window_get_type ())
@@ -55,5 +55,5 @@ void          g3jamin_app_window_open        (G3JAMinAppWindow *win,
                                               GFile             *file);
 
 
-#endif /* __G3JAMINAPPWINDOW_H */
+#endif /* __AJAMIAPPWINDOW_H */
 

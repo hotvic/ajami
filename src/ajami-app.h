@@ -1,5 +1,5 @@
 /*
- * This file is part of G3JAMin.
+ * This file is part of AJAMI.
  *
  * Copyright (C) 2014 Victor A. Santos <victoraur.santos@gmail.com>
  *
@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __G3JAMIN_APP_H__
-#define __G3JAMIN_APP_H__
+#ifndef __AJAMI_APP_H__
+#define __AJAMI_APP_H__
 
 #include <glib.h>
 #include <gio/gio.h>
@@ -71,4 +71,4 @@ G3JAMinApp    *g3jamin_app_new               (void);
 
 G_END_DECLS
 
-#endif  /* __G3JAMIN_APP_H__  */
+#endif  /* __AJAMI_APP_H__  */
