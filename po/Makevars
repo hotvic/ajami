@@ -1,5 +1,0 @@
-top_builddir = ..
-DOMAIN = g3jamin
-COPYRIGHT_HOLDER = G3JAMin and JAMin develpment team
-MSGID_BUGS_ADDRESS = victoraur.santos@gmail.com
-XGETTEXT_OPTIONS = --keyword=_ --from-code=UTF-8 
