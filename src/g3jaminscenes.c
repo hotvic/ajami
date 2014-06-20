@@ -197,20 +197,15 @@ g3jamin_scenes_popover_scene (G3JAMinScenes *scenes,
     {
         scenes->priv->popover = gtk_popover_new_from_model (scene,
                                                             scenes->priv->popover_model);
-        gtk_widget_show (scenes->priv->popover);
     }
-    else if (gtk_popover_get_relative_to (GTK_POPOVER (scenes->priv->popover)) == scene)
-    {
-        gtk_widget_show (scenes->priv->popover);
-    }
-    else
+    else if (gtk_popover_get_relative_to (GTK_POPOVER (scenes->priv->popover)) != scene)
     {
         gtk_widget_destroy(scenes->priv->popover);
 
         scenes->priv->popover = gtk_popover_new_from_model (scene,
                                                             scenes->priv->popover_model);
-        gtk_widget_show (scenes->priv->popover);
     }
+    gtk_widget_show (scenes->priv->popover);
 }
 
 
