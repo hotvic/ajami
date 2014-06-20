@@ -28,45 +28,36 @@
 
 G_BEGIN_DECLS
 
-#define G3JAMIN_TYPE_APP              (g3jamin_app_get_type())
-#define G3JAMIN_APP(obj)              (G_TYPE_CHECK_INSTANCE_CAST((obj),  G3JAMIN_TYPE_APP, G3JAMinApp))
-#define G3JAMIN_APP_CONST(obj)        (G_TYPE_CHECK_INSTANCE_CAST ((obj), G3JAMIN_TYPE_APP, G3JAMinSettings const))
-#define G3JAMIN_APP_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST((klass),   G3JAMIN_TYPE_APP, G3JAMinAppClass))
-#define G3JAMIN_IS_APP(obj)           (G_TYPE_CHECK_INSTANCE_TYPE((obj),  G3JAMIN_TYPE_APP))
-#define G3JAMIN_IS_APP_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass),  G3JAMIN_TYPE_APP))
-#define G3JAMIN_APP_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS((obj),   G3JAMIN_TYPE_APP, G3JAMinAppClass))
+#define AJAMI_TYPE_APP              (ajami_app_get_type())
+#define AJAMI_APP(obj)              (G_TYPE_CHECK_INSTANCE_CAST((obj),  AJAMI_TYPE_APP, AjamiApp))
+#define AJAMI_IS_APP(obj)           (G_TYPE_CHECK_INSTANCE_TYPE((obj),  AJAMI_TYPE_APP))
+#define AJAMI_APP_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST((klass),   AJAMI_TYPE_APP, AjamiAppClass))
+#define AJAMI_IS_APP_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass),  AJAMI_TYPE_APP))
+#define AJAMI_APP_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS((obj),   AJAMI_TYPE_APP, AjamiAppClass))
 
-typedef struct _G3JAMinApp        G3JAMinApp;
-typedef struct _G3JAMinAppClass   G3JAMinAppClass;
-typedef struct _G3JAMinAppPrivate G3JAMinAppPrivate;
 
-struct _G3JAMinApp
+typedef struct _AjamiApp        AjamiApp;
+typedef struct _AjamiAppClass   AjamiAppClass;
+typedef struct _AjamiAppPrivate AjamiAppPrivate;
+
+struct _AjamiApp
 {
   GtkApplication parent;
 
   /*< private > */
-  G3JAMinAppPrivate *priv;
+  AjamiAppPrivate *priv;
 };
 
-struct _G3JAMinAppClass
+struct _AjamiAppClass
 {
   GtkApplicationClass parent_class;
-
-  gboolean (*show_help)                    (G3JAMinApp   *app,
-                                            GtkWindow    *parent,
-                                            const gchar  *name,
-                                            const gchar  *link_id);
-
-  gchar *(*help_link_id)                   (G3JAMinApp   *app,
-                                            const gchar  *name,
-                                            const gchar  *link_id);
 };
 
 
 /* Public methods */
-GType          g3jamin_app_get_type          (void) G_GNUC_CONST;
+GType          ajami_app_get_type          (void);
 
-G3JAMinApp    *g3jamin_app_new               (void);
+AjamiApp      *ajami_app_new               (void);
 
 
 G_END_DECLS

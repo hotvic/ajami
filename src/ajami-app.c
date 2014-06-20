@@ -29,13 +29,13 @@
 #include "ajami-appwindow.h"
 
 /* Forward declarations */
-static void         g3jamin_app_class_init      (G3JAMinAppClass *klass);
-static void         g3jamin_app_init            (G3JAMinApp      *app);
-static void         g3jamin_app_dispose         (GObject         *object);
-static void         g3jamin_app_startup         (GApplication    *application);
-static void         g3jamin_app_shutdown        (GApplication    *app);
-static void         g3jamin_app_activate        (GApplication    *application);
-G3JAMinApp         *g3jamin_app_new             (void);
+static void         ajami_app_class_init        (AjamiAppClass *klass);
+static void         ajami_app_init              (AjamiApp      *app);
+static void         ajami_app_dispose           (GObject         *object);
+static void         ajami_app_startup           (GApplication    *application);
+static void         ajami_app_shutdown          (GApplication    *app);
+static void         ajami_app_activate          (GApplication    *application);
+AjamiApp           *ajami_app_new               (void);
 /* Actions */
 static void         activate_global_bypass      (GSimpleAction   *action,
                                                  GVariant        *parameter,
@@ -54,28 +54,28 @@ static void         activate_quit               (GSimpleAction   *action,
                                                  gpointer         data);
 /* Callbacks */
 /** Utility functions **/
-static gboolean     g3jamin_app_has_app_menu    (G3JAMinApp *app);
+static gboolean     ajami_app_has_app_menu    (AjamiApp *app);
 
 
-struct _G3JAMinAppPrivate
+struct _AjamiAppPrivate
 {
     GMenuModel         *window_menu;
 };
 
-G_DEFINE_TYPE_WITH_PRIVATE (G3JAMinApp, g3jamin_app, GTK_TYPE_APPLICATION);
+G_DEFINE_TYPE_WITH_PRIVATE (AjamiApp, ajami_app, GTK_TYPE_APPLICATION);
 
 
 static void
-g3jamin_app_class_init (G3JAMinAppClass *klass)
+ajami_app_class_init (AjamiAppClass *klass)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (klass);
     GApplicationClass *app_class = G_APPLICATION_CLASS (klass);
 
-    object_class->dispose = g3jamin_app_dispose;
+    object_class->dispose = ajami_app_dispose;
 
-    app_class->startup = g3jamin_app_startup;
-    app_class->activate = g3jamin_app_activate;
-    app_class->shutdown = g3jamin_app_shutdown;
+    app_class->startup = ajami_app_startup;
+    app_class->activate = ajami_app_activate;
+    app_class->shutdown = ajami_app_shutdown;
 }
 
 const GActionEntry app_entries[] = {
@@ -87,11 +87,11 @@ const GActionEntry app_entries[] = {
 };
 
 static void
-g3jamin_app_init (G3JAMinApp *app)
+ajami_app_init (AjamiApp *app)
 {
-    app->priv = g3jamin_app_get_instance_private (app);
+    app->priv = ajami_app_get_instance_private (app);
 
-    g_set_application_name ("g3jamin");
+    g_set_application_name ("ajami");
 
     g_action_map_add_action_entries (G_ACTION_MAP (app),
                                      app_entries,
@@ -100,29 +100,29 @@ g3jamin_app_init (G3JAMinApp *app)
 }
 
 static void
-g3jamin_app_dispose (GObject *object)
+ajami_app_dispose (GObject *object)
 {
-    G3JAMinApp *app = G3JAMIN_APP (object);
+    AjamiApp *app = AJAMI_APP (object);
 
-    G_OBJECT_CLASS (g3jamin_app_parent_class)->dispose (object);
+    G_OBJECT_CLASS (ajami_app_parent_class)->dispose (object);
 }
 
 static void
-g3jamin_app_startup (GApplication *application)
+ajami_app_startup (GApplication *application)
 {
-    G3JAMinApp *app = G3JAMIN_APP (application);
+    AjamiApp *app = AJAMI_APP (application);
     GError *error = NULL;
     GtkBuilder *builder;
 
-    G_APPLICATION_CLASS (g3jamin_app_parent_class)->startup (application);
+    G_APPLICATION_CLASS (ajami_app_parent_class)->startup (application);
 
     /* Setup locale/gettext */
     setlocale (LC_ALL, "");
 
     /* load menu model */
-    builder = gtk_builder_new_from_resource ("/org/g3jamin/ui/menus.ui");
+    builder = gtk_builder_new_from_resource ("/org/ajami/ui/menus.ui");
 
-    if (g3jamin_app_has_app_menu (app))
+    if (ajami_app_has_app_menu (app))
     {
         GMenuModel *appmenu;
 
@@ -136,29 +136,29 @@ g3jamin_app_startup (GApplication *application)
 }
 
 static void
-g3jamin_app_shutdown (GApplication *app)
+ajami_app_shutdown (GApplication *app)
 {
-    G_APPLICATION_CLASS (g3jamin_app_parent_class)->shutdown (app);
+    G_APPLICATION_CLASS (ajami_app_parent_class)->shutdown (app);
 }
 
 static void
-g3jamin_app_activate (GApplication *application)
+ajami_app_activate (GApplication *application)
 {
     GtkWidget *window = NULL;
 
 
-    window = g3jamin_app_window_new (G3JAMIN_APP (application));
+    window = ajami_app_window_new (AJAMI_APP (application));
     gtk_widget_show_all (window);
 
 
     gtk_window_present (GTK_WINDOW (window));
 }
 
-G3JAMinApp *
-g3jamin_app_new (void)
+AjamiApp *
+ajami_app_new (void)
 {
-    return g_object_new (G3JAMIN_TYPE_APP,
-                         "application-id", "org.hotvic.g3jamin",
+    return g_object_new (AJAMI_TYPE_APP,
+                         "application-id", "org.hotvic.ajami",
                          NULL);
 }
 
@@ -215,7 +215,7 @@ activate_quit (GSimpleAction *action,
 
 /* Utility functions */
 static gboolean
-g3jamin_app_has_app_menu (G3JAMinApp *app)
+ajami_app_has_app_menu (AjamiApp *app)
 {
     GtkSettings *gtk_settings;
     gboolean show_app_menu;
