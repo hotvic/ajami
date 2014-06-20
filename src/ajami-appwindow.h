@@ -27,32 +27,32 @@
 #include "ajami-app.h"
 
 
-#define G3JAMIN_APP_WINDOW_TYPE (g3jamin_app_window_get_type ())
-#define G3JAMIN_APP_WINDOW(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), G3JAMIN_APP_WINDOW_TYPE, G3JAMinAppWindow))
+#define AJAMI_APP_WINDOW_TYPE (ajami_app_window_get_type ())
+#define AJAMI_APP_WINDOW(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), AJAMI_APP_WINDOW_TYPE, AjamiAppWindow))
 
 
-typedef struct _G3JAMinAppWindow         G3JAMinAppWindow;
-typedef struct _G3JAMinAppWindowClass    G3JAMinAppWindowClass;
-typedef struct _G3JAMinAppWindowPrivate  G3JAMinAppWindowPrivate;
+typedef struct _AjamiAppWindow         AjamiAppWindow;
+typedef struct _AjamiAppWindowClass    AjamiAppWindowClass;
+typedef struct _AjamiAppWindowPrivate  AjamiAppWindowPrivate;
 
-struct _G3JAMinAppWindow
+struct _AjamiAppWindow
 {
     GtkApplicationWindow parent;
 
-    G3JAMinAppWindowPrivate *priv;
+    AjamiAppWindowPrivate *priv;
 };
 
-struct _G3JAMinAppWindowClass
+struct _AjamiAppWindowClass
 {
     GtkApplicationWindowClass parent_class;
 };
 
 
 /* Public methods */
-GType         g3jamin_app_window_get_type    (void);
-GtkWidget    *g3jamin_app_window_new         (G3JAMinApp        *app);
-void          g3jamin_app_window_open        (G3JAMinAppWindow *win,
-                                              GFile             *file);
+GType         ajami_app_window_get_type    (void);
+GtkWidget    *ajami_app_window_new         (AjamiApp       *app);
+void          ajami_app_window_open        (AjamiAppWindow *win,
+                                            GFile          *file);
 
 
 #endif /* __AJAMIAPPWINDOW_H */
