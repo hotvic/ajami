@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: G3JAMin 0.98.9\n"
 "Report-Msgid-Bugs-To: victoraur.santos@gmail.com\n"
-"POT-Creation-Date: 2013-07-13 16:02-0300\n"
+"POT-Creation-Date: 2014-06-15 14:52-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1167,17 +1167,6 @@ msgstr ""
 #: src/intrim.c:228
 #, c-format
 msgid "centre"
-msgstr ""
-
-#: src/main.c:89
-msgid ""
-"(C) 2003-2013 J. Depner, S. Harris, J. O'Quin, R. Parker and P. Shirkey\n"
-msgstr ""
-
-#: src/main.c:91
-msgid ""
-"This is free software, and you are welcome to redistribute it\n"
-"under certain conditions; see the file COPYING for details.\n"
 msgstr ""
 
 #: src/status-ui.c:46
