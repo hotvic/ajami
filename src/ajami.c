@@ -29,10 +29,10 @@
 int
 main(int argc, char *argv[])
 {
-    G3JAMinApp *app;
-    int         status;
+    AjamiApp *app;
+    int       status;
 
-    app = g3jamin_app_new ();
+    app = ajami_app_new ();
 
     status = g_application_run (G_APPLICATION (app), argc, argv);
 
