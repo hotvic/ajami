@@ -24,14 +24,14 @@
 
 
 /* Forward declarations */
-static void     g3jamin_scenes_class_init            (G3JAMinScenesClass *class);
-static void     g3jamin_scenes_init                  (G3JAMinScenes      *scenes);
-static void     g3jamin_scenes_dispose               (GObject            *object);
-GtkWidget      *g3jamin_scenes_new                   (void);
+static void     ajami_scenes_class_init            (AjamiScenesClass *kclass);
+static void     ajami_scenes_init                  (AjamiScenes      *scenes);
+static void     ajami_scenes_dispose               (GObject          *object);
+GtkWidget      *ajami_scenes_new                   (void);
 /** Callbacks **/   
-gboolean        g3jamin_scenes_button_press_event    (GtkWidget          *widget,
-                                                      GdkEvent           *event,
-                                                      gpointer           *data);
+gboolean        ajami_scenes_button_press_event    (GtkWidget        *widget,
+                                                    GdkEvent         *event,
+                                                    gpointer         *data);
 
 /* Signals */
 enum {
@@ -45,7 +45,7 @@ enum {
 static guint signals[LAST_SIGNAL] = { 0 };
 
 
-struct _G3JAMinScenesPrivate
+struct _AjamiScenesPrivate
 {
     /* Scenes context menu */
     GMenuModel *popover_model;
@@ -74,120 +74,120 @@ struct _G3JAMinScenesPrivate
     GtkWidget *scene_20;
 };
 
-G_DEFINE_TYPE_WITH_PRIVATE(G3JAMinScenes, g3jamin_scenes, GTK_TYPE_BOX);
+G_DEFINE_TYPE_WITH_PRIVATE(AjamiScenes, ajami_scenes, GTK_TYPE_BOX);
 
 
 static void
-g3jamin_scenes_class_init (G3JAMinScenesClass *kclass)
+ajami_scenes_class_init (AjamiScenesClass *kclass)
 {
     GObjectClass   *object_class = G_OBJECT_CLASS (kclass);
     GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (kclass);
 
-    G_OBJECT_CLASS (kclass)->dispose = g3jamin_scenes_dispose;
+    G_OBJECT_CLASS (kclass)->dispose = ajami_scenes_dispose;
 
     signals[ACTIVATE] =
             g_signal_new ("activate",
                           G_OBJECT_CLASS_TYPE (object_class),
                           G_SIGNAL_RUN_FIRST,
-                          G_STRUCT_OFFSET (G3JAMinScenesClass, activate),
+                          G_STRUCT_OFFSET (AjamiScenesClass, activate),
                           NULL, NULL,
                           g_cclosure_marshal_VOID__OBJECT,
                           G_TYPE_NONE,
                           2,
-                          G3JAMIN_TYPE_SCENES,
+                          AJAMI_TYPE_SCENES,
                           GTK_TYPE_WIDGET);
     signals[CLEAR] =
             g_signal_new ("clear",
                           G_OBJECT_CLASS_TYPE (object_class),
                           G_SIGNAL_RUN_FIRST,
-                          G_STRUCT_OFFSET (G3JAMinScenesClass, clear),
+                          G_STRUCT_OFFSET (AjamiScenesClass, clear),
                           NULL, NULL,
                           g_cclosure_marshal_VOID__OBJECT,
                           G_TYPE_NONE,
                           2,
-                          G3JAMIN_TYPE_SCENES,
+                          AJAMI_TYPE_SCENES,
                           GTK_TYPE_WIDGET);
     signals[POPOVER_MENU] =
             g_signal_new ("popover-menu",
                           G_OBJECT_CLASS_TYPE (object_class),
                           G_SIGNAL_RUN_FIRST,
-                          G_STRUCT_OFFSET (G3JAMinScenesClass, popover_menu),
+                          G_STRUCT_OFFSET (AjamiScenesClass, popover_menu),
                           NULL, NULL,
                           g_cclosure_marshal_VOID__OBJECT,
                           G_TYPE_NONE,
                           2,
-                          G3JAMIN_TYPE_SCENES,
+                          AJAMI_TYPE_SCENES,
                           GTK_TYPE_WIDGET);
 
     gtk_widget_class_set_template_from_resource (widget_class,
-                                                 "/org/g3jamin/ui/scenes.ui");
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_1);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_2);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_3);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_4);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_5);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_6);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_7);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_8);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_9);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_10);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_11);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_12);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_13);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_14);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_15);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_16);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_17);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_18);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_19);
-    gtk_widget_class_bind_template_child_private (widget_class, G3JAMinScenes, scene_20);
+                                                 "/org/ajami/ui/scenes.ui");
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_1);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_2);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_3);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_4);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_5);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_6);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_7);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_8);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_9);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_10);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_11);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_12);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_13);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_14);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_15);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_16);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_17);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_18);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_19);
+    gtk_widget_class_bind_template_child_private (widget_class, AjamiScenes, scene_20);
 
-    gtk_widget_class_bind_template_callback (widget_class, g3jamin_scenes_button_press_event);
+    gtk_widget_class_bind_template_callback (widget_class, ajami_scenes_button_press_event);
 }
 
 static void
-g3jamin_scenes_init (G3JAMinScenes *scenes)
+ajami_scenes_init (AjamiScenes *scenes)
 {
     GtkWidget  *popover;
     GMenuModel *model;
     GtkBuilder *builder;
 
-    scenes->priv = g3jamin_scenes_get_instance_private (scenes);
+    scenes->priv = ajami_scenes_get_instance_private (scenes);
     gtk_widget_init_template (GTK_WIDGET (scenes));
 
-    builder = gtk_builder_new_from_resource ("/org/g3jamin/ui/menus.ui");
+    builder = gtk_builder_new_from_resource ("/org/ajami/ui/menus.ui");
     scenes->priv->popover_model = G_MENU_MODEL (gtk_builder_get_object (builder, "scene_menu"));
 }
 
 static void
-g3jamin_scenes_dispose (GObject *object)
+ajami_scenes_dispose (GObject *object)
 {
-    G3JAMinScenes *scenes;
+    AjamiScenes *scenes;
 
-    scenes = G3JAMIN_SCENES (object);
+    scenes = AJAMI_SCENES (object);
 
-    G_OBJECT_CLASS (g3jamin_scenes_parent_class)->dispose (object);
+    G_OBJECT_CLASS (ajami_scenes_parent_class)->dispose (object);
 }
 
 GtkWidget *
-g3jamin_scenes_new (void)
+ajami_scenes_new (void)
 {
-    return g_object_new (G3JAMIN_TYPE_SCENES, NULL);
+    return g_object_new (AJAMI_TYPE_SCENES, NULL);
 }
 
 void
-g3jamin_scenes_activate_scene (G3JAMinScenes *scenes,
+ajami_scenes_activate_scene (AjamiScenes *scenes,
                                GtkWidget     *scene)
 {
     g_return_if_fail (scenes != NULL);
     g_return_if_fail (scene != NULL);
 
     gtk_image_set_from_resource (GTK_IMAGE (scene),
-                                 "/org/g3jamin/pixmaps/LED_green_on.xpm");
+                                 "/org/ajami/pixmaps/LED_green_on.xpm");
 }
 
 void
-g3jamin_scenes_popover_scene (G3JAMinScenes *scenes,
+ajami_scenes_popover_scene (AjamiScenes *scenes,
                               GtkWidget     *scene)
 {
     g_return_if_fail (scenes != NULL);
@@ -211,7 +211,7 @@ g3jamin_scenes_popover_scene (G3JAMinScenes *scenes,
 
 /* Callbacks */
 gboolean
-g3jamin_scenes_button_press_event (GtkWidget *widget,
+ajami_scenes_button_press_event (GtkWidget *widget,
                                    GdkEvent  *event,
                                    gpointer  *data)
 {
@@ -221,26 +221,26 @@ g3jamin_scenes_button_press_event (GtkWidget *widget,
         g_signal_emit (G_OBJECT (data),
                        signals[ACTIVATE],
                        0,
-                       G3JAMIN_SCENES (data),
+                       AJAMI_SCENES (data),
                        gtk_bin_get_child (GTK_BIN (widget)));
-        g3jamin_scenes_activate_scene (G3JAMIN_SCENES (data),
-                                       gtk_bin_get_child (GTK_BIN (widget)));
+        ajami_scenes_activate_scene (AJAMI_SCENES (data),
+                                     gtk_bin_get_child (GTK_BIN (widget)));
         break;
     case 2: /* Middle button */
         g_signal_emit (G_OBJECT (data),
                        signals[CLEAR],
                        0,
-                       G3JAMIN_SCENES (data),
+                       AJAMI_SCENES (data),
                        widget);
         break;
     case 3: /* Right button */
         g_signal_emit (G_OBJECT (data),
                        signals[POPOVER_MENU],
                        0,
-                       G3JAMIN_SCENES (data),
+                       AJAMI_SCENES (data),
                        widget);
-        g3jamin_scenes_popover_scene (G3JAMIN_SCENES (data),
-                                      gtk_bin_get_child (GTK_BIN (widget)));
+        ajami_scenes_popover_scene (AJAMI_SCENES (data),
+                                    gtk_bin_get_child (GTK_BIN (widget)));
         break;
     }
 

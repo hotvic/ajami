@@ -25,42 +25,42 @@
 #include <gtk/gtk.h>
 
 
-#define G3JAMIN_TYPE_SCENES                  (g3jamin_scenes_get_type ())
-#define G3JAMIN_SCENES(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), G3JAMIN_TYPE_SCENES, G3JAMinScenes))
-#define G3JAMIN_IS_SCENES(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), G3JAMIN_TYPE_SCENES))
-#define G3JAMIN_SCENES_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), G3JAMIN_TYPE_SCENES, G3JAMinScenesClass))
-#define G3JAMIN_IS_SCENES_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), G3JAMIN_TYPE_SCENES))
-#define G3JAMIN_SCENES_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), G3JAMIN_TYPE_SCENES, G3JAMinScenesClass))
+#define AJAMI_TYPE_SCENES                  (ajami_scenes_get_type ())
+#define AJAMI_SCENES(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), AJAMI_TYPE_SCENES, AjamiScenes))
+#define AJAMI_IS_SCENES(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), AJAMI_TYPE_SCENES))
+#define AJAMI_SCENES_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), AJAMI_TYPE_SCENES, AjamiScenesClass))
+#define AJAMI_IS_SCENES_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), AJAMI_TYPE_SCENES))
+#define AJAMI_SCENES_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), AJAMI_TYPE_SCENES, AjamiScenesClass))
 
 
-typedef struct _G3JAMinScenes         G3JAMinScenes;
-typedef struct _G3JAMinScenesClass    G3JAMinScenesClass;
-typedef struct _G3JAMinScenesPrivate  G3JAMinScenesPrivate;
+typedef struct _AjamiScenes         AjamiScenes;
+typedef struct _AjamiScenesClass    AjamiScenesClass;
+typedef struct _AjamiScenesPrivate  AjamiScenesPrivate;
 
-struct _G3JAMinScenes
+struct _AjamiScenes
 {
     GtkApplicationWindow parent;
 
-    G3JAMinScenesPrivate *priv;
+    AjamiScenesPrivate *priv;
 };
 
-struct _G3JAMinScenesClass
+struct _AjamiScenesClass
 {
     GtkApplicationWindowClass parent_class;
 
     /* Signals */
-    void    (* activate)        (G3JAMinScenes *scenes,
+    void    (* activate)        (AjamiScenes *scenes,
                                  GtkWidget     *scene);
-    void    (* clear)           (G3JAMinScenes *scenes,
+    void    (* clear)           (AjamiScenes *scenes,
                                  GtkWidget     *scene);
-    void    (* popover_menu)    (G3JAMinScenes *scenes,
+    void    (* popover_menu)    (AjamiScenes *scenes,
                                  GtkWidget     *scene);
 };
 
 
 /* Public methods */
-GType         g3jamin_scenes_get_type    (void);
-GtkWidget    *g3jamin_scenes_new         (void);
+GType         ajami_scenes_get_type    (void);
+GtkWidget    *ajami_scenes_new         (void);
 
 
 #endif /* __AJAMISCENES_H */
