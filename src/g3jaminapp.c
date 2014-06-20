@@ -29,12 +29,29 @@
 
 /* Forward declarations */
 static void         g3jamin_app_class_init      (G3JAMinAppClass *klass);
-static void         g3jamin_app_init            (G3JAMinApp *app);
-static void         g3jamin_app_dispose         (GObject *object);
-static void         g3jamin_app_startup         (GApplication *application);
-static void         g3jamin_app_shutdown        (GApplication *app);
-static void         g3jamin_app_activate        (GApplication *application);
+static void         g3jamin_app_init            (G3JAMinApp      *app);
+static void         g3jamin_app_dispose         (GObject         *object);
+static void         g3jamin_app_startup         (GApplication    *application);
+static void         g3jamin_app_shutdown        (GApplication    *app);
+static void         g3jamin_app_activate        (GApplication    *application);
 G3JAMinApp         *g3jamin_app_new             (void);
+/* Actions */
+static void         activate_global_bypass      (GSimpleAction   *action,
+                                                 GVariant        *parameter,
+                                                 gpointer         data);
+static void         activate_preferences        (GSimpleAction   *action,
+                                                 GVariant        *parameter,
+                                                 gpointer         data);
+static void         activate_help               (GSimpleAction   *action,
+                                                 GVariant        *parameter,
+                                                 gpointer         data);
+static void         activate_about              (GSimpleAction   *action,
+                                                 GVariant        *parameter,
+                                                 gpointer         data);
+static void         activate_quit               (GSimpleAction   *action,
+                                                 GVariant        *parameter,
+                                                 gpointer         data);
+/* Callbacks */
 /** Utility functions **/
 static gboolean     g3jamin_app_has_app_menu    (G3JAMinApp *app);
 
@@ -60,12 +77,25 @@ g3jamin_app_class_init (G3JAMinAppClass *klass)
     app_class->shutdown = g3jamin_app_shutdown;
 }
 
+const GActionEntry app_entries[] = {
+    { "global-bypass", activate_global_bypass },
+    { "preferences",   activate_preferences   },
+    { "help",          activate_help          },
+    { "about",         activate_about         },
+    { "quit",          activate_quit          }
+};
+
 static void
 g3jamin_app_init (G3JAMinApp *app)
 {
     app->priv = g3jamin_app_get_instance_private (app);
 
     g_set_application_name ("g3jamin");
+
+    g_action_map_add_action_entries (G_ACTION_MAP (app),
+                                     app_entries,
+                                     G_N_ELEMENTS (app_entries),
+                                     app);
 }
 
 static void
@@ -89,21 +119,16 @@ g3jamin_app_startup (GApplication *application)
     setlocale (LC_ALL, "");
 
     /* load menu model */
-    builder = gtk_builder_new ();
-    if (!gtk_builder_add_from_resource (builder,
-                                        "/org/g3jamin/ui/menus.ui",
-                                        &error))
-    {
-        g_warning ("loading menu builder file: %s", error->message);
-        g_error_free (error);
-    } else {
-        if (g3jamin_app_has_app_menu (app)) {
-            GMenuModel *appmenu;
+    builder = gtk_builder_new_from_resource ("/org/g3jamin/ui/menus.ui");
 
-            appmenu = G_MENU_MODEL (gtk_builder_get_object (builder, "appmenu"));
-            gtk_application_set_app_menu (GTK_APPLICATION (application), appmenu);
-        }
+    if (g3jamin_app_has_app_menu (app))
+    {
+        GMenuModel *appmenu;
+
+        appmenu = G_MENU_MODEL (gtk_builder_get_object (builder, "appmenu"));
+        gtk_application_set_app_menu (GTK_APPLICATION (application), appmenu);
     }
+
     app->priv->window_menu = G_MENU_MODEL (gtk_builder_get_object(builder, "menubar"));
 
     g_object_unref (builder);
@@ -122,7 +147,7 @@ g3jamin_app_activate (GApplication *application)
 
 
     window = g3jamin_app_window_new (G3JAMIN_APP (application));
-    gtk_widget_show_all(window);
+    gtk_widget_show_all (window);
 
 
     gtk_window_present (GTK_WINDOW (window));
@@ -136,6 +161,58 @@ g3jamin_app_new (void)
                          NULL);
 }
 
+/* Actions */
+static void
+activate_global_bypass (GSimpleAction *action,
+                        GVariant      *parameter,
+                        gpointer       data)
+{
+
+}
+
+static void
+activate_preferences (GSimpleAction *action,
+                      GVariant      *parameter,
+                      gpointer       data)
+{
+
+}
+
+static void
+activate_help (GSimpleAction *action,
+               GVariant      *parameter,
+               gpointer       data)
+{
+
+}
+
+static void
+activate_about (GSimpleAction *action,
+                GVariant      *parameter,
+                gpointer       data)
+{
+
+}
+
+static void
+activate_quit (GSimpleAction *action,
+               GVariant      *parameter,
+               gpointer       data)
+{
+    GList *windows;
+
+    /* TODO: Check if opened file (if has one) has modified
+             and ask to save */
+
+    windows = gtk_application_get_windows (GTK_APPLICATION (data));
+
+    for (; windows; windows = windows->next) {
+        gtk_widget_destroy (GTK_WIDGET (windows->data));
+    }
+}
+
+
+/* Utility functions */
 static gboolean
 g3jamin_app_has_app_menu (G3JAMinApp *app)
 {

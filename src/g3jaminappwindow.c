@@ -91,7 +91,7 @@ g3jamin_app_window_class_init (G3JAMinAppWindowClass *class)
     gtk_widget_class_bind_template_child_private (GTK_WIDGET_CLASS (class), G3JAMinAppWindow, gears);
 }
 
-const GActionEntry entries[] = {
+const GActionEntry win_entries[] = {
     { "new-preset",     activate_new_preset     },
     { "open-preset",    activate_open_preset    },
     { "save-preset",    activate_save_preset    },
@@ -114,13 +114,16 @@ g3jamin_app_window_init (G3JAMinAppWindow *win)
     gtk_widget_init_template (GTK_WIDGET (win));
 
     g_action_map_add_action_entries (G_ACTION_MAP (win),
-                                     entries,
-                                     G_N_ELEMENTS (entries),
+                                     win_entries,
+                                     G_N_ELEMENTS (win_entries),
                                      NULL);
 
     builder = gtk_builder_new_from_resource ("/org/g3jamin/ui/menus.ui");
+    
     gearsmenu = G_MENU_MODEL (gtk_builder_get_object (builder, "gearsmenu"));
     gtk_menu_button_set_menu_model (win->priv->gears, gearsmenu);
+
+    g_object_unref (builder);
 }
 
 static void

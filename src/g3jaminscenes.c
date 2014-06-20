@@ -48,7 +48,8 @@ static guint signals[LAST_SIGNAL] = { 0 };
 struct _G3JAMinScenesPrivate
 {
     /* Scenes context menu */
-    GtkWidget *popover;
+    GMenuModel *popover_model;
+    GtkWidget  *popover;
 
     /* Scenes */
     GtkWidget *scene_1;
@@ -147,6 +148,7 @@ g3jamin_scenes_class_init (G3JAMinScenesClass *kclass)
 static void
 g3jamin_scenes_init (G3JAMinScenes *scenes)
 {
+    GtkWidget  *popover;
     GMenuModel *model;
     GtkBuilder *builder;
 
@@ -154,7 +156,7 @@ g3jamin_scenes_init (G3JAMinScenes *scenes)
     gtk_widget_init_template (GTK_WIDGET (scenes));
 
     builder = gtk_builder_new_from_resource ("/org/g3jamin/ui/menus.ui");
-    model = G_MENU_MODEL (gtk_builder_get_object (builder, "scene_menu"));
+    scenes->priv->popover_model = G_MENU_MODEL (gtk_builder_get_object (builder, "scene_menu"));
 }
 
 static void
@@ -190,6 +192,25 @@ g3jamin_scenes_popover_scene (G3JAMinScenes *scenes,
 {
     g_return_if_fail (scenes != NULL);
     g_return_if_fail (scene != NULL);
+
+    if (scenes->priv->popover == NULL)
+    {
+        scenes->priv->popover = gtk_popover_new_from_model (scene,
+                                                            scenes->priv->popover_model);
+        gtk_widget_show (scenes->priv->popover);
+    }
+    else if (gtk_popover_get_relative_to (GTK_POPOVER (scenes->priv->popover)) == scene)
+    {
+        gtk_widget_show (scenes->priv->popover);
+    }
+    else
+    {
+        gtk_widget_destroy(scenes->priv->popover);
+
+        scenes->priv->popover = gtk_popover_new_from_model (scene,
+                                                            scenes->priv->popover_model);
+        gtk_widget_show (scenes->priv->popover);
+    }
 }
 
 
