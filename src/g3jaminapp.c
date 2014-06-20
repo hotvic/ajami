@@ -199,15 +199,15 @@ activate_quit (GSimpleAction *action,
                GVariant      *parameter,
                gpointer       data)
 {
-    GList *windows;
+    GList *windows, *scan;
 
     /* TODO: Check if opened file (if has one) has modified
              and ask to save */
 
     windows = gtk_application_get_windows (GTK_APPLICATION (data));
 
-    for (; windows; windows = windows->next) {
-        gtk_widget_destroy (GTK_WIDGET (windows->data));
+    for (scan = windows; scan; scan = scan->next) {
+        gtk_widget_destroy (GTK_WIDGET (scan->data));
     }
 }
 
