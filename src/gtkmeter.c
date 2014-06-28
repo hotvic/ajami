@@ -272,7 +272,6 @@ gtk_meter_draw (GtkWidget *widget,
     cairo_fill (cr);
     cairo_pattern_destroy (pat);
 
-    printf ("%i", GTK_IS_ADJUSTMENT (meter->priv->adjustment));
     val = iec_scale(gtk_adjustment_get_value (meter->priv->adjustment));
     if (val > meter->priv->peak) {
         if (val > meter->priv->iec_upper) {
