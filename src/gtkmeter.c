@@ -24,83 +24,56 @@
 #include "gtkmeter.h"
 
 
-#define METERSCALE_MAX_FONT_SIZE 8
-
 /* Forward declarations */
 
-static void gtk_meter_class_init               (GtkMeterClass    *klass);
-static void gtk_meter_init                     (GtkMeter         *meter);
-static void gtk_meter_set_property             (GObject          *object,
-                                                guint             prop_id,
-                                                const GValue     *value,
-                                                GParamSpec       *pspec);
-static void gtk_meter_get_property             (GObject          *object,
-                                                guint             prop_id,
-                                                GValue           *value,
-                                                GParamSpec       *pspec);
-static void gtk_meter_destroy                  (GtkWidget        *widget);
-static gboolean gtk_meter_draw                 (GtkWidget        *widget,
-                                                cairo_t          *cr);
-static void meterscale_draw_notch_label        (GtkMeter         *meterscale,
-                                                float             db,
-                                                int               mark,
-                                                PangoRectangle   *last_label_rect);
-static void draw_notch                         (GtkMeter         *meter,
-                                                cairo_t          *cr,
-                                                float             db,
-                                                int               mark,
-                                                int               length,
-                                                int               width);
-static void gtk_meter_adjustment_changed       (GtkAdjustment    *adjustment,
-                                                gpointer          data);
-static void gtk_meter_adjustment_value_changed (GtkAdjustment    *adjustment,
-                                                gpointer          data);
-static float iec_scale                         (float db);
+static void     gtk_meter_class_init               (GtkMeterClass    *klass);
+static void     gtk_meter_init                     (GtkMeter         *meter);
+static void     gtk_meter_set_property             (GObject          *object,
+                                                    guint             prop_id,
+                                                    const GValue     *value,
+                                                    GParamSpec       *pspec);
+static void     gtk_meter_get_property             (GObject          *object,
+                                                    guint             prop_id,
+                                                    GValue           *value,
+                                                    GParamSpec       *pspec);
+static gboolean gtk_meter_draw                     (GtkWidget        *widget,
+                                                    cairo_t          *cr);
+static void     draw_notch                         (GtkMeter         *meter,
+                                                    cairo_t          *cr,
+                                                    float             db,
+                                                    int               mark,
+                                                    int               length,
+                                                    int               width);
+void            gtk_meter_set_adjustment           (GtkMeter         *meter,
+                                                    GtkAdjustment    *adjustment);
+GtkAdjustment*  gtk_meter_get_adjustment           (GtkMeter         *meter);
+static void     gtk_meter_adjustment_changed       (GtkAdjustment    *adjustment,
+                                                    gpointer          data);
+static void     gtk_meter_adjustment_value_changed (GtkAdjustment    *adjustment,
+                                                    gpointer          data);
+static float    iec_scale                          (float db);
 
 
-G_DEFINE_TYPE_WITH_CODE (GtkMeter, gtk_meter, GTK_TYPE_DRAWING_AREA,
-                         G_IMPLEMENT_INTERFACE (GTK_TYPE_ORIENTABLE, NULL))
-                                               
-/* Local data */
-
-static GtkWidgetClass *parent_class = NULL;
-
-  
 struct _GtkMeterPrivate
-{  
+{
     GtkOrientation orientation;
 
     gboolean inverted;
 
-    /* The adjustment object that stores the data for this meter */
     GtkAdjustment *adjustment;
-    
+
+    /* Warn Point */
+    gfloat warn_point;
+
+    /* Peak values */
+    gfloat peak;
+
     /* Deflection limits */
-    gfloat lower;
-    gfloat upper;
     gfloat iec_lower;
     gfloat iec_upper;
 
-    /* update policy (GTK_UPDATE_[CONTINUOUS/DELAYED/DISCONTINUOUS]) */
-    guint direction : 2;
-  
-    GdkWindow         *event_window;
-
-    /* Button currently pressed or 0 if none */
-    guint8 button;
-
     /* Amber dB and deflection points */
-    gfloat amber_level;
     gfloat amber_frac;
-
-    /* Peak deflection */
-    gfloat peak;
-  
-    /* Peak deflection in reasonable units */
-    gfloat peak_db;
-  
-    /* ID of update timer, or 0 if none */
-    guint32 timer;
 
     /* Old values from adjustment stored so we know when something changes */
     gfloat old_value;
@@ -108,13 +81,18 @@ struct _GtkMeterPrivate
     gfloat old_upper;
 };
 
+G_DEFINE_TYPE_WITH_CODE (GtkMeter, gtk_meter, GTK_TYPE_WIDGET,
+                         G_ADD_PRIVATE (GtkMeter)
+                         G_IMPLEMENT_INTERFACE (GTK_TYPE_ORIENTABLE, NULL));
+
 enum {
     PROP_0,
-  
-    PROP_ORIENTATION,
-    PROP_ADJUSTMENT,
+
+    PROP_WARN_POINT,
     PROP_INVERTED,
-  
+    PROP_ADJUSTMENT,
+    PROP_ORIENTATION, /* overriden */
+
     N_PROPERTIES
 };
 
@@ -132,46 +110,48 @@ gtk_meter_class_init (GtkMeterClass *kclass)
 
     widget_class->draw = gtk_meter_draw;
 
-    g_object_class_override_property (object_class,
-                                      PROP_ORIENTATION,
-                                      "orientation");
 
     g_object_class_install_property (object_class,
-                                     PROP_ADJUSTMENT,
-                                     g_param_spec_object ("adjustment",
-                                                          "Adjustment",
-                                                          "The GtkAdjustment that contains the current value of this meter object",
-                                                          GTK_TYPE_ADJUSTMENT,
-                                                          G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+                                     PROP_WARN_POINT,
+                                     g_param_spec_float ("warn-point",
+                                                         "Warn Point",
+                                                         "The point where the warn bar (yellow) is drawn",
+                                                         -60.0f,
+                                                         6.0f,
+                                                         -6.0f,
+                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
     g_object_class_install_property (object_class,
                                      PROP_INVERTED,
                                      g_param_spec_boolean ("inverted",
                                                            "Inverted",
-                                                           "If Widget should be drawn inverted",
+                                                           "Draw bars inverted",
                                                            FALSE,
                                                            G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-
-    g_type_class_add_private (object_class, sizeof (GtkMeterPrivate));
+    g_object_class_install_property (object_class,
+                                     PROP_ADJUSTMENT,
+                                     g_param_spec_object ("adjustment",
+                                                          "Adjustment",
+                                                          "The Adjustment used",
+                                                          GTK_TYPE_ADJUSTMENT,
+                                                          G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+    g_object_class_override_property (object_class,
+                                      PROP_ORIENTATION,
+                                      "orientation");
 }
 
 static void
 gtk_meter_init (GtkMeter *meter)
 {
-    meter->priv = G_TYPE_INSTANCE_GET_PRIVATE (meter,
-                                               GTK_TYPE_METER,
-                                               GtkMeterPrivate);
+    meter->priv = gtk_meter_get_instance_private (meter);
 
     gtk_widget_set_has_window (GTK_WIDGET (meter), FALSE);
 
     meter->priv->orientation = GTK_ORIENTATION_VERTICAL;
-    meter->priv->inverted = FALSE;
     meter->priv->adjustment = NULL;
-    meter->priv->button = 0;
-    meter->priv->timer = 0;
-    meter->priv->amber_level = -6.0f;
+    meter->priv->inverted = FALSE;
     meter->priv->amber_frac = 0.0f;
-    meter->priv->iec_lower = 0.0f;
-    meter->priv->iec_upper = 0.0f;
+    meter->priv->iec_lower = 0.0;
+    meter->priv->iec_upper = 0.0;
     meter->priv->old_value = 0.0;
     meter->priv->old_lower = 0.0;
     meter->priv->old_upper = 0.0;
@@ -189,16 +169,20 @@ gtk_meter_set_property (GObject      *object,
 
     switch (prop_id)
     {
-    case PROP_ORIENTATION:
-        meter->priv->orientation = g_value_get_enum (value);
-        gtk_widget_queue_resize (GTK_WIDGET (meter));
-        break;
-    case PROP_ADJUSTMENT:
-        gtk_meter_set_adjustment (meter, g_value_get_object (value));
+    case PROP_WARN_POINT:
+        gtk_meter_set_warn_point (meter, g_value_get_float (value));
+        gtk_widget_queue_draw (GTK_WIDGET (meter));
         break;
     case PROP_INVERTED:
         meter->priv->inverted = g_value_get_boolean (value);
         gtk_widget_queue_draw (GTK_WIDGET (meter));
+        break;
+    case PROP_ADJUSTMENT:
+        gtk_meter_set_adjustment (meter, g_value_get_object (value));
+        break;
+    case PROP_ORIENTATION:
+        meter->priv->orientation = g_value_get_enum (value);
+        gtk_widget_queue_resize (GTK_WIDGET (meter));
         break;
     }
 }
@@ -213,14 +197,17 @@ gtk_meter_get_property (GObject      *object,
 
     switch (prop_id)
     {
+    case PROP_WARN_POINT:
+        g_value_set_float (value, meter->priv->warn_point);
+        break;
+    case PROP_INVERTED:
+        g_value_set_boolean (value, meter->priv->inverted);
+        break;
     case PROP_ORIENTATION:
         g_value_set_enum (value, meter->priv->orientation);
         break;
     case PROP_ADJUSTMENT:
         g_value_set_object (value, meter->priv->adjustment);
-        break;
-    case PROP_INVERTED:
-        g_value_set_boolean (value, meter->priv->inverted);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -235,92 +222,23 @@ gtk_meter_new (GtkOrientation  orientation,
     GtkWidget *widget = NULL;
     GtkMeter  *meter  = NULL;
 
-    g_return_val_if_fail (GTK_IS_ADJUSTMENT (adjustment), widget);
-
     widget = g_object_new (GTK_TYPE_METER, NULL);
-    meter = GTK_METER (widget);
+    meter  = GTK_METER (widget);
 
     gtk_meter_set_adjustment (meter, adjustment);
-    meter->priv->orientation = orientation;
-    meter->priv->lower = gtk_adjustment_get_lower (adjustment);
-    meter->priv->upper = gtk_adjustment_get_upper (adjustment);
-    meter->priv->iec_lower = iec_scale(meter->priv->lower);
-    meter->priv->iec_upper = iec_scale(meter->priv->upper);
+    gtk_orientable_set_orientation (GTK_ORIENTABLE (widget), orientation);
 
     return widget;
-}
-
-GtkAdjustment*
-gtk_meter_get_adjustment (GtkMeter *meter)
-{
-    g_return_val_if_fail (GTK_IS_METER (meter), NULL);
-
-    if (!meter->priv->adjustment) {
-        GtkAdjustment *adj = NULL;
-
-        adj = gtk_adjustment_new (0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-        gtk_meter_set_adjustment (meter, adj);
-    }
-
-    return meter->priv->adjustment;
-}
-
-void
-gtk_meter_set_adjustment (GtkMeter      *meter,
-                          GtkAdjustment *adjustment)
-{
-    g_return_if_fail (GTK_IS_METER (meter));
-
-    if (meter->priv->adjustment != adjustment) {
-        if (meter->priv->adjustment) {
-            g_signal_handlers_disconnect_by_func (meter->priv->adjustment,
-                                                  gtk_meter_adjustment_changed,
-                                                  meter);
-            g_signal_handlers_disconnect_by_func (meter->priv->adjustment,
-                                                  gtk_meter_adjustment_value_changed,
-                                                  meter);
-            g_object_unref (meter->priv->adjustment);
-        }
-    
-        meter->priv->adjustment = adjustment;
-        g_object_ref_sink (adjustment);
-    
-        g_signal_connect (adjustment, "changed",
-                          G_CALLBACK (gtk_meter_adjustment_changed),
-                          meter);
-        g_signal_connect (adjustment, "value-changed",
-                          G_CALLBACK (gtk_meter_adjustment_value_changed),
-                          meter);
-
-        gtk_meter_adjustment_changed (adjustment, meter);
-    }
-  
-    gtk_widget_queue_draw (GTK_WIDGET (meter));
-} 
-
-gboolean
-gtk_meter_get_inverted (GtkMeter *meter)
-{
-    return meter->priv->inverted;
-}
-
-void
-gtk_meter_set_inverted (GtkMeter *meter,
-                        gboolean  inverted)
-{
-    meter->priv->inverted = inverted;
-
-    gtk_widget_queue_draw (GTK_WIDGET (meter));
 }
 
 static gboolean
 gtk_meter_draw (GtkWidget *widget,
                 cairo_t   *cr)
 {
-    float    val, frac, peak_frac;
-    int      g_h, a_h, r_h;
-    int      width = 0, height = 0;
-    int      dw = 0, dh = 0;
+    float val, frac, peak_frac;
+    int   g_h, a_h, r_h;
+    int   width = 0, height = 0;
+    int   dw = 0, dh = 0;
     cairo_pattern_t *pat;
     GtkMeter *meter = GTK_METER (widget);
 
@@ -354,7 +272,8 @@ gtk_meter_draw (GtkWidget *widget,
     cairo_fill (cr);
     cairo_pattern_destroy (pat);
 
-    val = iec_scale(gtk_adjustment_get_value(meter->priv->adjustment));
+    printf ("%i", GTK_IS_ADJUSTMENT (meter->priv->adjustment));
+    val = iec_scale(gtk_adjustment_get_value (meter->priv->adjustment));
     if (val > meter->priv->peak) {
         if (val > meter->priv->iec_upper) {
             meter->priv->peak = meter->priv->iec_upper;
@@ -391,48 +310,65 @@ gtk_meter_draw (GtkWidget *widget,
     /* generate colors */
 
     // Green bar
-    if (meter->priv->orientation == GTK_ORIENTATION_VERTICAL && !meter->priv->inverted)
-        cairo_rectangle (cr, 2, dh - g_h, dw, g_h);
-    else if (meter->priv->orientation == GTK_ORIENTATION_VERTICAL && meter->priv->inverted)
-        cairo_rectangle (cr, 2, 2, dw, g_h);
-    else if (meter->priv->orientation == GTK_ORIENTATION_HORIZONTAL && !meter->priv->inverted)
-        cairo_rectangle (cr, 2, 2, g_h, dw);
-    else if (meter->priv->orientation == GTK_ORIENTATION_HORIZONTAL && meter->priv->inverted)
-        cairo_rectangle (cr, dh - g_h, 2, g_h, dw);
+    if (meter->priv->orientation == GTK_ORIENTATION_VERTICAL)
+    {
+        if (meter->priv->inverted)
+            cairo_rectangle (cr, 2, 2, dw, g_h);
+        else
+            cairo_rectangle (cr, 2, dh - g_h, dw, g_h);
+    }
+    else
+    {
+        if (meter->priv->inverted)
+            cairo_rectangle (cr, dh - g_h, 2, g_h, dw);
+        else
+            cairo_rectangle (cr, 2, 2, g_h, dw);
+    }
     cairo_set_source_rgba (cr, 0.1, 0.5, 0.2, 0.8);
     cairo_fill (cr);
 
     // amber bar
     if (a_h > g_h) {
-        if (meter->priv->orientation == GTK_ORIENTATION_VERTICAL && !meter->priv->inverted)
-            cairo_rectangle (cr, 2, dh - a_h, dw, a_h - g_h);
-        else if (meter->priv->orientation == GTK_ORIENTATION_VERTICAL && meter->priv->inverted)
-            cairo_rectangle (cr, 2, g_h, dw, a_h - g_h);
-        else if (meter->priv->orientation == GTK_ORIENTATION_HORIZONTAL && !meter->priv->inverted)
-            cairo_rectangle (cr, g_h, 2, a_h - g_h, dw);
-        else if (meter->priv->orientation == GTK_ORIENTATION_HORIZONTAL && meter->priv->inverted)
-            cairo_rectangle (cr, dh - a_h, 2, a_h - g_h, dw);
+        if (meter->priv->orientation == GTK_ORIENTATION_VERTICAL)
+        {
+            if (meter->priv->inverted)
+                cairo_rectangle (cr, 2, g_h, dw, a_h - g_h);
+            else
+                cairo_rectangle (cr, 2, dh - a_h, dw, a_h - g_h);
+        }
+        else
+        {
+            if (meter->priv->inverted)
+                cairo_rectangle (cr, dh - a_h, 2, a_h - g_h, dw);
+            else
+                cairo_rectangle (cr, g_h, 2, a_h - g_h, dw);
+        }
         cairo_set_source_rgba (cr, 0.8,0.8,0.2, 0.8);
         cairo_fill (cr);
     }
-  
+
     // red bar
     if (r_h > a_h) {
-        if (meter->priv->orientation == GTK_ORIENTATION_VERTICAL && !meter->priv->inverted)
-            cairo_rectangle (cr, 2, dh - r_h, dw, r_h - a_h);
-        else if (meter->priv->orientation == GTK_ORIENTATION_VERTICAL && meter->priv->inverted)
-            cairo_rectangle (cr, 2, a_h, dw, r_h - a_h);
-        else if (meter->priv->orientation == GTK_ORIENTATION_HORIZONTAL && !meter->priv->inverted)
-            cairo_rectangle (cr, a_h, 2, r_h - a_h, dw);
-        else if (meter->priv->orientation == GTK_ORIENTATION_HORIZONTAL && meter->priv->inverted)
-            cairo_rectangle (cr, dh - r_h, 2, r_h - a_h, dw);
+        if (meter->priv->orientation == GTK_ORIENTATION_VERTICAL)
+        {
+            if (meter->priv->inverted)
+                cairo_rectangle (cr, 2, a_h, dw, r_h - a_h);
+            else
+                cairo_rectangle (cr, 2, dh - r_h, dw, r_h - a_h);
+        }
+        else
+        {
+            if (meter->priv->inverted)
+                cairo_rectangle (cr, dh - r_h, 2, r_h - a_h, dw);
+            else
+                cairo_rectangle (cr, a_h, 2, r_h - a_h, dw);
+        }
         cairo_set_source_rgba (cr, 1,0,0.1, 0.8);
         cairo_fill (cr);
     }
 
 
     /* Create glassy layer effect */
-  
     cairo_set_source_rgba (cr, 0.8, 0.8, 0.8, 1.0);
 
     // left
@@ -442,7 +378,7 @@ gtk_meter_draw (GtkWidget *widget,
     // top
     cairo_rectangle (cr, 2, 0, width - 2, 2);
     cairo_fill (cr);
- 
+
     // right border
     cairo_rectangle (cr, width - 2, 0, 2, height);
     cairo_fill (cr);
@@ -538,6 +474,51 @@ gtk_meter_draw (GtkWidget *widget,
 //   }
 // }
 
+GtkAdjustment *
+gtk_meter_get_adjustment (GtkMeter *meter)
+{
+    return meter->priv->adjustment;
+}
+
+void
+gtk_meter_set_adjustment (GtkMeter *meter,
+                          GtkAdjustment *adjustment)
+{
+    g_return_if_fail (GTK_IS_METER (meter));
+
+    if (!GTK_IS_ADJUSTMENT (adjustment))
+        adjustment = gtk_adjustment_new (0, 0, 0, 0, 0, 0);
+
+    if (meter->priv->adjustment != adjustment)
+    {
+        if (meter->priv->adjustment)
+        {
+            g_signal_handlers_disconnect_by_func (meter->priv->adjustment,
+                                                  gtk_meter_adjustment_changed,
+                                                  meter);
+            g_signal_handlers_disconnect_by_func (meter->priv->adjustment,
+                                                  gtk_meter_adjustment_value_changed,
+                                                  meter);
+
+            g_object_unref (meter->priv->adjustment);
+        }
+
+        g_signal_connect (G_OBJECT (adjustment),
+                          "changed",
+                          G_CALLBACK (gtk_meter_adjustment_changed),
+                          meter);
+        g_signal_connect (G_OBJECT (adjustment),
+                          "value-changed",
+                          G_CALLBACK (gtk_meter_adjustment_value_changed),
+                          meter);
+
+        meter->priv->adjustment = adjustment;
+        g_object_ref_sink (adjustment);
+
+        gtk_meter_adjustment_changed (adjustment, meter);
+    }
+}
+
 static void
 gtk_meter_adjustment_changed (GtkAdjustment *adjustment,
                               gpointer       data)
@@ -554,7 +535,7 @@ gtk_meter_adjustment_changed (GtkAdjustment *adjustment,
         meter->priv->iec_lower = iec_scale(gtk_adjustment_get_lower(adjustment));
         meter->priv->iec_upper = iec_scale(gtk_adjustment_get_upper(adjustment));
 
-        gtk_meter_set_warn_point(meter, meter->priv->amber_level);
+        gtk_meter_set_warn_point(meter, meter->priv->warn_point);
 
         meter->priv->old_value = gtk_adjustment_get_value(adjustment);
         meter->priv->old_lower = gtk_adjustment_get_lower(adjustment);
@@ -606,25 +587,15 @@ static float iec_scale(float db)
     return def; 
 }
 
-float gtk_meter_get_peak(GtkMeter *meter)
-{
-    return meter->priv->peak_db;
-}
-
-void gtk_meter_reset_peak(GtkMeter *meter)
-{
-    meter->priv->peak = 0.0f;
-}
-
 void gtk_meter_set_warn_point(GtkMeter *meter, gfloat pt)
 {
-    meter->priv->amber_level = pt;
+    meter->priv->warn_point = pt;
 
     if (meter->priv->inverted)
-        meter->priv->amber_frac = 1.0f - (iec_scale(meter->priv->amber_level) - meter->priv->iec_lower) /
+        meter->priv->amber_frac = 1.0f - (iec_scale(meter->priv->warn_point) - meter->priv->iec_lower) /
                                          (meter->priv->iec_upper - meter->priv->iec_lower);
     else
-        meter->priv->amber_frac = (iec_scale(meter->priv->amber_level) - meter->priv->iec_lower) /
+        meter->priv->amber_frac = (iec_scale(meter->priv->warn_point) - meter->priv->iec_lower) /
                                   (meter->priv->iec_upper - meter->priv->iec_lower);
 
     gtk_widget_queue_draw (GTK_WIDGET (meter));

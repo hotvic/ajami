@@ -38,29 +38,21 @@ typedef struct _GtkMeterClass       GtkMeterClass;
 
 struct _GtkMeter
 {
-  GtkWidget widget;
-  
-  GtkMeterPrivate *priv;
-  
+    GtkWidget widget;
+
+    GtkMeterPrivate *priv;
 };
 
 struct _GtkMeterClass
 {
-  GtkDrawingAreaClass parent_class;
+    GtkRangeClass parent_class;
 };
 
 
 GType          gtk_meter_get_type               (void);
 GtkWidget*     gtk_meter_new                    (GtkOrientation  orientation,
                                                  GtkAdjustment  *adjustment);
-GtkAdjustment* gtk_meter_get_adjustment         (GtkMeter       *meter);
-void           gtk_meter_set_adjustment         (GtkMeter       *meter,
-                                                 GtkAdjustment  *adjustment);
-gboolean       gtk_meter_get_inverted           (GtkMeter       *meter);
-void           gtk_meter_set_inverted           (GtkMeter       *meter,
-                                                 gboolean        inverted);
-float          gtk_meter_get_peak               (GtkMeter       *meter);
-void	         gtk_meter_reset_peak             (GtkMeter       *meter);
+void           gtk_meter_get_warn_point         (GtkMeter       *meter);
 void           gtk_meter_set_warn_point         (GtkMeter       *meter,
                                                  gfloat          pt);
 
