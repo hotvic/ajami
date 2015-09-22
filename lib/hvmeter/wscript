@@ -1,0 +1,11 @@
+#! /usr/bin/env python
+# encoding: utf-8
+
+
+def build(bld):
+    hvmeter = bld(target='hvmeter', features='c cstlib')
+    hvmeter.source = 'hv-meter.vala'
+    hvmeter.install_binding = False
+    hvmeter.packages ='gtk+-3.0'
+    hvmeter.uselib = 'GTK'
+    hvmeter.pkg_name = 'hvmeter'

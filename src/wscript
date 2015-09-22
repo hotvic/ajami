@@ -1,0 +1,36 @@
+#! /usr/bin/env python
+# encoding: utf-8
+
+
+def configure(cnf):
+    cnf.define('LIBDIR', cnf.env['LIBDIR'])
+    cnf.define('DATADIR', cnf.env['INSTALL_DATA_DIR'])
+    cnf.write_config_header('config.h')
+
+    if cnf.options.debug:
+        cnf.env.CFLAGS = ['-g3', '-O0', '-Wall']
+        cnf.env.CXXFLAGS = ['-g3', '-O0', '-Wall']
+
+def build(bld):
+    valaobjs = bld(
+        features         = 'c cstlib',
+        target           = 'ajamiobjects',
+        vala_target_glib = '2.38',
+        install_binding  = False,
+        packages         = 'gtk+-3.0 posix',
+        uselib           = 'GTK',
+        use              = 'hvmeter',
+        vala_resources   = '../data/ajami.gresource.xml',
+    )
+    valaobjs.source = 'ajamiapp.vala ajamiwindow.vala ajamiscenes.vala ajamicompressor.vala'
+    valaobjs.source += ' ajamihelp.vala ajamilimiter.vala ajamiargs.vala ajami.vala'
+
+    ajami = bld(
+        features       = 'c cprogram glib2',
+        target         = 'ajami',
+        uselib         = 'GTK JACK LIBXML FFTW OSC M DL',
+        use            = 'ajamiobjects',
+        includes       = '.',
+        source         = '../data/ajami.gresource.xml'
+    )
+    ajami.source += ' io.c limiter-ui.c rms.c process.c state.c plugin.c'

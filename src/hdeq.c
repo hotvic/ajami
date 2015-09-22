@@ -3,7 +3,7 @@
  *            the JAMin (JACK Audio Mastering interface) program.
  *
  *  Copyright (C) 2003 Jan C. Depner.
- *  
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -24,27 +24,27 @@
 
     A few programmer notes:
 
-    We use the GEQ to set up a lot of the HDEQ.  This is because the GEQ was 
-    built first and we already had a few things, like the X and Y ranges, to 
+    We use the GEQ to set up a lot of the HDEQ.  This is because the GEQ was
+    built first and we already had a few things, like the X and Y ranges, to
     work from.  If you modify the GEQ the HDEQ will be reset.  If you modify
-    the HDEQ the GEQ will be reset.  The difference between setting the EQ 
+    the HDEQ the GEQ will be reset.  The difference between setting the EQ
     curve with the HDEQ vs the GEQ is that you can actually set the 1024 bands
     of EQ instead of setting 31 bands and then splining the in-between points.
 
     The HDEQ uses a log scale in the X, or frequency, direction which is normal
     for audio.
 
-    The X range of the HDEQ is set 25Hz to 20KHz.  This doesn't change, 
-    however, the index into the X array of single_levels[] values (from 
-    process.c) changes with the sample rate.  This is very confusing (I still 
+    The X range of the HDEQ is set 25Hz to 20KHz.  This doesn't change,
+    however, the index into the X array of single_levels[] values (from
+    process.c) changes with the sample rate.  This is very confusing (I still
     don't have it completely under control).
 
     A lot of the information that is used in process.c and state.c is not
     stored in frequency and gain (dB).  It is in other units - you'll have to
-    look at the code 'cause I don't remember exactly what they are at the 
+    look at the code 'cause I don't remember exactly what they are at the
     moment ;-)
 
-    Functions that begin with process_ are defined in the process.c file.  
+    Functions that begin with process_ are defined in the process.c file.
     Functions that begin with s_ are defined in state.c.  We've tried to
     stay with this as much as possible (although it's not written in stone).
     You'll note that a lot of the functions that are callable outside this
@@ -79,7 +79,7 @@
 
 #include "hdeq.h"
 #include "main.h"
-#include "callbacks.h"
+#include "ajami-callbacks.h"
 #include "geq.h"
 #include "interface.h"
 #include "support.h"
@@ -95,7 +95,7 @@
 #include "preferences.h"
 
 
-/*  What I'm referring to as notches are actually slidable parametric EQ 
+/*  What I'm referring to as notches are actually slidable parametric EQ
     controls.  */
 
 #define EQ_SPECTRUM_RANGE             90.0
@@ -116,7 +116,7 @@
 #define NOTCH_PASS_WIDTH              75
 
 
-void interpolate (float, int, float, float, int *, float *, float *, float *, 
+void interpolate (float, int, float, float, int *, float *, float *, float *,
                   float *);
 
 
@@ -141,7 +141,7 @@ static GtkMenu           *HDEQ_menu;
 
 static GtkScale        *l_low2mid, *l_mid2high;
 static GtkWidget       *l_comp[3];
-static GtkLabel        *l_low2mid_lbl, *l_mid2high_lbl, *l_comp_lbl[3], 
+static GtkLabel        *l_low2mid_lbl, *l_mid2high_lbl, *l_comp_lbl[3],
                        *l_EQ_curve_lbl = NULL, *l_c_curve_lbl[3];
 static GtkDrawingArea  *l_EQ_curve, *l_comp_curve[3];
 //static GdkDrawable     *EQ_drawable, *comp_drawable[3];
@@ -152,31 +152,31 @@ static PangoContext    *comp_pc[3], *EQ_pc;
 static GtkAdjustment   *l_low2mid_adj;
 static GdkRGBA  	   *color;
 static float           EQ_curve_range_x, EQ_curve_range_y, EQ_curve_width,
-                       EQ_curve_height, EQ_xinterp[EQ_INTERP + 1], EQ_start, 
-                       EQ_end, EQ_interval, EQ_yinterp[EQ_INTERP + 1], 
-                       *EQ_xinput = NULL, *EQ_yinput = NULL, 
-                       l_geq_freqs[EQ_BANDS], l_geq_gains[EQ_BANDS], 
-                       comp_curve_range_x[3], comp_curve_range_y[3], 
-                       comp_curve_width[3], comp_curve_height[3] , 
-                       comp_start_x[3], comp_start_y[3], comp_end_x[3], 
+                       EQ_curve_height, EQ_xinterp[EQ_INTERP + 1], EQ_start,
+                       EQ_end, EQ_interval, EQ_yinterp[EQ_INTERP + 1],
+                       *EQ_xinput = NULL, *EQ_yinput = NULL,
+                       l_geq_freqs[EQ_BANDS], l_geq_gains[EQ_BANDS],
+                       comp_curve_range_x[3], comp_curve_range_y[3],
+                       comp_curve_width[3], comp_curve_height[3] ,
+                       comp_start_x[3], comp_start_y[3], comp_end_x[3],
                        comp_end_y[3], EQ_freq_xinterp[EQ_INTERP + 1],
-                       EQ_freq_yinterp[EQ_INTERP + 1], 
-                       EQ_notch_gain[NOTCHES], EQ_x_notched[EQ_INTERP + 1], 
-                       EQ_y_notched[EQ_INTERP + 1], EQ_gain_lower = -12.0, 
+                       EQ_freq_yinterp[EQ_INTERP + 1],
+                       EQ_notch_gain[NOTCHES], EQ_x_notched[EQ_INTERP + 1],
+                       EQ_y_notched[EQ_INTERP + 1], EQ_gain_lower = -12.0,
                        EQ_gain_upper = 12.0, EQ_notch_default[NOTCHES];
 
-/*  Note the array dimensions for the parametric notch handles.  Here's how 
+/*  Note the array dimensions for the parametric notch handles.  Here's how
     they're laid out - first dimension [2] = X and Y indexes; second dimension [3] =
     left handle, center handle, right handle (left shelf 0 is 0, right shelf 2 is
     EQ_CURVE_width); third dimension is notch number from left (0).  */
 
-static int             EQ_mod = 1, EQ_drawing = 0, EQ_input_points = 0, 
-                       EQ_length = 0, EQ_draw_dir = 0, 
-                       comp_realized[3] = {0, 0, 0}, 
-                       EQ_realized = 0, xover_active = 0, xover_handle_l2m, 
-                       xover_handle_m2h, EQ_drag_l2m = 0, EQ_drag_m2h = 0, 
+static int             EQ_mod = 1, EQ_drawing = 0, EQ_input_points = 0,
+                       EQ_length = 0, EQ_draw_dir = 0,
+                       comp_realized[3] = {0, 0, 0},
+                       EQ_realized = 0, xover_active = 0, xover_handle_l2m,
+                       xover_handle_m2h, EQ_drag_l2m = 0, EQ_drag_m2h = 0,
                        EQ_notch_drag[NOTCHES],
-                       EQ_notch_Q_drag[NOTCHES], 
+                       EQ_notch_Q_drag[NOTCHES],
                        EQ_notch_handle[2][3][NOTCHES], EQ_notch_width[NOTCHES],
                        EQ_notch_index[NOTCHES], EQ_notch_flag[NOTCHES];
 static guint           notebook1_page = 0;
@@ -235,7 +235,7 @@ void clean_quit ()
 }
 
 
-/*  Setup default values and widget pointers based on names from glade-2.  
+/*  Setup default values and widget pointers based on names from glade-2.
     DON'T CHANGE WIDGET NAMES in glade-2 without checking first.  */
 
 void bind_hdeq ()
@@ -268,22 +268,22 @@ void bind_hdeq ()
     l_EQ_curve = GTK_DRAWING_AREA (lookup_widget (main_window, "EQ_curve"));
     l_EQ_curve_lbl = GTK_LABEL (lookup_widget (main_window, "EQ_curve_lbl"));
 
-    l_comp_curve[0] = GTK_DRAWING_AREA (lookup_widget (main_window, 
+    l_comp_curve[0] = GTK_DRAWING_AREA (lookup_widget (main_window,
                                                        "comp1_curve"));
-    l_comp_curve[1] = GTK_DRAWING_AREA (lookup_widget (main_window, 
+    l_comp_curve[1] = GTK_DRAWING_AREA (lookup_widget (main_window,
                                                        "comp2_curve"));
-    l_comp_curve[2] = GTK_DRAWING_AREA (lookup_widget (main_window, 
+    l_comp_curve[2] = GTK_DRAWING_AREA (lookup_widget (main_window,
                                                        "comp3_curve"));
 
-    l_c_curve_lbl[0] = GTK_LABEL (lookup_widget (main_window, 
+    l_c_curve_lbl[0] = GTK_LABEL (lookup_widget (main_window,
                                                  "low_curve_lbl"));
-    l_c_curve_lbl[1] = GTK_LABEL (lookup_widget (main_window, 
+    l_c_curve_lbl[1] = GTK_LABEL (lookup_widget (main_window,
                                                  "mid_curve_lbl"));
-    l_c_curve_lbl[2] = GTK_LABEL (lookup_widget (main_window, 
+    l_c_curve_lbl[2] = GTK_LABEL (lookup_widget (main_window,
                                                  "high_curve_lbl"));
 
 
-    /*  All of the notch defaults.  Note that EQ_notch_index is NOT the 
+    /*  All of the notch defaults.  Note that EQ_notch_index is NOT the
         frequency of the notch handle.  It is the index into the frequncy
         array.  Also, the X scale for the HDEQ is log.  This is pretty
         much standard for audio.  */
@@ -298,7 +298,7 @@ void bind_hdeq ()
       {
         EQ_notch_gain[i] = 0.0;
         EQ_notch_width[i] = 5;
-        EQ_notch_drag[i] = 0; 
+        EQ_notch_drag[i] = 0;
         EQ_notch_Q_drag[i] = 0;
         EQ_notch_flag[i] = 0;
         EQ_notch_index[i] = nearest_x (EQ_notch_default[i]);
@@ -339,17 +339,17 @@ void hdeq_low2mid_set (GtkRange *range)
 
     if (value >= other_value)
       {
-        /*  This tells the state functions (state.c) not to do anything even 
+        /*  This tells the state functions (state.c) not to do anything even
             though we're going to move a GUI control.  */
 
-		s_suppress_push();
+        s_suppress_push();
 
         gtk_range_set_value ((GtkRange *) l_mid2high, value);
 
 
         /*  This lets the state functions behave normally again.  */
 
-		s_suppress_pop();
+        s_suppress_pop();
         gtk_widget_set_sensitive (l_comp[1], FALSE);
       }
     else
@@ -358,7 +358,7 @@ void hdeq_low2mid_set (GtkRange *range)
       }
 
 
-    /*  If the low slider is at the bottom of it's range, desensitize the low 
+    /*  If the low slider is at the bottom of it's range, desensitize the low
         band compressor.  */
 
     l_low2mid_adj = gtk_range_get_adjustment (range);
@@ -416,14 +416,14 @@ void hdeq_low2mid_set (GtkRange *range)
         // gdk_gc_set_foreground (EQ_gc, get_color (HDEQ_SPECTRUM_COLOR));
         color = get_color (HDEQ_SPECTRUM_COLOR);
         //	cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
-		
-        // cr = gdk_cairo_create (widget->window);	
+
+        // cr = gdk_cairo_create (widget->window);
         //cairo_rectangle (cr, 0, length, width-1, 2);
-        //cairo_set_source_rgba (cr, 0.5,0.5,0.5, 1.0); 
+        //cairo_set_source_rgba (cr, 0.5,0.5,0.5, 1.0);
         //cairo_fill (cr);
-        //  cairo_destroy(cr);  
-		
-		
+        //  cairo_destroy(cr);
+
+
         for (i = 0 ; i < EQ_INTERP ; i++)
           {
         //    if (i) gdk_draw_line (EQ_drawable, EQ_gc, spectrum_x[i - 1], spectrum_y[i - 1],
@@ -461,14 +461,14 @@ void hdeq_mid2high_set (GtkRange *range)
       {
         /*  Suppress state functionality.  */
 
-	s_suppress_push();
+    s_suppress_push();
 
         gtk_range_set_value ((GtkRange *) l_low2mid, value);
 
 
         /*  Unsuppress state functionality.  */
 
-	s_suppress_pop();
+    s_suppress_pop();
         gtk_widget_set_sensitive (l_comp[1], FALSE);
       }
     else
@@ -531,7 +531,7 @@ void hdeq_mid2high_set (GtkRange *range)
         /*  Set the foreground color for drawing the spectrum curve.  */
 
  //       gdk_gc_set_foreground (EQ_gc, get_color (HDEQ_SPECTRUM_COLOR));
-		color = get_color (HDEQ_SPECTRUM_COLOR);
+        color = get_color (HDEQ_SPECTRUM_COLOR);
 //		cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
         for (i = 0 ; i < EQ_INTERP ; i++)
           {
@@ -547,7 +547,7 @@ void hdeq_mid2high_set (GtkRange *range)
 }
 
 
-/*  Someone has pressed the low to mid crossover button.  Called from 
+/*  Someone has pressed the low to mid crossover button.  Called from
     callbacks.c.  */
 
 void hdeq_low2mid_button (int active)
@@ -558,7 +558,7 @@ void hdeq_low2mid_button (int active)
 }
 
 
-/*  Someone has pressed the mid to high crossover button.  Called from 
+/*  Someone has pressed the mid to high crossover button.  Called from
     callbacks.c.  */
 
 void hdeq_mid2high_button (int active)
@@ -585,7 +585,7 @@ void hdeq_mid2high_init ()
 }
 
 
-/*  Set the low to mid and mid to high crossovers.  This is called from the 
+/*  Set the low to mid and mid to high crossovers.  This is called from the
     window1_show callback (in callbacks.c) so it only gets called once.  */
 
 void crossover_init ()
@@ -600,7 +600,7 @@ void crossover_init ()
     redraw (draw_EQ_curve).  This is a callback that is set up in the GEQ
     code.  */
 
-gboolean 
+gboolean
 hdeq_eqb_mod (GtkAdjustment *adj, gpointer user_data)
 {
     EQ_mod = 1;
@@ -613,10 +613,10 @@ hdeq_eqb_mod (GtkAdjustment *adj, gpointer user_data)
 
 static void logfreq2xpix (float log_freq, int *x)
 {
-  *x = NINT (((log_freq - gtk_adjustment_get_lower (l_low2mid_adj)) / EQ_curve_range_x) * 
+  *x = NINT (((log_freq - gtk_adjustment_get_lower (l_low2mid_adj)) / EQ_curve_range_x) *
         EQ_curve_width);
-        
-  //      printf("%f, %f, %i, %i\n",log_freq, gtk_adjustment_get_lower (l_low2mid_adj),  EQ_curve_range_x, 
+
+  //      printf("%f, %f, %i, %i\n",log_freq, gtk_adjustment_get_lower (l_low2mid_adj),  EQ_curve_range_x,
   //      EQ_curve_width );
 }
 
@@ -628,7 +628,7 @@ static void freq2xpix (float freq, int *x)
     float log_freq;
 
 
-    /*  Covert the frequency to log of the frequency and call the above 
+    /*  Covert the frequency to log of the frequency and call the above
         function.  */
 
     log_freq = log10f (freq);
@@ -640,7 +640,7 @@ static void freq2xpix (float freq, int *x)
 
 static void gain2ypix (float gain, int *y)
 {
-    *y = EQ_curve_height - NINT (((gain - EQ_gain_lower) / 
+    *y = EQ_curve_height - NINT (((gain - EQ_gain_lower) /
                 EQ_curve_range_y) * EQ_curve_height);
 }
 
@@ -665,9 +665,9 @@ static void loggain2ypix (float log_gain, int *y)
 void draw_EQ_spectrum_curve (float single_levels[])
 {
     int            i, bin;
-    float          step, range, freq;	
+    float          step, range, freq;
 
-    /*  Don't update if we're drawing an EQ curve or we're moving a 
+    /*  Don't update if we're drawing an EQ curve or we're moving a
         crossover.  */
 
     if (!EQ_drawing && !xover_active)
@@ -688,26 +688,26 @@ void draw_EQ_spectrum_curve (float single_levels[])
             freq2xpix (freq, &spectrum_x[i]);
 
 
-            /*  Figure out which single_levels[] bin corresponds to this 
+            /*  Figure out which single_levels[] bin corresponds to this
                 frequency.  The FFT bins go from 0Hz to the input sample rate
                 divided by 2.  */
 
             bin = NINT (freq / sample_rate * ((float) BINS + 0.5f));
 
 
-            /*  Most of the single_levels[] values will be in the -90.0db to 
+            /*  Most of the single_levels[] values will be in the -90.0db to
                 -20.0db range.  We're using -90.0db to 0.0db as our range.  */
 
-            spectrum_y[i] = NINT (-(lin2db(single_levels[bin]) / EQ_SPECTRUM_RANGE) * 
+            spectrum_y[i] = NINT (-(lin2db(single_levels[bin]) / EQ_SPECTRUM_RANGE) *
                                   EQ_curve_height);
-        
-			
+
+
           }
 
-		 gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve)); 
+         gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 
       }
-        
+
 }
 
 
@@ -732,15 +732,15 @@ static void set_EQ ()
       }
 
 
-    /*  Recompute the splined curve in the freq domain for setting the 
+    /*  Recompute the splined curve in the freq domain for setting the
         eq_coefs.  */
 
     for (i = 0 ; i < EQ_length ; i++) x[i] = powf (10.0f, EQ_x_notched[i]);
 
     interval = ((l_geq_freqs[EQ_BANDS - 1]) - l_geq_freqs[0]) / EQ_INTERP;
 
-    interpolate (interval, EQ_length, l_geq_freqs[0], 
-        l_geq_freqs[EQ_BANDS - 1], &EQ_length, x, EQ_y_notched, 
+    interpolate (interval, EQ_length, l_geq_freqs[0],
+        l_geq_freqs[EQ_BANDS - 1], &EQ_length, x, EQ_y_notched,
         EQ_freq_xinterp, EQ_freq_yinterp);
 
 
@@ -748,13 +748,13 @@ static void set_EQ ()
 
 
     /*  Set EQ coefficients based on the hand-drawn curve.  */
-    	geq_set_coefs (EQ_length, EQ_freq_xinterp, EQ_freq_yinterp);
+        geq_set_coefs (EQ_length, EQ_freq_xinterp, EQ_freq_yinterp);
 
     /*  Set the graphic EQ sliders based on the hand-drawn curve.  */
-    	geq_set_sliders (EQ_length, EQ_freq_xinterp, EQ_freq_yinterp);
-	
-	//printf("%f, %f, %f\n",EQ_length, EQ_freq_xinterp, EQ_freq_yinterp);
-		
+        geq_set_sliders (EQ_length, EQ_freq_xinterp, EQ_freq_yinterp);
+
+    //printf("%f, %f, %f\n",EQ_length, EQ_freq_xinterp, EQ_freq_yinterp);
+
     EQ_mod = 0;
 }
 
@@ -809,7 +809,7 @@ void reset_hdeq ()
     /*  Redraw the EQ curve.  */
 
 //    draw_EQ_curve ();
-	gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve)); 
+    gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 
     /*  Set the scene warning button so that people will know to save it.  */
 
@@ -863,7 +863,7 @@ static void insert_notch ()
                 x[3] = EQ_x_notched[ndx];
                 y[3] = EQ_y_notched[ndx];
 
-                interpolate (EQ_interval, 4, x[0], x[3], &length, x, 
+                interpolate (EQ_interval, 4, x[0], x[3], &length, x,
                     y, &EQ_x_notched[slide], &EQ_y_notched[slide]);
               }
 
@@ -887,7 +887,7 @@ static void insert_notch ()
                 x[3] = EQ_x_notched[slide];
                 y[3] = EQ_notch_gain[j];
 
-                interpolate (EQ_interval, 4, x[0], x[3], &length, x, 
+                interpolate (EQ_interval, 4, x[0], x[3], &length, x,
                     y, &EQ_x_notched[ndx], &EQ_y_notched[ndx]);
               }
 
@@ -910,7 +910,7 @@ static void insert_notch ()
                 x[4] = EQ_x_notched[right];
                 y[4] = EQ_y_notched[right];
 
-                interpolate (EQ_interval, 5, x[0], x[4], &length, x, 
+                interpolate (EQ_interval, 5, x[0], x[4], &length, x,
                     y, &EQ_x_notched[left], &EQ_y_notched[left]);
               }
           }
@@ -925,12 +925,12 @@ void draw_EQ_curve (cairo_t *EQ_cr)
 {
     int            i, x0 = 0, y0 = 0, x1, y1, inc;
     float          x[EQ_BANDS], y[EQ_BANDS];
- 
+
     /*  If the EQ widget has not been realized (not visible), go away.  */
 
     if (!EQ_realized) return;
 
-	
+
     /*  Clear the curve drawing area.  */
 
     color = get_color (HDEQ_BACKGROUND_COLOR);
@@ -938,12 +938,12 @@ void draw_EQ_curve (cairo_t *EQ_cr)
 
     cairo_rectangle (EQ_cr, 0, 0, EQ_curve_width + 1, EQ_curve_height + 1);
     cairo_fill_preserve (EQ_cr);
-    
-    color = get_color (HDEQ_GRID_COLOR);
-	cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
 
-	cairo_set_line_width (EQ_cr, 1.0);
-	cairo_stroke (EQ_cr);
+    color = get_color (HDEQ_GRID_COLOR);
+    cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
+
+    cairo_set_line_width (EQ_cr, 1.0);
+    cairo_stroke (EQ_cr);
 
     /*  Draw the grid lines.  First we get the latest and greatest GEQ gains
         and frequencies.  */
@@ -961,17 +961,17 @@ void draw_EQ_curve (cairo_t *EQ_cr)
       {
         for (x0 = i ; x0 <= inc * 10 ; x0 += inc)
           {
-				freq2xpix ((float) x0, &x1);
+                freq2xpix ((float) x0, &x1);
 
-				cairo_move_to (EQ_cr, x1, 0); 
-				cairo_line_to (EQ_cr, x1, EQ_curve_height);
-				cairo_stroke (EQ_cr);
+                cairo_move_to (EQ_cr, x1, 0);
+                cairo_line_to (EQ_cr, x1, EQ_curve_height);
+                cairo_stroke (EQ_cr);
 
           }
         i = inc * 10;
         inc *= 10;
-      } 
-        
+      }
+
 
     /*  Gain lines in Y.  */
 
@@ -981,11 +981,11 @@ void draw_EQ_curve (cairo_t *EQ_cr)
       {
         if (!(i % inc))
           {
-				gain2ypix ((float) i, &y1);
+                gain2ypix ((float) i, &y1);
 
-				cairo_move_to (EQ_cr, 0, y1); 
-				cairo_line_to (EQ_cr, EQ_curve_width, y1);
-				cairo_stroke (EQ_cr);
+                cairo_move_to (EQ_cr, 0, y1);
+                cairo_line_to (EQ_cr, EQ_curve_width, y1);
+                cairo_stroke (EQ_cr);
           }
       }
 
@@ -997,48 +997,48 @@ void draw_EQ_curve (cairo_t *EQ_cr)
 
 
     color = get_color (LOW_BAND_COLOR);
-	cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue); 
-	
+    cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
+
     freq2xpix (process_get_low2mid_xover (), &x1);
-    
 
-		cairo_move_to (EQ_cr, x1, 0); 
-		cairo_line_to (EQ_cr, x1, EQ_curve_height);
-		cairo_stroke (EQ_cr);
- 
-		cairo_rectangle (EQ_cr, x1 - XOVER_HANDLE_HALF_SIZE, 0, XOVER_HANDLE_SIZE, XOVER_HANDLE_SIZE);
-		cairo_fill (EQ_cr);  
- 
- 		cairo_rectangle (EQ_cr, x1 - XOVER_HANDLE_HALF_SIZE, EQ_curve_height - XOVER_HANDLE_SIZE, XOVER_HANDLE_SIZE, XOVER_HANDLE_SIZE);
-		cairo_fill (EQ_cr);
 
-		
+        cairo_move_to (EQ_cr, x1, 0);
+        cairo_line_to (EQ_cr, x1, EQ_curve_height);
+        cairo_stroke (EQ_cr);
+
+        cairo_rectangle (EQ_cr, x1 - XOVER_HANDLE_HALF_SIZE, 0, XOVER_HANDLE_SIZE, XOVER_HANDLE_SIZE);
+        cairo_fill (EQ_cr);
+
+        cairo_rectangle (EQ_cr, x1 - XOVER_HANDLE_HALF_SIZE, EQ_curve_height - XOVER_HANDLE_SIZE, XOVER_HANDLE_SIZE, XOVER_HANDLE_SIZE);
+        cairo_fill (EQ_cr);
+
+
     xover_handle_l2m = x1;
 
 
- 
+
     color = get_color (HIGH_BAND_COLOR);
-	cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);  
+    cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
     freq2xpix (process_get_mid2high_xover (), &x1);
- 
-  		cairo_move_to (EQ_cr, x1, 0); 
-  		cairo_line_to (EQ_cr, x1, EQ_curve_height);
-		cairo_stroke (EQ_cr);
 
-  		cairo_rectangle (EQ_cr, x1 - XOVER_HANDLE_HALF_SIZE, 0, XOVER_HANDLE_SIZE, XOVER_HANDLE_SIZE);
-		cairo_fill (EQ_cr); 
+        cairo_move_to (EQ_cr, x1, 0);
+        cairo_line_to (EQ_cr, x1, EQ_curve_height);
+        cairo_stroke (EQ_cr);
 
- 		cairo_rectangle (EQ_cr, x1 - XOVER_HANDLE_HALF_SIZE, EQ_curve_height - XOVER_HANDLE_SIZE, XOVER_HANDLE_SIZE, XOVER_HANDLE_SIZE);
-		cairo_fill (EQ_cr); 
+        cairo_rectangle (EQ_cr, x1 - XOVER_HANDLE_HALF_SIZE, 0, XOVER_HANDLE_SIZE, XOVER_HANDLE_SIZE);
+        cairo_fill (EQ_cr);
+
+        cairo_rectangle (EQ_cr, x1 - XOVER_HANDLE_HALF_SIZE, EQ_curve_height - XOVER_HANDLE_SIZE, XOVER_HANDLE_SIZE, XOVER_HANDLE_SIZE);
+        cairo_fill (EQ_cr);
 
 
     xover_handle_m2h = x1;
 
-    
-    /*  If we've messed with the graphics EQ sliders, recompute the splined 
+
+    /*  If we've messed with the graphics EQ sliders, recompute the splined
         curve.  See hdeq_eqb_mod above.  */
 
-    if (EQ_mod) 
+    if (EQ_mod)
       {
         /*  Set X and Y arrays of the 31 bands from the GEQ.  */
 
@@ -1051,7 +1051,7 @@ void draw_EQ_curve (cairo_t *EQ_cr)
 
         /*  Spline the bands to 1024 points.  */
 
-        interpolate (EQ_interval, EQ_BANDS, EQ_start, EQ_end, 
+        interpolate (EQ_interval, EQ_BANDS, EQ_start, EQ_end,
                      &EQ_length, x, y, EQ_xinterp, EQ_yinterp);
 
 
@@ -1080,7 +1080,7 @@ void draw_EQ_curve (cairo_t *EQ_cr)
           }
 
 
-        /*  Insert the notches before we pull out the frequencies and save 
+        /*  Insert the notches before we pull out the frequencies and save
             state.  */
 
         insert_notch ();
@@ -1090,48 +1090,48 @@ void draw_EQ_curve (cairo_t *EQ_cr)
 
         for (i = 0 ; i < NOTCHES ; i++)
           {
-			s_set_description (S_NOTCH_GAIN (i), g_strdup_printf("Reset notch %d", i));
+            s_set_description (S_NOTCH_GAIN (i), g_strdup_printf("Reset notch %d", i));
             s_set_value_ns (S_NOTCH_GAIN (i), EQ_notch_gain[i]);
             s_set_value_ns (S_NOTCH_Q (i), (float) EQ_notch_width[i]);
             s_set_value_ns (S_NOTCH_FREQ (i), powf (10.0f, EQ_x_notched[EQ_notch_index[i]]));
             s_set_value_ns (S_NOTCH_FLAG (i), (float) EQ_notch_flag[i]);
           }
-           
+
       }
 
 
     /*  Plot the curve.  Note that we're plotting the "notched" arrays not
         the interp arrays.  */
 
-	color = get_color (HDEQ_CURVE_COLOR);
-	cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);    
-	
-	
+    color = get_color (HDEQ_CURVE_COLOR);
+    cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
+
+
     for (i = 0 ; i < EQ_length - 1 ; i++)
       {
         logfreq2xpix (EQ_x_notched[i], &x1);
         loggain2ypix (EQ_y_notched[i], &y1);
 
-		if (i){
-			
-				cairo_move_to (EQ_cr, x0, y0); 
-				cairo_line_to (EQ_cr, x1, y1);
-				cairo_stroke (EQ_cr);
-		}
+        if (i){
+
+                cairo_move_to (EQ_cr, x0, y0);
+                cairo_line_to (EQ_cr, x1, y1);
+                cairo_stroke (EQ_cr);
+        }
         x0 = x1;
         y0 = y1;
       }
 
 
     /*  Add the notch handles.  */
-	//printf("adding notches \n");
-	
+    //printf("adding notches \n");
+
     for (i = 0 ; i < NOTCHES ; i++)
       {
-	//	printf("adding notches %i \n", i);
-		color = get_color (HANDLE_COLOR);
-		cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
-		
+    //	printf("adding notches %i \n", i);
+        color = get_color (HANDLE_COLOR);
+        cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
+
         logfreq2xpix (EQ_x_notched[EQ_notch_index[i]], &x1);
 
 
@@ -1147,17 +1147,17 @@ void draw_EQ_curve (cairo_t *EQ_cr)
             loggain2ypix (EQ_y_notched[EQ_notch_index[i]], &y1);
           }
 
-	//	printf("adding notches %i %i %i \n", i, x1, y1);
-		cairo_arc (EQ_cr, x1, y1, NOTCH_HANDLE_WIDTH/2, 0, 2 * M_PI);
-		cairo_fill_preserve (EQ_cr);
+    //	printf("adding notches %i %i %i \n", i, x1, y1);
+        cairo_arc (EQ_cr, x1, y1, NOTCH_HANDLE_WIDTH/2, 0, 2 * M_PI);
+        cairo_fill_preserve (EQ_cr);
 
-		color = get_color (HIGH_BAND_COLOR);
-		cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);  
-		cairo_set_line_width (EQ_cr, 1.0);
-		cairo_stroke (EQ_cr);
+        color = get_color (HIGH_BAND_COLOR);
+        cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
+        cairo_set_line_width (EQ_cr, 1.0);
+        cairo_stroke (EQ_cr);
 
 
-        EQ_notch_handle[0][0][i] = EQ_notch_handle[0][1][i] = 
+        EQ_notch_handle[0][0][i] = EQ_notch_handle[0][1][i] =
             EQ_notch_handle[0][2][i]= x1;
         EQ_notch_handle[1][1][i] = y1;
 
@@ -1176,46 +1176,46 @@ void draw_EQ_curve (cairo_t *EQ_cr)
         if (i && i < NOTCHES - 1)
           {
 
-			color = get_color (HANDLE_COLOR);
-			cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
-			
+            color = get_color (HANDLE_COLOR);
+            cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
+
             x0 = EQ_notch_index[i] - EQ_notch_width[i];
 
             logfreq2xpix (EQ_x_notched[x0], &x1);
             loggain2ypix (EQ_y_notched[x0], &y1);
 
-            if (EQ_notch_handle[0][1][i] - x1 < NOTCH_HANDLE_HALF_WIDTH) 
+            if (EQ_notch_handle[0][1][i] - x1 < NOTCH_HANDLE_HALF_WIDTH)
                 x1 = EQ_notch_handle[0][1][i] - NOTCH_HANDLE_WIDTH;
-			cairo_rectangle (EQ_cr, x1 - NOTCH_HANDLE_HALF_WIDTH/2, y1 - NOTCH_CENTER_HALF_HEIGHT/3, NOTCH_HANDLE_WIDTH/2, NOTCH_CENTER_HEIGHT/3);
-			cairo_fill_preserve (EQ_cr); 
-			color = get_color (HIGH_BAND_COLOR);
-			cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);  
-			cairo_set_line_width (EQ_cr, 1.0);
-			cairo_stroke (EQ_cr);
-	
+            cairo_rectangle (EQ_cr, x1 - NOTCH_HANDLE_HALF_WIDTH/2, y1 - NOTCH_CENTER_HALF_HEIGHT/3, NOTCH_HANDLE_WIDTH/2, NOTCH_CENTER_HEIGHT/3);
+            cairo_fill_preserve (EQ_cr);
+            color = get_color (HIGH_BAND_COLOR);
+            cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
+            cairo_set_line_width (EQ_cr, 1.0);
+            cairo_stroke (EQ_cr);
+
             EQ_notch_handle[0][0][i] = x1;
             EQ_notch_handle[1][0][i] = y1;
 
 
-			color = get_color (HANDLE_COLOR);
-			cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
-			
+            color = get_color (HANDLE_COLOR);
+            cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
+
             x0 = EQ_notch_index[i] + EQ_notch_width[i];
 
             logfreq2xpix (EQ_x_notched[x0], &x1);
             loggain2ypix (EQ_y_notched[x0], &y1);
 
-            if (x1 - EQ_notch_handle[0][1][i] < NOTCH_HANDLE_HALF_WIDTH) 
+            if (x1 - EQ_notch_handle[0][1][i] < NOTCH_HANDLE_HALF_WIDTH)
                 x1 = EQ_notch_handle[0][1][i] + NOTCH_HANDLE_WIDTH;
 
-			cairo_rectangle (EQ_cr, x1 - NOTCH_HANDLE_HALF_WIDTH/2, y1 - NOTCH_CENTER_HALF_HEIGHT/3, NOTCH_HANDLE_WIDTH/2, NOTCH_CENTER_HEIGHT/3);
+            cairo_rectangle (EQ_cr, x1 - NOTCH_HANDLE_HALF_WIDTH/2, y1 - NOTCH_CENTER_HALF_HEIGHT/3, NOTCH_HANDLE_WIDTH/2, NOTCH_CENTER_HEIGHT/3);
 
-			cairo_fill_preserve (EQ_cr);
-			color = get_color (HIGH_BAND_COLOR);
-			cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);  
-			cairo_set_line_width (EQ_cr, 1.0);
-			cairo_stroke (EQ_cr);		
-				
+            cairo_fill_preserve (EQ_cr);
+            color = get_color (HIGH_BAND_COLOR);
+            cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
+            cairo_set_line_width (EQ_cr, 1.0);
+            cairo_stroke (EQ_cr);
+
             EQ_notch_handle[0][2][i] = x1;
             EQ_notch_handle[1][2][i] = y1;
           }
@@ -1228,35 +1228,35 @@ void draw_EQ_curve (cairo_t *EQ_cr)
     EQ_mod = 0;
 
 /* Draw EQ Spectrum Curve */
-		color = get_color (HDEQ_SPECTRUM_COLOR);
-		cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
-		cairo_move_to (EQ_cr, spectrum_x[0], spectrum_y[0]); 
-		for (i = 0 ; i < EQ_INTERP ; i++)
-		{
-			if (i) {
-						
-				cairo_line_to (EQ_cr, spectrum_x[i], spectrum_y[i]);			
-			    
-			}
-		}	
-		cairo_stroke (EQ_cr);
-
-	/* Draw hand drawn curve */	
-/*	if (EQ_drawing){
-		
-        color = get_color (HDEQ_CURVE_COLOR);
-		cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
-		cairo_move_to (EQ_cr, EQ_xinput[0], EQ_yinput[0]);
-		for (i = 0 ; i < EQ_input_points ; i++)
+        color = get_color (HDEQ_SPECTRUM_COLOR);
+        cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
+        cairo_move_to (EQ_cr, spectrum_x[0], spectrum_y[0]);
+        for (i = 0 ; i < EQ_INTERP ; i++)
         {
-		
-			//cairo_move_to (EQ_cr, EQ_xinput[i], EQ_yinput[i]);
-			cairo_line_to (EQ_cr,  EQ_xinput[i], EQ_yinput[i]);
-        }                                              
- //                   gdk_draw_line (hdeq_pixmap, EQ_gc, 
- //                                  NINT (EQ_xinput[EQ_input_points - 1]), 
+            if (i) {
+
+                cairo_line_to (EQ_cr, spectrum_x[i], spectrum_y[i]);
+
+            }
+        }
+        cairo_stroke (EQ_cr);
+
+    /* Draw hand drawn curve */
+/*	if (EQ_drawing){
+
+        color = get_color (HDEQ_CURVE_COLOR);
+        cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
+        cairo_move_to (EQ_cr, EQ_xinput[0], EQ_yinput[0]);
+        for (i = 0 ; i < EQ_input_points ; i++)
+        {
+
+            //cairo_move_to (EQ_cr, EQ_xinput[i], EQ_yinput[i]);
+            cairo_line_to (EQ_cr,  EQ_xinput[i], EQ_yinput[i]);
+        }
+ //                   gdk_draw_line (hdeq_pixmap, EQ_gc,
+ //                                  NINT (EQ_xinput[EQ_input_points - 1]),
  //                                  NINT (EQ_yinput[EQ_input_points - 1]), x, y);
-	}
+    }
 */
 
 }
@@ -1274,21 +1274,21 @@ void hdeq_curve_draw (GtkWidget *widget, cairo_t *cr, gpointer data)
     EQ_curve_range_x = gtk_adjustment_get_upper (l_low2mid_adj) - gtk_adjustment_get_lower (l_low2mid_adj);
 
 //	printf("%f, %f\n", gtk_adjustment_get_upper (l_low2mid_adj), gtk_adjustment_get_lower (l_low2mid_adj));
-	
+
     EQ_curve_range_y = EQ_gain_upper - EQ_gain_lower;
 
 
     /*  Since allocation width and height are inclusive we need to decrement
         for calculations.  */
-    
+
     GtkAllocation *allocation = g_new0 (GtkAllocation, 1);
 
-	gtk_widget_get_allocation(GTK_WIDGET(widget), allocation);
+    gtk_widget_get_allocation(GTK_WIDGET(widget), allocation);
 
     EQ_curve_width = allocation->width - 1;
     EQ_curve_height = allocation->height - 1;
-	g_free (allocation);
-	
+    g_free (allocation);
+
     draw_EQ_curve (cr);
 
     /*  Window is ready for motion events.  */
@@ -1315,21 +1315,21 @@ void hdeq_curve_init (GtkWidget *widget)
     /*  Setting a callback based on notch gain changes.  */
 
     s_set_callback (S_NOTCH_GAIN(0), set_EQ_curve_values);
-	
+
     EQ_realized = 1;
 
 }
 
 void hdeq_curve_update()
 {
-	
-		gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve)); 
-	
+
+        gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+
 }
 
 /*  Don't let the notches overlap.  */
 
-/*  notch is the notch number (0-4), new is the nearest frequency index to the cursor, 
+/*  notch is the notch number (0-4), new is the nearest frequency index to the cursor,
     q is 0 for center of notch, 1 for left handle, 2 for right handle.  */
 
 static int check_notch (int notch, int new, int q)
@@ -1407,13 +1407,13 @@ static int check_notch (int notch, int new, int q)
 /*  This comes from the hdeq drawing area motion callback (actually the event
     box).  There are about a million things going on here.  This is basically
     the engine for the hdeq interface.  The rest of it happens in the button
-    press and release handlers.  Take a look at the comments in the function 
+    press and release handlers.  Take a look at the comments in the function
     to see what's actually happening.  */
 
 void hdeq_curve_motion (GdkEventMotion *event)
 {
     static int      prev_x = -1, prev_y = -1, current_cursor = -1;
-    int             i, j, x, y, size, diffx_l2m, diffx_m2h, diff_notch[2], 
+    int             i, j, x, y, size, diffx_l2m, diffx_m2h, diff_notch[2],
                     cursor, drag, notch_flag = -1, lo, hi, clock_diff;
     float           freq, gain, s_gain;
     char            *coords = NULL;
@@ -1458,24 +1458,24 @@ void hdeq_curve_motion (GdkEventMotion *event)
         /*  Set the "caption" for the window.  We're tracking the cursor in
             relation to frequency, EQ gain, and spectrum curve gain.  */
 
-        freq = pow (10.0, (gtk_adjustment_get_lower (l_low2mid_adj) + (((double) x / 
+        freq = pow (10.0, (gtk_adjustment_get_lower (l_low2mid_adj) + (((double) x /
             (double) EQ_curve_width) * EQ_curve_range_x)));
 
-        gain = ((((double) EQ_curve_height - (double) y) / 
-            (double) EQ_curve_height) * EQ_curve_range_y) + 
+        gain = ((((double) EQ_curve_height - (double) y) /
+            (double) EQ_curve_height) * EQ_curve_range_y) +
             EQ_gain_lower;
 
-        s_gain = -(EQ_SPECTRUM_RANGE - (((((double) EQ_curve_height - 
+        s_gain = -(EQ_SPECTRUM_RANGE - (((((double) EQ_curve_height -
             (double) y) / (double) EQ_curve_height) * EQ_SPECTRUM_RANGE)));
 
-	coords = g_strdup_printf(_("%dHz , EQ : %.1fdb , Spectrum : %ddb"), NINT
-		(freq), gain, NINT (s_gain));
+    coords = g_strdup_printf(_("%dHz , EQ : %.1fdb , Spectrum : %ddb"), NINT
+        (freq), gain, NINT (s_gain));
 
         gtk_label_set_text (l_EQ_curve_lbl, coords);
-	free(coords);
+    free(coords);
 
 
-        /*  If we're in the midst of drawing the curve...  We're going to 
+        /*  If we're in the midst of drawing the curve...  We're going to
             build the EQ_input arrays from the cursor track.  */
 
         if (EQ_drawing && EQ_input_points)
@@ -1506,15 +1506,15 @@ void hdeq_curve_motion (GdkEventMotion *event)
                   {
  //                   gdk_gc_set_foreground (EQ_gc, get_color (HDEQ_CURVE_COLOR));
               //      color = get_color (HDEQ_CURVE_COLOR);
-				//	cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
-                                                      
- //                   gdk_draw_line (hdeq_pixmap, EQ_gc, 
- //                                  NINT (EQ_xinput[EQ_input_points - 1]), 
+                //	cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
+
+ //                   gdk_draw_line (hdeq_pixmap, EQ_gc,
+ //                                  NINT (EQ_xinput[EQ_input_points - 1]),
  //                                  NINT (EQ_yinput[EQ_input_points - 1]), x, y);
  //                   gdk_gc_set_foreground (EQ_gc, get_color (TEXT_COLOR));
-			//		color = get_color (TEXT_COLOR);
-			//		cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
-					
+            //		color = get_color (TEXT_COLOR);
+            //		cairo_set_source_rgb (EQ_cr,color->red,color->green, color->blue);
+
                     size = (EQ_input_points + 1) * sizeof (float);
                     EQ_xinput = (float *) realloc (EQ_xinput, size);
                     EQ_yinput = (float *) realloc (EQ_yinput, size);
@@ -1580,15 +1580,15 @@ void hdeq_curve_motion (GdkEventMotion *event)
               {
                 if (EQ_notch_drag[i])
                   {
-                    /*  If we're shifted we're raising or lowering notch 
+                    /*  If we're shifted we're raising or lowering notch
                         gain only.  */
 
                     if (event->state & GDK_SHIFT_MASK)
                       {
                         if (y >= 0 && y <= EQ_curve_height)
                           {
-                            EQ_notch_gain[i] = (((((double) EQ_curve_height - 
-                                (double) y) / (double) EQ_curve_height) * 
+                            EQ_notch_gain[i] = (((((double) EQ_curve_height -
+                                (double) y) / (double) EQ_curve_height) *
                                 EQ_curve_range_y) + EQ_gain_lower) * 0.05;
 
                             drag = 1;
@@ -1598,7 +1598,7 @@ void hdeq_curve_motion (GdkEventMotion *event)
 
                             /*  Save state.  */
 
-							s_set_description (S_NOTCH_GAIN (i), g_strdup_printf("Move notch %d", i));
+                            s_set_description (S_NOTCH_GAIN (i), g_strdup_printf("Move notch %d", i));
                             s_set_value_ns (S_NOTCH_GAIN (i), EQ_notch_gain[i]);
                             s_set_value_ns (S_NOTCH_FREQ (i), freq);
                             s_set_value_ns (S_NOTCH_FLAG (i), (float) EQ_notch_flag[i]);
@@ -1609,12 +1609,12 @@ void hdeq_curve_motion (GdkEventMotion *event)
                       }
 
 
-                    /*  Dragging the notch handle in X and Y (i.e. not 
+                    /*  Dragging the notch handle in X and Y (i.e. not
                         shifted).  */
 
                     else
                       {
-                        if (x >= 0 && x <= EQ_curve_width && y >= 0 && 
+                        if (x >= 0 && x <= EQ_curve_width && y >= 0 &&
                             y <= EQ_curve_height)
                           {
                             j = nearest_x (freq);
@@ -1622,10 +1622,10 @@ void hdeq_curve_motion (GdkEventMotion *event)
                               {
                                 EQ_notch_index[i] = nearest_x (freq);
 
-                                EQ_notch_gain[i] = 
-                                    (((((double) EQ_curve_height - 
-                                    (double) y) / (double) EQ_curve_height) * 
-                                    EQ_curve_range_y) + EQ_gain_lower) * 
+                                EQ_notch_gain[i] =
+                                    (((((double) EQ_curve_height -
+                                    (double) y) / (double) EQ_curve_height) *
+                                    EQ_curve_range_y) + EQ_gain_lower) *
                                     0.05;
                                 EQ_notch_flag[i] = 1;
 
@@ -1635,7 +1635,7 @@ void hdeq_curve_motion (GdkEventMotion *event)
 
                                 /*  Save state.  */
 
-								s_set_description (S_NOTCH_GAIN (i), g_strdup_printf("Move notch %d", i));
+                                s_set_description (S_NOTCH_GAIN (i), g_strdup_printf("Move notch %d", i));
                                 s_set_value_ns (S_NOTCH_GAIN (i), EQ_notch_gain[i]);
                                 s_set_value_ns (S_NOTCH_FREQ (i), freq);
                                 s_set_value_ns (S_NOTCH_FLAG (i), (float) EQ_notch_flag[i]);
@@ -1677,7 +1677,7 @@ void hdeq_curve_motion (GdkEventMotion *event)
 
                             /*  Save state.  */
 
-							s_set_description (S_NOTCH_GAIN (i), g_strdup_printf("Move notch %d", i));
+                            s_set_description (S_NOTCH_GAIN (i), g_strdup_printf("Move notch %d", i));
                             s_set_value_ns (S_NOTCH_GAIN (i), EQ_notch_gain[i]);
                             s_set_value_ns (S_NOTCH_FREQ (i), freq);
                             s_set_value_ns (S_NOTCH_FLAG (i), (float) EQ_notch_flag[i]);
@@ -1712,7 +1712,7 @@ void hdeq_curve_motion (GdkEventMotion *event)
               {
                 /*  If we pass over any of the handles we want to change the
                     cursor.  We check by comparing the X/Y cursor position
-                    to the X/Y position of the handles and their 
+                    to the X/Y position of the handles and their
                     width/height.  */
 
                 cursor = GDK_PENCIL;
@@ -1723,11 +1723,11 @@ void hdeq_curve_motion (GdkEventMotion *event)
                 diffx_m2h = abs (x - xover_handle_m2h);
 
 
-                /*  No point in checking for notches if we're already passing 
+                /*  No point in checking for notches if we're already passing
                     over one of the xover bars.  */
 
                 if ((diffx_l2m <= XOVER_HANDLE_HALF_SIZE || diffx_m2h <= XOVER_HANDLE_HALF_SIZE) &&
-                    (y <= XOVER_HANDLE_SIZE || y >= EQ_curve_height - XOVER_HANDLE_SIZE)) 
+                    (y <= XOVER_HANDLE_SIZE || y >= EQ_curve_height - XOVER_HANDLE_SIZE))
                   {
                     cursor = GDK_SB_H_DOUBLE_ARROW;
                   }
@@ -1738,7 +1738,7 @@ void hdeq_curve_motion (GdkEventMotion *event)
                         if (EQ_notch_drag[i] || EQ_notch_Q_drag[i])
                           {
                             /*  Shift is pressed so we can only adjust gain,
-                                therefore we want the vertical double 
+                                therefore we want the vertical double
                                 arrow.  */
 
                             if (event->state & GDK_SHIFT_MASK)
@@ -1771,7 +1771,7 @@ void hdeq_curve_motion (GdkEventMotion *event)
                             diff_notch[1] <= NOTCH_CENTER_HEIGHT)
                           {
                             /*  Shift is pressed so we can only adjust gain,
-                                therefore we want the vertical double 
+                                therefore we want the vertical double
                                 arrow.  */
 
                             if (event->state & GDK_SHIFT_MASK)
@@ -1841,7 +1841,7 @@ void hdeq_curve_motion (GdkEventMotion *event)
 
                 coords = g_strdup_printf (_("%ddb , %dHz - %dHz"), NINT (gain), lo, hi);
                 gtk_label_set_text (l_EQ_curve_lbl, coords);
-		free(coords);
+        free(coords);
               }
           }
 
@@ -1860,8 +1860,8 @@ void hdeq_curve_motion (GdkEventMotion *event)
           {
           //  gdk_draw_pixmap (EQ_drawable, EQ_gc, hdeq_pixmap, 0, 0, 0, 0,
           //                   EQ_curve_width + 1, EQ_curve_height + 1);
-			
-			gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve)); 
+
+            gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 
  //           if (get_spectrum_freq ())
  //             {
@@ -1889,16 +1889,16 @@ void hdeq_curve_motion (GdkEventMotion *event)
 }
 
 
-/*  This comes from the hdeq drawing area button press callback (actually the 
+/*  This comes from the hdeq drawing area button press callback (actually the
     event box).  Again, many things happening here depending on the location
-    of the cursor when the button is pressed.  Take a look at the comments in 
+    of the cursor when the button is pressed.  Take a look at the comments in
     the function to see what's actually happening.  */
 
 void hdeq_curve_button_press (GdkEventButton *event)
 {
     float               *x = NULL, *y = NULL;
-    int                 diffx_l2m, diffx_m2h, diff_notch[2], i, j, i_start = 0, 
-                        i_end = 0, size, ex, ey, *temp_x = NULL, 
+    int                 diffx_l2m, diffx_m2h, diff_notch[2], i, j, i_start = 0,
+                        i_end = 0, size, ex, ey, *temp_x = NULL,
                         *temp_y = NULL;
     static int          interp_pad = 5;
 
@@ -1911,11 +1911,11 @@ void hdeq_curve_button_press (GdkEventButton *event)
 
         /*  Button 1 or 2 - start drawing or end drawing unless we're over a notch
             or xover handle in which case we will be grabbing and sliding the
-            handle in the X or X/Y direction(s).  <Shift> button 1 or 2 is for 
-            grabbing and sliding only in the Y direction (notch/shelf filters 
-            only - look at the motion callback).  <Ctrl> button 1 or 2 will reset 
+            handle in the X or X/Y direction(s).  <Shift> button 1 or 2 is for
+            grabbing and sliding only in the Y direction (notch/shelf filters
+            only - look at the motion callback).  <Ctrl> button 1 or 2 will reset
             shelf and notch values to 0.0.  If you use button 2 you will only
-            be able to drag handles, not draw the curve.  This can make life a bit 
+            be able to drag handles, not draw the curve.  This can make life a bit
             easier since you won't start drawing a curve if you miss the handle.  */
 
       case 1:
@@ -1925,7 +1925,7 @@ void hdeq_curve_button_press (GdkEventButton *event)
 
         if (!EQ_drawing)
           {
-            /*  Checking for position over xover bar or notch handles.  We 
+            /*  Checking for position over xover bar or notch handles.  We
                 check by comparing the X/Y cursor position to the X/Y position
                 of the handles and their width/height.  */
 
@@ -1935,7 +1935,7 @@ void hdeq_curve_button_press (GdkEventButton *event)
 
             /*  Over low to mid crossover handle.  */
 
-            if (diffx_l2m <= XOVER_HANDLE_HALF_SIZE && 
+            if (diffx_l2m <= XOVER_HANDLE_HALF_SIZE &&
                 (ey <= XOVER_HANDLE_SIZE ||
                  ey >= EQ_curve_height - XOVER_HANDLE_SIZE))
               {
@@ -1946,8 +1946,8 @@ void hdeq_curve_button_press (GdkEventButton *event)
 
             /*  Over mid to high crossover handle.  */
 
-            else if (diffx_m2h <= XOVER_HANDLE_HALF_SIZE && 
-                (ey <= XOVER_HANDLE_SIZE || 
+            else if (diffx_m2h <= XOVER_HANDLE_HALF_SIZE &&
+                (ey <= XOVER_HANDLE_SIZE ||
                  ey >= EQ_curve_height - XOVER_HANDLE_SIZE))
               {
                 EQ_drag_m2h = 1;
@@ -1992,7 +1992,7 @@ void hdeq_curve_button_press (GdkEventButton *event)
 
                             /*  Save state.  */
 
-			    s_set_description (S_NOTCH_GAIN (i), g_strdup_printf("Reset notch %d", i));
+                s_set_description (S_NOTCH_GAIN (i), g_strdup_printf("Reset notch %d", i));
                             s_set_value_ns (S_NOTCH_GAIN (i), EQ_notch_gain[i]);
                             s_set_value_ns (S_NOTCH_Q (i), (float) EQ_notch_width[i]);
                             s_set_value_ns (S_NOTCH_FLAG (i), (float) EQ_notch_flag[i]);
@@ -2003,7 +2003,7 @@ void hdeq_curve_button_press (GdkEventButton *event)
                             insert_notch ();
                             set_EQ ();
                    //         draw_EQ_curve ();
-							gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve)); 
+                            gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
                           }
                         else
                           {
@@ -2054,12 +2054,12 @@ void hdeq_curve_button_press (GdkEventButton *event)
                   }
 
 
-                /*  If we aren't over a handle we must be starting to draw 
+                /*  If we aren't over a handle we must be starting to draw
                     the curve so mark the starting point.  */
 
                 if (!xover_active && event->button == 1)
                   {
-                    /*  Save the first point so we can do real narrow EQ 
+                    /*  Save the first point so we can do real narrow EQ
                         changes.  */
 
                     size = (EQ_input_points + 1) * sizeof (float);
@@ -2082,14 +2082,14 @@ void hdeq_curve_button_press (GdkEventButton *event)
           }
 
 
-        /*  End drawing - combine the drawn data with any parts of the 
-            previous that haven't been superceded by what was drawn.  Use 
-            an "interp_pad" cushion on either side of the drawn section 
+        /*  End drawing - combine the drawn data with any parts of the
+            previous that haven't been superceded by what was drawn.  Use
+            an "interp_pad" cushion on either side of the drawn section
             so it will merge nicely with the old data.  */
 
         else if (event->button == 1)
           {
-            /*  If the user drew right to left we need to reverse the 
+            /*  If the user drew right to left we need to reverse the
                 field.  */
 
             if (EQ_draw_dir == -1)
@@ -2113,7 +2113,7 @@ void hdeq_curve_button_press (GdkEventButton *event)
                     temp_y[i] = EQ_yinput[i];
                   }
 
-                for (i = 0, j = EQ_input_points - 1 ; i < EQ_input_points ; 
+                for (i = 0, j = EQ_input_points - 1 ; i < EQ_input_points ;
                      i++, j--)
                   {
                     EQ_xinput[i] = temp_x[j];
@@ -2138,13 +2138,13 @@ void hdeq_curve_button_press (GdkEventButton *event)
                     (double) EQ_curve_width) * EQ_curve_range_x);
 
 
-                EQ_yinput[i] = (((((double) EQ_curve_height - 
-                    (double) EQ_yinput[i]) / (double) EQ_curve_height) * 
+                EQ_yinput[i] = (((((double) EQ_curve_height -
+                    (double) EQ_yinput[i]) / (double) EQ_curve_height) *
                     EQ_curve_range_y) + EQ_gain_lower) * 0.05;
               }
 
 
-            /*  Merge the drawn section with the old curve.  We're putting it 
+            /*  Merge the drawn section with the old curve.  We're putting it
                 all into the x and y arrays.  */
 
 
@@ -2215,7 +2215,7 @@ void hdeq_curve_button_press (GdkEventButton *event)
               }
 
 
-            /*  Set anything after the drawn section from the interpolated 
+            /*  Set anything after the drawn section from the interpolated
                 arrays (without the notches).  */
 
             for (i = i_end ; i < EQ_length ; i++)
@@ -2233,7 +2233,7 @@ void hdeq_curve_button_press (GdkEventButton *event)
             /*  Recompute the splined curve in the log(freq) domain for
                 plotting the EQ.  */
 
-            interpolate (EQ_interval, j, EQ_start, EQ_end, &EQ_length, x, 
+            interpolate (EQ_interval, j, EQ_start, EQ_end, &EQ_length, x,
                 y, EQ_xinterp, EQ_yinterp);
 
 
@@ -2265,7 +2265,7 @@ void hdeq_curve_button_press (GdkEventButton *event)
             /*  Redraw the curve.  */
 
      //       draw_EQ_curve ();
-			gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve)); 
+            gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
           }
         break;
 
@@ -2283,7 +2283,7 @@ void hdeq_curve_button_press (GdkEventButton *event)
 }
 
 
-/*  This comes from the hdeq drawing area button release callback (actually 
+/*  This comes from the hdeq drawing area button release callback (actually
     the event box).  Not as much going on here.  Mostly just resetting
     whatever was done in the motion and button press functions.  */
 
@@ -2295,11 +2295,11 @@ void hdeq_curve_button_release (GdkEventButton  *event)
     switch (event->button)
       {
       case 1:
- 
+
         /*  This is a bit weird.  We're just trying to count releases while
             drawing the EQ curve.  If we're drawing and release the first time
             we'll set to 2 (we just started drawing, EQ_drawing was set to 1
-            by the button press callback).  If we're drawing and release for 
+            by the button press callback).  If we're drawing and release for
             the second time we set to 0 (end drawing section).  */
 
         if (EQ_drawing == 1)
@@ -2315,7 +2315,7 @@ void hdeq_curve_button_release (GdkEventButton  *event)
         /*  Set the graphic EQ sliders based on the hand-drawn curve.  */
 
         geq_set_sliders (EQ_length, EQ_freq_xinterp, EQ_freq_yinterp);
-	//	gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+    //	gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
         EQ_mod = 0;
 
         break;
@@ -2333,7 +2333,7 @@ void hdeq_curve_button_release (GdkEventButton  *event)
             EQ_input_points = 0;
 
      //       draw_EQ_curve ();
-			gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve)); 
+            gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
           }
         break;
       }
@@ -2345,14 +2345,14 @@ void hdeq_curve_button_release (GdkEventButton  *event)
     xover_active = 0;
     EQ_drag_l2m = 0;
     EQ_drag_m2h = 0;
-    for (i = 0 ; i < NOTCHES ; i++) 
+    for (i = 0 ; i < NOTCHES ; i++)
       {
         EQ_notch_drag[i] = 0;
         EQ_notch_Q_drag[i] = 0;
       }
 
 
-    /*  Set the scene warning button because we've (probably) changed 
+    /*  Set the scene warning button because we've (probably) changed
         something.  */
 
     set_scene_warning_button ();
@@ -2430,7 +2430,7 @@ void hdeq_popup (int action)
 
         set_EQ ();
   //      draw_EQ_curve ();
-		gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve)); 
+        gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 
 
         /*  Set the scene warning button so that people will know to save it.  */
@@ -2452,7 +2452,7 @@ void hdeq_popup (int action)
             EQ_input_points = 0;
 
    //         draw_EQ_curve ();
-			gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve)); 
+            gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
           }
         break;
       }
@@ -2467,7 +2467,7 @@ void hdeq_curve_set_label (char *string)
 }
 
 
-/*  Gets the gain values from the state functions and sets up everything.  
+/*  Gets the gain values from the state functions and sets up everything.
     We're carrying the two unused variable (id, value) so that we can use this
     as a callback that we set up with s_set_callback above.  They're not ever
     used for anything.  */
@@ -2498,18 +2498,18 @@ void set_EQ_curve_values (int id, float value)
 
 
     /*  Set the GEQ coefs and faders.  */
-	if(gui_mode == 0){ // default
-	//	set_EQ ();
-		EQ_mod = 1;
-	} else {
-		EQ_mod = 0;
-	}
-	
+    if(gui_mode == 0){ // default
+    //	set_EQ ();
+        EQ_mod = 1;
+    } else {
+        EQ_mod = 0;
+    }
+
 
     /*  Redraw the curve.  */
 
  //   draw_EQ_curve ();
-	gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve)); 
+    gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 }
 
 
@@ -2517,12 +2517,12 @@ void set_EQ_curve_values (int id, float value)
 
 void hdeq_set_xover ()
 {
-    process_set_low2mid_xover ((float) pow (10.0, 
+    process_set_low2mid_xover ((float) pow (10.0,
                                             s_get_value (S_XOVER_FREQ(0))));
-    process_set_mid2high_xover ((float) pow (10.0, 
+    process_set_mid2high_xover ((float) pow (10.0,
                                              s_get_value (S_XOVER_FREQ(1))));
-    
-	printf("%f %f \n", 	s_get_value (S_XOVER_FREQ(0)), s_get_value (S_XOVER_FREQ(1)));
+
+    printf("%f %f \n", 	s_get_value (S_XOVER_FREQ(0)), s_get_value (S_XOVER_FREQ(1)));
     hdeq_low2mid_init ();
     hdeq_mid2high_init ();
 }
@@ -2540,7 +2540,7 @@ void hdeq_set_lower_gain (float gain)
   EQ_curve_range_y = EQ_gain_upper - EQ_gain_lower;
 
 // draw_EQ_curve ();
-  gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve)); 
+  gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 
   set_scene_warning_button ();
 }
@@ -2558,7 +2558,7 @@ void hdeq_set_upper_gain (float gain)
   EQ_curve_range_y = EQ_gain_upper - EQ_gain_lower;
 
  // draw_EQ_curve ();
-  gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve)); 
+  gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 
   set_scene_warning_button ();
 }
@@ -2587,7 +2587,7 @@ static void comp_write_annotation (int i, char *string)
 
     /*  Clear the annotation area.  */
 
-    pl = pango_layout_new (comp_pc[i]);  
+    pl = pango_layout_new (comp_pc[i]);
     pango_layout_set_text (pl, "-99 , -99", -1);
     pango_layout_get_pixel_extents (pl, &ink_rect, NULL);
 
@@ -2595,7 +2595,7 @@ static void comp_write_annotation (int i, char *string)
 //		    ink_rect.height + 5);
 //    gdk_gc_set_foreground (comp_gc[i], get_color (TEXT_COLOR));
 
-    pl = pango_layout_new (comp_pc[i]);  
+    pl = pango_layout_new (comp_pc[i]);
     pango_layout_set_text (pl, string, -1);
 
 
@@ -2605,9 +2605,9 @@ static void comp_write_annotation (int i, char *string)
 
 void comp_curve_update(int i)
 {
-	
-		gtk_widget_queue_draw(GTK_WIDGET(l_comp_curve[i])); 
-	
+
+        gtk_widget_queue_draw(GTK_WIDGET(l_comp_curve[i]));
+
 }
 
 /*  Draw the compressor curve (0-2).  */
@@ -2624,9 +2624,9 @@ void draw_comp_curve (int i, cairo_t *cr)
 
     /*  Clear the curve drawing area.  */
 
-//    gdk_window_clear_area (comp_drawable[i], 0, 0, comp_curve_width[i], 
+//    gdk_window_clear_area (comp_drawable[i], 0, 0, comp_curve_width[i],
 //        comp_curve_height[i]);
-//    gdk_gc_set_line_attributes (comp_gc[i], 1, GDK_LINE_SOLID, GDK_CAP_BUTT, 
+//    gdk_gc_set_line_attributes (comp_gc[i], 1, GDK_LINE_SOLID, GDK_CAP_BUTT,
 //        GDK_JOIN_MITER);
 
 
@@ -2636,14 +2636,14 @@ void draw_comp_curve (int i, cairo_t *cr)
       {
         if (!(j % 10))
           {
-            x1 = NINT (((float) (j - comp_start_x[i]) / 
+            x1 = NINT (((float) (j - comp_start_x[i]) /
                 comp_curve_range_x[i]) * comp_curve_width[i]);
 
-//            gdk_draw_line (comp_drawable[i], comp_gc[i], x1, 0, x1, 
+//            gdk_draw_line (comp_drawable[i], comp_gc[i], x1, 0, x1,
 //                comp_curve_height[i]);
-				cairo_move_to (cr, x1, 0); 
-				cairo_line_to (cr, x1, comp_curve_height[i]);
-				cairo_stroke (cr);
+                cairo_move_to (cr, x1, 0);
+                cairo_line_to (cr, x1, comp_curve_height[i]);
+                cairo_stroke (cr);
           }
       }
 
@@ -2653,25 +2653,25 @@ void draw_comp_curve (int i, cairo_t *cr)
           {
             if (!j)
               {
- //               gdk_gc_set_line_attributes (comp_gc[i], 2, GDK_LINE_SOLID, 
+ //               gdk_gc_set_line_attributes (comp_gc[i], 2, GDK_LINE_SOLID,
  //                   GDK_CAP_BUTT, GDK_JOIN_MITER);
-					cairo_set_line_width (cr, 2.0);
+                    cairo_set_line_width (cr, 2.0);
               }
             else
               {
- //               gdk_gc_set_line_attributes (comp_gc[i], 1, GDK_LINE_SOLID, 
+ //               gdk_gc_set_line_attributes (comp_gc[i], 1, GDK_LINE_SOLID,
  //                   GDK_CAP_BUTT, GDK_JOIN_MITER);
-					cairo_set_line_width (cr, 1.0);
+                    cairo_set_line_width (cr, 1.0);
               }
 
-            y1 = comp_curve_height[i] - NINT (((float) (j - comp_start_y[i]) / 
+            y1 = comp_curve_height[i] - NINT (((float) (j - comp_start_y[i]) /
                 comp_curve_range_y[i]) * comp_curve_height[i]);
 
- //           gdk_draw_line (comp_drawable[i], comp_gc[i], 0, y1, 
+ //           gdk_draw_line (comp_drawable[i], comp_gc[i], 0, y1,
  //               comp_curve_width[i], y1);
-				cairo_move_to (cr, 0, y1); 
-				cairo_line_to (cr, comp_curve_width[i], y1);
-				cairo_stroke (cr);
+                cairo_move_to (cr, 0, y1);
+                cairo_line_to (cr, comp_curve_width[i], y1);
+                cairo_stroke (cr);
           }
       }
 
@@ -2682,31 +2682,31 @@ void draw_comp_curve (int i, cairo_t *cr)
 //        GDK_JOIN_MITER);
 //    gdk_gc_set_foreground (comp_gc[i], get_color (LOW_BAND_COLOR + i));
 
-	color = get_color (LOW_BAND_COLOR + i);
+    color = get_color (LOW_BAND_COLOR + i);
     cairo_set_source_rgb (cr,color->red,color->green, color->blue);
-    
+
     comp = comp_get_settings (i);
 
     x0 = 999.0;
-    for (x = comp_start_x[i] ; x <= comp_end_x[i] ; x += 0.5f) 
+    for (x = comp_start_x[i] ; x <= comp_end_x[i] ; x += 0.5f)
       {
-        x1 = NINT (((x - comp_start_x[i]) / comp_curve_range_x[i]) * 
+        x1 = NINT (((x - comp_start_x[i]) / comp_curve_range_x[i]) *
             comp_curve_width[i]);
 
         y = eval_comp (comp.threshold, comp.ratio, comp.knee, x) +
-	    comp.makeup_gain;
+        comp.makeup_gain;
 
-        y1 = comp_curve_height[i] - NINT (((y - comp_start_y[i]) / 
+        y1 = comp_curve_height[i] - NINT (((y - comp_start_y[i]) /
             comp_curve_range_y[i]) * comp_curve_height[i]);
 
         if (x0 != 999.0) {
  //           gdk_draw_line (comp_drawable[i], comp_gc[i], x0, y0, x1, y1);
- 
-			cairo_move_to (cr, x0, y0); 
-			cairo_line_to (cr, x1, y1);
-			cairo_stroke (cr);
-			
-		}	
+
+            cairo_move_to (cr, x0, y0);
+            cairo_line_to (cr, x1, y1);
+            cairo_stroke (cr);
+
+        }
 
         x0 = x1;
         y0 = y1;
@@ -2723,13 +2723,13 @@ void comp_curve_draw (GtkWidget *widget, cairo_t *cr, int i)
 {
     /*  Since we're doing inclusive plots on the compressor curves we'll
         not decrement the width and height.  */
-	GtkAllocation *allocation = g_new0 (GtkAllocation, 1);
-	gtk_widget_get_allocation(GTK_WIDGET(widget), allocation);
-	
+    GtkAllocation *allocation = g_new0 (GtkAllocation, 1);
+    gtk_widget_get_allocation(GTK_WIDGET(widget), allocation);
+
     comp_curve_width[i] = allocation->width;
     comp_curve_height[i] = allocation->height;
-	g_free(allocation);	
-	
+    g_free(allocation);
+
     draw_comp_curve (i, cr);
 }
 
@@ -2766,7 +2766,7 @@ void comp_curve_box_motion (int i, GdkEventMotion  *event)
     char           *coords = NULL;
 
 
-    x = comp_start_x[i] + (((float) event->x / 
+    x = comp_start_x[i] + (((float) event->x /
         (float) comp_curve_width[i]) * comp_curve_range_x[i]);
 
 
@@ -2780,26 +2780,26 @@ void comp_curve_box_motion (int i, GdkEventMotion  *event)
 }
 
 
-/*  Leaving the box/curve, turn off highlights in the labels of the box and 
+/*  Leaving the box/curve, turn off highlights in the labels of the box and
     curve.  */
 
 void comp_box_leave (int i)
 {
-    gtk_widget_override_color ((GtkWidget *) l_comp_lbl[i], GTK_STATE_FLAG_NORMAL, 
+    gtk_widget_override_color ((GtkWidget *) l_comp_lbl[i], GTK_STATE_FLAG_NORMAL,
                           get_color (TEXT_COLOR));
-    gtk_widget_override_color ((GtkWidget *) l_c_curve_lbl[i], GTK_STATE_FLAG_NORMAL, 
+    gtk_widget_override_color ((GtkWidget *) l_c_curve_lbl[i], GTK_STATE_FLAG_NORMAL,
                           get_color (TEXT_COLOR));
 }
 
 
-/*  Entering the box/curve, turn on highlights in the labels of the box and 
+/*  Entering the box/curve, turn on highlights in the labels of the box and
     curve.  */
 
 void comp_box_enter (int i)
 {
-    gtk_widget_override_color ((GtkWidget *) l_comp_lbl[i], GTK_STATE_FLAG_NORMAL, 
+    gtk_widget_override_color ((GtkWidget *) l_comp_lbl[i], GTK_STATE_FLAG_NORMAL,
                           get_color (LOW_BAND_COLOR + i));
-    gtk_widget_override_color ((GtkWidget *) l_c_curve_lbl[i], GTK_STATE_FLAG_NORMAL, 
+    gtk_widget_override_color ((GtkWidget *) l_c_curve_lbl[i], GTK_STATE_FLAG_NORMAL,
                           get_color (LOW_BAND_COLOR + i));
 }
 

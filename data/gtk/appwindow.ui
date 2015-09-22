@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="ajami">
+    <requires lib="gtk+" version="3.12"/>
+    <!-- Adjustments -->
+    <object class="GtkAdjustment" id="in_amp_adj">
+        <property name="value">0</property>
+        <property name="lower">-12</property>
+        <property name="upper">12</property>
+        <property name="step-increment">1</property>
+    </object>
+    <object class="GtkAdjustment" id="in_stereo_adj">
+        <property name="value">0</property>
+        <property name="lower">-6</property>
+        <property name="upper">6</property>
+        <property name="step-increment">1</property>
+    </object>
+    <object class="GtkAdjustment" id="inmeter_l_adj">
+        <property name="value">0</property>
+        <property name="lower">-60</property>
+        <property name="upper">6</property>
+        <property name="step-increment">0.25</property>
+    </object>
+    <object class="GtkAdjustment" id="inmeter_r_adj">
+        <property name="value">0</property>
+        <property name="lower">-60</property>
+        <property name="upper">6</property>
+        <property name="step-increment">0.25</property>
+    </object>
+    <object class="GtkAdjustment" id="out_amp_adj">
+        <property name="value">0</property>
+        <property name="lower">-50</property>
+        <property name="upper">0</property>
+        <property name="step-increment">1</property>
+    </object>
+    <object class="GtkAdjustment" id="rmsmeter_l_adj">
+        <property name="value">0</property>
+        <property name="lower">-60</property>
+        <property name="upper">6</property>
+        <property name="step-increment">0.25</property>
+    </object>
+    <object class="GtkAdjustment" id="outmeter_l_adj">
+        <property name="value">0</property>
+        <property name="lower">-60</property>
+        <property name="upper">6</property>
+        <property name="step-increment">0.25</property>
+    </object>
+    <object class="GtkAdjustment" id="outmeter_r_adj">
+        <property name="value">0</property>
+        <property name="lower">-60</property>
+        <property name="upper">6</property>
+        <property name="step-increment">0.25</property>
+    </object>
+    <object class="GtkAdjustment" id="rmsmeter_r_adj">
+        <property name="value">0</property>
+        <property name="lower">-60</property>
+        <property name="upper">6</property>
+        <property name="step-increment">0.25</property>
+    </object>
+    <!-- AjamiMainWindow Template -->
+    <template class="AjamiMainWindow" parent="GtkApplicationWindow">
+        <property name="title" translatable="yes">AJAMI</property>
+        <property name="icon_name">ajami</property>
+        <property name="default-height">680</property>
+        <property name="default-width">949</property>
+        <child>
+            <object class="GtkBox" id="outer_vbox">
+                <property name="orientation">vertical</property>
+                <child>
+                    <object class="AjamiScenes" id="scenes"/>
+                </child>
+                <child>
+                    <object class="GtkBox" id="outer_hbox">
+                        <property name="orientation">horizontal</property>
+                        <child>
+                            <object class="GtkBox" id="main_vbox">
+                                <property name="orientation">vertical</property>
+                                <child>
+                                    <object class="GtkBox" id="input_stack_hbox">
+                                        <property name="orientation">horizontal</property>
+                                        <child>
+                                            <object class="GtkFrame" id="input_frame">
+                                                <property name="label" translatable="yes">Input</property>
+                                                <property name="label-xalign">0.5</property>
+                                                <child>
+                                                    <object class="GtkBox" id="input_outerbox">
+                                                        <property name="orientation">vertical</property>
+                                                        <child>
+                                                            <object class="GtkBox" id="input_innerbox">
+                                                                <property name="orientation">horizontal</property>
+                                                                <child>
+                                                                    <object class="GtkScale" id="in_amp_scale">
+                                                                        <property name="vexpand">true</property>
+                                                                        <property name="adjustment">in_amp_adj</property>
+                                                                        <property name="orientation">vertical</property>
+                                                                        <property name="inverted">true</property>
+                                                                    </object>
+                                                                    <packing>
+                                                                        <property name="expand">true</property>
+                                                                    </packing>
+                                                                </child>
+                                                                <child>
+                                                                    <object class="HVMeter" id="inmeter_l">
+                                                                        <property name="width-request">15</property>
+                                                                        <property name="vexpand">true</property>
+                                                                        <property name="adjustment">inmeter_l_adj</property>
+                                                                        <property name="orientation">vertical</property>
+                                                                        <property name="inverted">false</property>
+                                                                    </object>
+                                                                    <packing>
+                                                                        <property name="expand">false</property>
+                                                                    </packing>
+                                                                </child>
+                                                                <child>
+                                                                    <object class="HVMeter" id="inmeter_r">
+                                                                        <property name="width-request">15</property>
+                                                                        <property name="vexpand">true</property>
+                                                                        <property name="adjustment">inmeter_r_adj</property>
+                                                                        <property name="orientation">vertical</property>
+                                                                        <property name="inverted">false</property>
+                                                                    </object>
+                                                                    <packing>
+                                                                        <property name="expand">false</property>
+                                                                    </packing>
+                                                                </child>
+                                                            </object>
+                                                        </child>
+                                                        <child>
+                                                            <object class="GtkScale" id="in_stereo_scale">
+                                                                <property name="adjustment">in_stereo_adj</property>
+                                                                <property name="orientation">horizontal</property>
+                                                                <property name="inverted">true</property>
+                                                                <property name="has-origin">false</property>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                </child>
+                                            </object>
+                                        </child>
+                                        <child>
+                                            <object class="GtkBox" id="stack_vbox">
+                                                <property name="orientation">vertical</property>
+                                                <child>
+                                                    <object class="GtkStackSwitcher" id="main_stack_switcher">
+                                                        <property name="stack">main_stack</property>
+                                                        <property name="halign">GTK_ALIGN_CENTER</property>
+                                                        <property name="hexpand">true</property>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkStack" id="main_stack">
+                                                        <property name="visible">false</property>
+                                                        <property name="expand">true</property>
+                                                        <child>
+                                                            <object class="GtkBox" id="geq_stack"/>
+                                                            <packing>
+                                                                <property name="name">geq</property>
+                                                                <property name="title" translatable="yes">30 band EQ</property>
+                                                            </packing>
+                                                        </child>
+                                                        <child>
+                                                            <object class="GtkBox" id="spectrum_stack"/>
+                                                            <packing>
+                                                                <property name="name">spectrum</property>
+                                                                <property name="title" translatable="yes">Spectrum</property>
+                                                            </packing>
+                                                        </child>
+                                                        <child>
+                                                            <object class="GtkBox" id="comp_curves_stack"/>
+                                                            <packing>
+                                                                <property name="name">comp_curves</property>
+                                                                <property name="title" translatable="yes">Compressor curves</property>
+                                                            </packing>
+                                                        </child>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkBox" id="eq_cross_hbox">
+                                                        <property name="orientation">horizontal</property>
+                                                        <child>
+                                                            <object class="GtkCheckButton" id="eq_bypass_chkbtn">
+                                                                <property name="label" translatable="yes">EQ bypass</property>
+                                                            </object>
+                                                        </child>
+                                                        <child>
+                                                            <object class="GtkLabel" id="cross_low_lbl">
+                                                                <property name="label">100</property>
+                                                            </object>
+                                                            <packing>
+                                                                <property name="expand">true</property>
+                                                            </packing>
+                                                        </child>
+                                                        <child>
+                                                            <object class="GtkLabel" id="cross_lbl">
+                                                                <property name="label" translatable="yes">Crossover</property>
+                                                            </object>
+                                                            <packing>
+                                                                <property name="expand">true</property>
+                                                            </packing>
+                                                        </child>
+                                                        <child>
+                                                            <object class="GtkLabel" id="cross_high_lbl">
+                                                                <property name="label">1500</property>
+                                                            </object>
+                                                            <packing>
+                                                                <property name="expand">true</property>
+                                                            </packing>
+                                                        </child>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkScale" id="cross_low_scale">
+                                                        <property name="orientation">horizontal</property>
+                                                        <property name="inverted">false</property>
+                                                        <property name="draw-value">false</property>
+                                                        <property name="has-origin">false</property>
+                                                        <property name="digits">0</property>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkScale" id="cross_high_scale">
+                                                        <property name="orientation">horizontal</property>
+                                                        <property name="inverted">false</property>
+                                                        <property name="draw-value">false</property>
+                                                        <property name="has-origin">false</property>
+                                                    </object>
+                                                </child>
+                                            </object>
+                                        </child>
+                                    </object>
+                                </child>
+                                <child>
+                                    <object class="GtkBox" id="compressor_limiter_hbox">
+                                        <property name="orientation">horizontal</property>
+                                        <child>
+                                            <object class="AjamiCompressor" id="compressor_low">
+                                                <property name="label">Low: %i - %i</property>
+                                            </object>
+                                            <packing>
+                                                <property name="expand">true</property>
+                                            </packing>
+                                        </child>
+                                        <child>
+                                            <object class="AjamiCompressor" id="compressor_mid">
+                                                <property name="label">Mid: %i - %i</property>
+                                            </object>
+                                            <packing>
+                                                <property name="expand">true</property>
+                                            </packing>
+                                        </child>
+                                        <child>
+                                            <object class="AjamiCompressor" id="compressor_high">
+                                                <property name="label">High: %i - %i</property>
+                                            </object>
+                                            <packing>
+                                                <property name="expand">true</property>
+                                            </packing>
+                                        </child>
+                                        <child>
+                                            <object class="GtkBox" id="booster_limiter_vbox">
+                                                <property name="orientation">vertical</property>
+                                                <child>
+                                                    <object class="GtkFrame" id="boost_frame">
+                                                        <property name="label" translatable="yes">Boost</property>
+                                                        <child>
+                                                            <object class="GtkBox" id="boost_hbox">
+                                                                <property name="orientation">horizontal</property>
+                                                                <child>
+                                                                    <object class="GtkLabel">
+                                                                        <property name="label" translatable="yes">Amount</property>
+                                                                    </object>
+                                                                </child>
+                                                                <child>
+                                                                    <object class="GtkScale" id="boost_scale">
+                                                                        <property name="hexpand">true</property>
+                                                                        <property name="orientation">horizontal</property>
+                                                                        <property name="value-pos">GTK_POS_RIGHT</property>
+                                                                    </object>
+                                                                </child>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                    <packing>
+                                                        <property name="expand">true</property>
+                                                    </packing>
+                                                </child>
+                                                <child>
+                                                    <object class="AjamiLimiter" id="limiter"/>
+                                                </child>
+                                            </object>
+                                        </child>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkFrame" id="out_frame">
+                                <property name="label" translatable="yes">Output</property>
+                                <property name="label-xalign">0.5</property>
+                                <child>
+                                    <object class="GtkBox" id="out_outer_vbox">
+                                        <property name="orientation">vertical</property>
+                                        <property name="hexpand">false</property>
+                                        <child>
+                                            <object class="GtkBox" id="out_out_hbox">
+                                                <property name="orientation">horizontal</property>
+                                                <child>
+                                                    <object class="GtkLabel" id="out_out_lbl">
+                                                        <property name="label" translatable="yes">OUT</property>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkEntry" id="out_out_l_entry">
+                                                        <property name="editable">false</property>
+                                                        <property name="max-width-chars">5</property>
+                                                        <property name="width-chars">5</property>
+                                                        <property name="text">0.0</property>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkEntry" id="out_out_r_entry">
+                                                        <property name="editable">false</property>
+                                                        <property name="max-width-chars">5</property>
+                                                        <property name="width-chars">5</property>
+                                                        <property name="text">0.0</property>
+                                                    </object>
+                                                </child>
+                                            </object>
+                                        </child>
+                                        <child>
+                                            <object class="GtkBox" id="out_rms_hbox">
+                                                <property name="orientation">horizontal</property>
+                                                <child>
+                                                    <object class="GtkLabel" id="out_rms_lbl">
+                                                        <property name="label" translatable="yes">RMS</property>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkEntry" id="out_rms_l_entry">
+                                                        <property name="editable">false</property>
+                                                        <property name="max-width-chars">5</property>
+                                                        <property name="width-chars">5</property>
+                                                        <property name="text">0.0</property>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkEntry" id="out_rms_r_entry">
+                                                        <property name="editable">false</property>
+                                                        <property name="max-width-chars">5</property>
+                                                        <property name="width-chars">5</property>
+                                                        <property name="text">0.0</property>
+                                                    </object>
+                                                </child>
+                                            </object>
+                                        </child>
+                                        <child>
+                                            <object class="GtkBox" id="out_hbox">
+                                                <property name="orientation">horizontal</property>
+                                                <child>
+                                                    <object class="GtkScale" id="out_amp_scale">
+                                                        <property name="vexpand">true</property>
+                                                        <property name="adjustment">out_amp_adj</property>
+                                                        <property name="orientation">vertical</property>
+                                                        <property name="inverted">true</property>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="HVMeter" id="rmsmeter_l">
+                                                        <property name="halign">GTK_ALIGN_END</property>
+                                                        <property name="vexpand">true</property>
+                                                        <property name="width-request">10</property>
+                                                        <property name="adjustment">rmsmeter_l_adj</property>
+                                                        <property name="orientation">vertical</property>
+                                                        <property name="inverted">false</property>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="HVMeter" id="outmeter_l">
+                                                        <property name="hexpand">true</property>
+                                                        <property name="vexpand">true</property>
+                                                        <property name="width-request">15</property>
+                                                        <property name="adjustment">outmeter_l_adj</property>
+                                                        <property name="orientation">vertical</property>
+                                                        <property name="inverted">false</property>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="HVMeter" id="outmeter_r">
+                                                        <property name="hexpand">true</property>
+                                                        <property name="vexpand">true</property>
+                                                        <property name="width-request">15</property>
+                                                        <property name="adjustment">outmeter_r_adj</property>
+                                                        <property name="orientation">vertical</property>
+                                                        <property name="inverted">false</property>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="HVMeter" id="rmsmeter_r">
+                                                        <property name="halign">GTK_ALIGN_START</property>
+                                                        <property name="vexpand">true</property>
+                                                        <property name="width-request">10</property>
+                                                        <property name="adjustment">rmsmeter_r_adj</property>
+                                                        <property name="orientation">vertical</property>
+                                                        <property name="inverted">false</property>
+                                                    </object>
+                                                </child>
+                                            </object>
+                                        </child>
+                                        <child>
+                                            <object class="GtkCheckButton" id="global_bypes_chkbtn">
+                                                <property name="label" translatable="yes">Global bypass</property>
+                                            </object>
+                                        </child>
+                                    </object>
+                                </child>
+                            </object>
+                            <packing>
+                                <property name="expand">false</property>
+                                <property name="fill">false</property>
+                            </packing>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </child>
+    </template>
+</interface>

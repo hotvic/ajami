@@ -30,15 +30,15 @@ void bind_stereo()
 
 
     for (i = 0; i < 3; i++) {
-	s_set_callback(S_STEREO_WIDTH(i), stereo_cb);
-	process_set_stereo_width(i, 0.0f);
+        s_set_callback(S_STEREO_WIDTH(i), stereo_cb);
+        process_set_stereo_width(i, 0.0f);
 
 
         /*  This is a holdover from when we had per band balance.  It is still
             needed until Steve gets a chance to clean up the stereo balance hacks
             that I've done.  JCD  */
 
-	process_set_stereo_balance(i, 0.0f);
+        process_set_stereo_balance(i, 0.0f);
     }
 }
 

@@ -29,7 +29,7 @@
 #include "db.h"
 #include "state.h"
 #include "scenes.h"
-#include "callbacks.h"
+#include "ajami-callbacks.h"
 #include "help.h"
 
 GtkAdjustment *geqa[EQ_BANDS];
@@ -56,45 +56,45 @@ void bind_geq()
     const double hz_per_bin = sample_rate / (double)BINS;
 
     for (i=0; i<EQ_BANDS; i++) {
-	geq_freqs[i] = 1000.0 * pow(10.0, (double)(i-16) * 0.1);
-	/* printf("GEQ band %d = %g Hz\n", i, geq_freqs[i]); */
+    geq_freqs[i] = 1000.0 * pow(10.0, (double)(i-16) * 0.1);
+    /* printf("GEQ band %d = %g Hz\n", i, geq_freqs[i]); */
     }
 
     for (i=0; i<EQ_BANDS; i++) {
-		sprintf(name, "eqb%d", i+1);
-		geqr[i] = GTK_RANGE(lookup_widget(main_window, name));
-		geqa[i] = GTK_ADJUSTMENT(gtk_range_get_adjustment(GTK_RANGE(geqr[i])));
-		g_signal_connect(G_OBJECT(geqa[i]), "value-changed", 
-							 G_CALLBACK(eqb_changed), GINT_TO_POINTER (i+1));
-		g_signal_connect(G_OBJECT(geqa[i]), "value-changed", 
-							 G_CALLBACK(hdeq_eqb_mod), NULL);
-	}
+        sprintf(name, "eqb%d", i+1);
+        geqr[i] = GTK_RANGE(lookup_widget(main_window, name));
+        geqa[i] = GTK_ADJUSTMENT(gtk_range_get_adjustment(GTK_RANGE(geqr[i])));
+        g_signal_connect(G_OBJECT(geqa[i]), "value-changed",
+                             G_CALLBACK(eqb_changed), GINT_TO_POINTER (i+1));
+        g_signal_connect(G_OBJECT(geqa[i]), "value-changed",
+                             G_CALLBACK(hdeq_eqb_mod), NULL);
+    }
 
 
     for (i=0; i<BANDS + 1; i++) {
-		geq_gains[i] = 1.0f;
+        geq_gains[i] = 1.0f;
     }
 
     bin = 0;
     while (bin <= geq_freqs[0] / hz_per_bin && bin < (BINS / 2) - 1) {
-		bin_base[bin] = 0;
-		bin_delta[bin++] = 0.0f;
+        bin_base[bin] = 0;
+        bin_delta[bin++] = 0.0f;
     }
 
     for (i = 1; i < BANDS - 1 && bin < (BINS / 2) - 1
-	 && geq_freqs[i+1] < sample_rate / 2; i++) {
-		last_bin = bin;
-		next_bin = geq_freqs[i+1] / hz_per_bin;
-		while (bin <= next_bin) {
-			bin_base[bin] = i;
-			bin_delta[bin] = (float)(bin-last_bin) / (float)(next_bin-last_bin);
-			bin++;
-		}
+     && geq_freqs[i+1] < sample_rate / 2; i++) {
+        last_bin = bin;
+        next_bin = geq_freqs[i+1] / hz_per_bin;
+        while (bin <= next_bin) {
+            bin_base[bin] = i;
+            bin_delta[bin] = (float)(bin-last_bin) / (float)(next_bin-last_bin);
+            bin++;
+        }
     }
 
     for (; bin < (BINS / 2); bin++) {
-		bin_base[bin] = BANDS - 1;
-		bin_delta[bin] = 0.0f;
+        bin_base[bin] = BANDS - 1;
+        bin_delta[bin] = 0.0f;
     }
 
     geq_set_gains();
@@ -106,7 +106,7 @@ void geq_set_gains()
 
     if (!EQ_drawn)
       {
-//		printf("setting geq gains");  
+//		printf("setting geq gains");
         eq_coefs[0] = 1.0f;
         for (bin = 1; bin < (BINS/2 - 1); bin++) {
           eq_coefs[bin] = ((1.0f-bin_delta[bin]) * geq_gains[bin_base[bin]])
@@ -122,8 +122,8 @@ void geq_set_coefs (int length, float x[], float y[])
 
     if (length < BINS / 2 - 1)
       {
-        errstr = 
-          g_strdup_printf (_("Splined length %d does not match BINS / 2 - 1 (%d)"), 
+        errstr =
+          g_strdup_printf (_("Splined length %d does not match BINS / 2 - 1 (%d)"),
                            length, BINS / 2 - 1);
 
         fprintf (stderr, "%s\n", errstr);
@@ -134,10 +134,10 @@ void geq_set_coefs (int length, float x[], float y[])
       {
         /*  Set eq_coefs using linear gain values.  */
 
-        for (i = 0 ; i < (BINS/2 - 1) ; i++) 
+        for (i = 0 ; i < (BINS/2 - 1) ; i++)
           {
             /*  Figure out which eq_coeffs bin corresponds to this frequency.
-                The FFT bins go from 0Hz to the input sample rate divided 
+                The FFT bins go from 0Hz to the input sample rate divided
                 by 2.  */
 
             bin = NINT (x[i] / sample_rate * ((float) BINS + 0.5f));
@@ -155,7 +155,7 @@ void geq_set_sliders(int length, float x[], float y[])
 
     if (length < BINS / 2 - 1)
       {
-        errstr = g_strdup_printf (_("Splined length %d does not match BINS / 2 - 1 (%d)"), 
+        errstr = g_strdup_printf (_("Splined length %d does not match BINS / 2 - 1 (%d)"),
                                   length, BINS / 2 - 1);
 
         fprintf (stderr, "%s\n", errstr);
@@ -171,7 +171,7 @@ void geq_set_sliders(int length, float x[], float y[])
 
 
         /*  Set the faders in the graphic EQ.  First and last should be
-            exact since that's what we splined to.  Use linear interpolation 
+            exact since that's what we splined to.  Use linear interpolation
             for the others.  */
 
         gtk_adjustment_set_value (geqa[0], y[0] / 0.05);
@@ -213,7 +213,7 @@ void geq_get_freqs_and_gains(float *freqs, float *gains)
         gains[i] = geq_gains[i];
       }
 }
-    
+
 gboolean eqb_changed(GtkAdjustment *adj, gpointer user_data)
 {
     int band = GPOINTER_TO_INT (user_data);
@@ -223,16 +223,16 @@ gboolean eqb_changed(GtkAdjustment *adj, gpointer user_data)
     geq_set_gains();
 
 
-    /*  If the adjustment was made by hand set the scene warning.  If it was 
-        set automatically by the set_EQ function we don't want to set it 
+    /*  If the adjustment was made by hand set the scene warning.  If it was
+        set automatically by the set_EQ function we don't want to set it
         because this could just be a scene change.  We are drawing the curve
         in order to set the state values.  */
 
-    if (!EQ_drawn) 
+    if (!EQ_drawn)
       {
         set_scene_warning_button ();
   //      draw_EQ_curve ();
-		hdeq_curve_update();
+        hdeq_curve_update();
       }
 
     return FALSE;
@@ -241,8 +241,8 @@ gboolean eqb_changed(GtkAdjustment *adj, gpointer user_data)
 GtkAdjustment *geq_get_adjustment(int band)
 {
     if (band < 0 || band > EQ_BANDS) {
-	fprintf(stderr, _("jam error: Adjustment from out-of-range band %d requested\n"), band);
-	exit(1);
+    fprintf(stderr, _("jam error: Adjustment from out-of-range band %d requested\n"), band);
+    exit(1);
     }
     return geqa[band];
 }

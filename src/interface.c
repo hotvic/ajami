@@ -15,7 +15,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 
-#include "callbacks.h"
+#include "ajami-callbacks.h"
 #include "interface.h"
 #include "support.h"
 
@@ -558,134 +558,6 @@ create_window1 (void)
   gtk_widget_show (outer_vbox);
   gtk_container_add (GTK_CONTAINER (window1), outer_vbox);
 
-  menubar1 = gtk_menu_bar_new ();
-  gtk_widget_set_name (menubar1, "menubar1");
-  gtk_widget_show (menubar1);
-  gtk_box_pack_start (GTK_BOX (outer_vbox), menubar1, FALSE, FALSE, 0);
-
-  menuitem1 = gtk_menu_item_new_with_mnemonic (_("_File"));
-  gtk_widget_set_name (menuitem1, "menuitem1");
-  gtk_widget_show (menuitem1);
-  gtk_container_add (GTK_CONTAINER (menubar1), menuitem1);
-
-  menuitem1_menu = gtk_menu_new ();
-  gtk_widget_set_name (menuitem1_menu, "menuitem1_menu");
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem1), menuitem1_menu);
-
-  new1 = gtk_image_menu_item_new_from_stock ("gtk-new", accel_group);
-  gtk_widget_set_name (new1, "new1");
-  gtk_widget_show (new1);
-  gtk_container_add (GTK_CONTAINER (menuitem1_menu), new1);
-
-  open1 = gtk_image_menu_item_new_from_stock ("gtk-open", accel_group);
-  gtk_widget_set_name (open1, "open1");
-  gtk_widget_show (open1);
-  gtk_container_add (GTK_CONTAINER (menuitem1_menu), open1);
-
-  save1 = gtk_image_menu_item_new_from_stock ("gtk-save", accel_group);
-  gtk_widget_set_name (save1, "save1");
-  gtk_widget_show (save1);
-  gtk_container_add (GTK_CONTAINER (menuitem1_menu), save1);
-
-  save_as1 = gtk_image_menu_item_new_with_mnemonic (_("Save _As"));
-  gtk_widget_set_name (save_as1, "save_as1");
-  gtk_widget_show (save_as1);
-  gtk_container_add (GTK_CONTAINER (menuitem1_menu), save_as1);
-  gtk_widget_add_accelerator (save_as1, "activate", accel_group,
-                              GDK_KEY_a, (GdkModifierType) GDK_CONTROL_MASK,
-                              GTK_ACCEL_VISIBLE);
-
-  image330 = gtk_image_new_from_stock ("gtk-save-as", GTK_ICON_SIZE_MENU);
-  gtk_widget_set_name (image330, "image330");
-  gtk_widget_show (image330);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (save_as1), image330);
-
-  separatormenuitem1 = gtk_menu_item_new ();
-  gtk_widget_set_name (separatormenuitem1, "separatormenuitem1");
-  gtk_widget_show (separatormenuitem1);
-  gtk_container_add (GTK_CONTAINER (menuitem1_menu), separatormenuitem1);
-  gtk_widget_set_sensitive (separatormenuitem1, FALSE);
-
-  quit1 = gtk_image_menu_item_new_from_stock ("gtk-quit", accel_group);
-  gtk_widget_set_name (quit1, "quit1");
-  gtk_widget_show (quit1);
-  gtk_container_add (GTK_CONTAINER (menuitem1_menu), quit1);
-
-  menuitem2 = gtk_menu_item_new_with_mnemonic (_("_Edit"));
-  gtk_widget_set_name (menuitem2, "menuitem2");
-  gtk_widget_show (menuitem2);
-  gtk_container_add (GTK_CONTAINER (menubar1), menuitem2);
-
-  menuitem2_menu = gtk_menu_new ();
-  gtk_widget_set_name (menuitem2_menu, "menuitem2_menu");
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem2), menuitem2_menu);
-
-  undo1 = gtk_image_menu_item_new_with_mnemonic (_("_Undo"));
-  gtk_widget_set_name (undo1, "undo1");
-  gtk_widget_show (undo1);
-  gtk_container_add (GTK_CONTAINER (menuitem2_menu), undo1);
-  gtk_widget_add_accelerator (undo1, "activate", accel_group,
-                              GDK_KEY_z, (GdkModifierType) GDK_CONTROL_MASK,
-                              GTK_ACCEL_VISIBLE);
-
-  image331 = gtk_image_new_from_stock ("gtk-undo", GTK_ICON_SIZE_MENU);
-  gtk_widget_set_name (image331, "image331");
-  gtk_widget_show (image331);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (undo1), image331);
-
-  redo1 = gtk_image_menu_item_new_with_mnemonic (_("_Redo"));
-  gtk_widget_set_name (redo1, "redo1");
-  gtk_widget_show (redo1);
-  gtk_container_add (GTK_CONTAINER (menuitem2_menu), redo1);
-  gtk_widget_add_accelerator (redo1, "activate", accel_group,
-                              GDK_KEY_r, (GdkModifierType) GDK_CONTROL_MASK,
-                              GTK_ACCEL_VISIBLE);
-
-  image332 = gtk_image_new_from_stock ("gtk-redo", GTK_ICON_SIZE_MENU);
-  gtk_widget_set_name (image332, "image332");
-  gtk_widget_show (image332);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (redo1), image332);
-
-  preferences1 = gtk_image_menu_item_new_from_stock ("gtk-preferences", accel_group);
-  gtk_widget_set_name (preferences1, "preferences1");
-  gtk_widget_show (preferences1);
-  gtk_container_add (GTK_CONTAINER (menuitem2_menu), preferences1);
-
-  jack_ports = gtk_menu_item_new_with_mnemonic (_("_Ports"));
-  gtk_widget_set_name (jack_ports, "jack_ports");
-  gtk_widget_show (jack_ports);
-  gtk_container_add (GTK_CONTAINER (menubar1), jack_ports);
-
-  menuitem4 = gtk_menu_item_new_with_mnemonic (_("_Help"));
-  gtk_widget_set_name (menuitem4, "menuitem4");
-  gtk_widget_show (menuitem4);
-  gtk_container_add (GTK_CONTAINER (menubar1), menuitem4);
-
-  menuitem4_menu = gtk_menu_new ();
-  gtk_widget_set_name (menuitem4_menu, "menuitem4_menu");
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem4), menuitem4_menu);
-
-  help1 = gtk_image_menu_item_new_with_mnemonic (_("_General"));
-  gtk_widget_set_name (help1, "help1");
-  gtk_widget_show (help1);
-  gtk_container_add (GTK_CONTAINER (menuitem4_menu), help1);
-  gtk_widget_add_accelerator (help1, "activate", accel_group,
-                              GDK_KEY_h, (GdkModifierType) GDK_CONTROL_MASK,
-                              GTK_ACCEL_VISIBLE);
-
-  image333 = gtk_image_new_from_stock ("gtk-help", GTK_ICON_SIZE_MENU);
-  gtk_widget_set_name (image333, "image333");
-  gtk_widget_show (image333);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (help1), image333);
-
-  keys1 = gtk_image_menu_item_new_with_mnemonic (_("_Keys"));
-  gtk_widget_set_name (keys1, "keys1");
-  gtk_widget_show (keys1);
-  gtk_container_add (GTK_CONTAINER (menuitem4_menu), keys1);
-  gtk_widget_add_accelerator (keys1, "activate", accel_group,
-                              GDK_KEY_k, (GdkModifierType) GDK_CONTROL_MASK,
-                              GTK_ACCEL_VISIBLE);
-
   image334 = gtk_image_new_from_stock ("gtk-index", GTK_ICON_SIZE_MENU);
   gtk_widget_set_name (image334, "image334");
   gtk_widget_show (image334);
@@ -744,8 +616,8 @@ create_window1 (void)
   rewind_button = gtk_event_box_new ();
   gtk_widget_set_name (rewind_button, "rewind_button");
   gtk_widget_show (rewind_button);
-  gtk_grid_attach (GTK_GRID (transport_controls), rewind_button, 0, 0, 1, 1);                  
-                    
+  gtk_grid_attach (GTK_GRID (transport_controls), rewind_button, 0, 0, 1, 1);
+
   gtk_widget_set_tooltip_text (rewind_button, _("rewind transport"));
 
   rewind = gtk_image_new_from_stock ("gtk-media-previous", GTK_ICON_SIZE_BUTTON);
@@ -756,7 +628,7 @@ create_window1 (void)
   backward_button = gtk_event_box_new ();
   gtk_widget_set_name (backward_button, "backward_button");
   gtk_widget_show (backward_button);
-  gtk_grid_attach (GTK_GRID (transport_controls), backward_button, 1, 0, 1, 1);                   
+  gtk_grid_attach (GTK_GRID (transport_controls), backward_button, 1, 0, 1, 1);
   gtk_widget_set_tooltip_text( backward_button, _("backward transport"));
 
   backward = gtk_image_new_from_stock ("gtk-media-rewind", GTK_ICON_SIZE_BUTTON);
@@ -767,7 +639,7 @@ create_window1 (void)
   play_button = gtk_event_box_new ();
   gtk_widget_set_name (play_button, "play_button");
   gtk_widget_show (play_button);
-  gtk_grid_attach (GTK_GRID (transport_controls), play_button, 2, 0, 1, 1);                   
+  gtk_grid_attach (GTK_GRID (transport_controls), play_button, 2, 0, 1, 1);
   gtk_widget_set_tooltip_text (play_button, _("play transport"));
 
   play = gtk_image_new_from_stock ("gtk-media-play", GTK_ICON_SIZE_BUTTON);
@@ -778,7 +650,7 @@ create_window1 (void)
   pause_button = gtk_event_box_new ();
   gtk_widget_set_name (pause_button, "pause_button");
   gtk_widget_show (pause_button);
-  gtk_grid_attach (GTK_GRID (transport_controls), pause_button, 3, 0, 1, 1);                   
+  gtk_grid_attach (GTK_GRID (transport_controls), pause_button, 3, 0, 1, 1);
   gtk_widget_set_tooltip_text (pause_button, _("pause transport"));
 
   pause = gtk_image_new_from_stock ("gtk-media-pause", GTK_ICON_SIZE_BUTTON);
@@ -789,7 +661,7 @@ create_window1 (void)
   forward_button = gtk_event_box_new ();
   gtk_widget_set_name (forward_button, "forward_button");
   gtk_widget_show (forward_button);
-  gtk_grid_attach (GTK_GRID (transport_controls), forward_button, 4, 0, 1, 1);                  
+  gtk_grid_attach (GTK_GRID (transport_controls), forward_button, 4, 0, 1, 1);
   gtk_widget_set_tooltip_text (forward_button, _("forward transport"));
 
   forward = gtk_image_new_from_stock ("gtk-media-next", GTK_ICON_SIZE_BUTTON);
@@ -1932,7 +1804,7 @@ create_window1 (void)
   gtk_widget_show (label48);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 1), label48);
   gtk_label_set_use_markup (GTK_LABEL (label48), TRUE);
-  
+
   spectrum_eventbox = gtk_event_box_new ();
   gtk_widget_set_name (spectrum_eventbox, "spectrum_eventbox");
   gtk_widget_show (spectrum_eventbox);
@@ -2132,7 +2004,7 @@ create_window1 (void)
  // gtk_grid_attach (GTK_GRID (table14), low2mid_event_box, 0, 1, 0, 1,
  //                   (GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL),
  //                   (GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL), 0, 0);
-  gtk_grid_attach (GTK_GRID (table14), low2mid_event_box, 0, 0, 1, 1);                  
+  gtk_grid_attach (GTK_GRID (table14), low2mid_event_box, 0, 0, 1, 1);
   gtk_widget_set_tooltip_text ( low2mid_event_box, _("Low to Mid Band Crossover"));
 
   low2mid = gtk_scale_new (GTK_ORIENTATION_HORIZONTAL, GTK_ADJUSTMENT (gtk_adjustment_new (2.22462, 1.39794, 4.30103, 0.01, 0.1, 0)));
@@ -2147,7 +2019,7 @@ create_window1 (void)
 //  gtk_grid_attach (GTK_GRID (table14), mid2high_event_box, 0, 1, 1, 2,
  //                   (GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL),
 //                    (GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL), 0, 0);
-  gtk_grid_attach (GTK_GRID (table14), mid2high_event_box, 0, 1, 1, 1);                   
+  gtk_grid_attach (GTK_GRID (table14), mid2high_event_box, 0, 1, 1, 1);
   gtk_widget_set_tooltip_text ( mid2high_event_box, _("Mid to High Band Crossover"));
 
   mid2high = gtk_scale_new (GTK_ORIENTATION_HORIZONTAL, GTK_ADJUSTMENT (gtk_adjustment_new (3.19488, 1.39794, 4.30103, 0.01, 0.1, 0)));
@@ -3145,7 +3017,7 @@ create_window1 (void)
  // gtk_grid_attach (GTK_GRID(table15), limit_val_label, 1, 2, 1, 1);
   //                  (GtkAttachOptions) (GTK_FILL),
   //                  (GtkAttachOptions) (0), 0, 0);
-  gtk_grid_attach (GTK_GRID (table15), limit_val_label, 2, 0, 1, 1);                   
+  gtk_grid_attach (GTK_GRID (table15), limit_val_label, 2, 0, 1, 1);
   gtk_misc_set_alignment (GTK_MISC (limit_val_label), 1, 0.5);
   gtk_misc_set_padding (GTK_MISC (limit_val_label), 4, 0);
 
@@ -3155,7 +3027,7 @@ create_window1 (void)
  // gtk_grid_attach (GTK_GRID (table15), release_val_label, 1, 2, 1, 2,
  //                   (GtkAttachOptions) (GTK_FILL),
  //                   (GtkAttachOptions) (0), 0, 0);
-  gtk_grid_attach (GTK_GRID (table15), release_val_label, 2, 1, 1, 1);                     
+  gtk_grid_attach (GTK_GRID (table15), release_val_label, 2, 1, 1, 1);
   gtk_misc_set_alignment (GTK_MISC (release_val_label), 1, 0.5);
   gtk_misc_set_padding (GTK_MISC (release_val_label), 4, 0);
 
@@ -3166,7 +3038,7 @@ create_window1 (void)
 //  gtk_grid_attach (GTK_GRID (table15), lim_lh_scale, 2, 3, 1, 2,
  //                   (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 //                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
-  gtk_grid_attach (GTK_GRID (table15), lim_lh_scale, 3, 0, 3, 1);                  
+  gtk_grid_attach (GTK_GRID (table15), lim_lh_scale, 3, 0, 3, 1);
   gtk_scale_set_draw_value (GTK_SCALE (lim_lh_scale), FALSE);
   gtk_scale_set_value_pos (GTK_SCALE (lim_lh_scale), GTK_POS_LEFT);
   gtk_scale_set_digits (GTK_SCALE (lim_lh_scale), 0);
@@ -3178,7 +3050,7 @@ create_window1 (void)
 //  gtk_grid_attach (GTK_GRID (table15), lim_out_trim_scale, 2, 3, 0, 1,
 //                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 //                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
-  gtk_grid_attach (GTK_GRID (table15), lim_out_trim_scale, 3, 1, 3, 1);                  
+  gtk_grid_attach (GTK_GRID (table15), lim_out_trim_scale, 3, 1, 3, 1);
   gtk_widget_set_size_request (lim_out_trim_scale, 68, 20);
   gtk_scale_set_draw_value (GTK_SCALE (lim_out_trim_scale), FALSE);
   gtk_scale_set_value_pos (GTK_SCALE (lim_out_trim_scale), GTK_POS_LEFT);
@@ -3189,7 +3061,7 @@ create_window1 (void)
 //  gtk_grid_attach (GTK_GRID (table15), label218, 0, 1, 1, 2,
 //                   (GtkAttachOptions) (GTK_FILL),
 //                   (GtkAttachOptions) (0), 0, 0);
-  gtk_grid_attach (GTK_GRID (table15), label218, 0, 0, 1, 1);                   
+  gtk_grid_attach (GTK_GRID (table15), label218, 0, 0, 1, 1);
   gtk_misc_set_alignment (GTK_MISC (label218), 0, 0.5);
 
   label217 = gtk_label_new (_("Limit"));
@@ -3198,7 +3070,7 @@ create_window1 (void)
 //  gtk_grid_attach (GTK_GRID (table15), label217, 0, 1, 0, 1,
 //                    (GtkAttachOptions) (GTK_FILL),
 //                    (GtkAttachOptions) (0), 0, 0);
-  gtk_grid_attach (GTK_GRID (table15), label217, 0, 1, 1, 1);                  
+  gtk_grid_attach (GTK_GRID (table15), label217, 0, 1, 1, 1);
   gtk_misc_set_alignment (GTK_MISC (label217), 0, 0.5);
 
   lim_out_meter_eventbox = gtk_event_box_new ();
@@ -3279,7 +3151,7 @@ create_window1 (void)
 //  gtk_grid_attach (GTK_GRID (table16), out_meter_text_l, 1, 2, 0, 1,
 //                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 //                    (GtkAttachOptions) (0), 0, 0);
-  gtk_grid_attach (GTK_GRID (table16), out_meter_text_l, 1, 0, 1, 1);                  
+  gtk_grid_attach (GTK_GRID (table16), out_meter_text_l, 1, 0, 1, 1);
   gtk_widget_set_tooltip_text (out_meter_text_l, _("Left channel output peak/level"));
   gtk_editable_set_editable (GTK_EDITABLE (out_meter_text_l), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (out_meter_text_l), 8226);
@@ -3291,7 +3163,7 @@ create_window1 (void)
 //  gtk_grid_attach (GTK_GRID (table16), out_meter_text_r, 2, 3, 0, 1,
 //                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 //                    (GtkAttachOptions) (0), 0, 0);
-  gtk_grid_attach (GTK_GRID (table16), out_meter_text_r, 1, 1, 1, 1);                   
+  gtk_grid_attach (GTK_GRID (table16), out_meter_text_r, 1, 1, 1, 1);
   gtk_widget_set_tooltip_text ( out_meter_text_r, _("Right channel output peak/level"));
   gtk_editable_set_editable (GTK_EDITABLE (out_meter_text_r), FALSE);
   gtk_entry_set_invisible_char (GTK_ENTRY (out_meter_text_r), 8226);
@@ -5050,7 +4922,7 @@ create_pref_dialog (void)
   gtk_window_set_type_hint (GTK_WINDOW (pref_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 
  // dialog_vbox1 = GTK_DIALOG (pref_dialog)->vbox;
-  dialog_vbox1 = gtk_dialog_get_content_area(GTK_DIALOG (pref_dialog)); 
+  dialog_vbox1 = gtk_dialog_get_content_area(GTK_DIALOG (pref_dialog));
   gtk_widget_set_name (dialog_vbox1, "dialog_vbox1");
   gtk_widget_show (dialog_vbox1);
 
@@ -5746,7 +5618,7 @@ create_colorchooserdialog1 (GtkWidget * parent)
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (colorchooserdialog1, colorchooserdialog1, "colorchooserdialog1");
-  
+
   return colorchooserdialog1;
 }
 
@@ -6463,17 +6335,17 @@ create_window3 (void)
   gtk_widget_show (hbox_w3_1);
  // gtk_container_add (GTK_CONTAINER (vbox167), hbox_w3_1);
   gtk_box_pack_start (GTK_BOX (vbox167), hbox_w3_1, FALSE, TRUE, 0);
-  
+
   button1 = gtk_button_new_with_mnemonic (_("Master"));
   gtk_widget_set_name (button1, "button1");
   gtk_widget_show (button1);
   gtk_box_pack_start (GTK_BOX (hbox_w3_1), button1, TRUE, TRUE, 0);
-  
+
   button2 = gtk_button_new_with_mnemonic (_("Multi"));
   gtk_widget_set_name (button2, "button2");
   gtk_widget_show (button2);
   gtk_box_pack_start (GTK_BOX (hbox_w3_1), button2, TRUE, TRUE, 0);
-  
+
   frame29 = gtk_frame_new (NULL);
   gtk_widget_set_name (frame29, "frame29");
   gtk_widget_show (frame29);
@@ -6523,25 +6395,25 @@ create_window3 (void)
   gtk_widget_show (presets_outmeter_r);
   gtk_box_pack_start (GTK_BOX (hbox85), presets_outmeter_r, TRUE, TRUE, 0);
   gtk_widget_set_size_request (presets_outmeter_r, 15, 0);
-  
+
   global_bypass_event_box_presets = gtk_event_box_new ();
   gtk_widget_set_name (global_bypass_event_box_presets, "global_bypass_event_box_presets");
   gtk_widget_show (global_bypass_event_box_presets);
   gtk_box_pack_start (GTK_BOX (vbox168), global_bypass_event_box_presets, FALSE, TRUE, 0);
   gtk_widget_set_tooltip_text ( global_bypass_event_box_presets, _("Bypass all processing") );
-  
+
   checkbutton1 = gtk_check_button_new_with_mnemonic (_("Global bypass"));
   gtk_widget_set_name (checkbutton1, "checkbutton1");
   gtk_widget_show (checkbutton1);
   gtk_container_add (GTK_CONTAINER (global_bypass_event_box_presets), checkbutton1);
- // gtk_box_pack_start (GTK_BOX (global_bypass_event_box_presets), checkbutton1, FALSE, FALSE, 0);  
+ // gtk_box_pack_start (GTK_BOX (global_bypass_event_box_presets), checkbutton1, FALSE, FALSE, 0);
 
   label3183 = gtk_label_new (_("Output"));
   gtk_widget_set_name (label3183, "label3183");
   gtk_widget_show (label3183);
   gtk_frame_set_label_widget (GTK_FRAME (frame29), label3183);
-  
-  
+
+
 
   g_signal_connect ((gpointer) window3, "delete_event",
                     G_CALLBACK (on_window3_delete_event),
@@ -6569,7 +6441,7 @@ create_window3 (void)
                     NULL);
   g_signal_connect ((gpointer) button2, "button_press_event",
                     G_CALLBACK (on_eButton2_button_press_event),
-                    NULL);                  
+                    NULL);
   g_signal_connect ((gpointer) eventbox73, "enter_notify_event",
                     G_CALLBACK (on_output_eventbox_enter_notify_event),
                     NULL);
@@ -6651,21 +6523,21 @@ create_window4 (void)
   gtk_container_add (GTK_CONTAINER (window4), hbox_w4_1);
 
 
-  
-  
-  
+
+
+
   g_signal_connect ((gpointer) window4, "delete_event",
                     G_CALLBACK (on_window4_delete_event),
                     NULL);
   g_signal_connect ((gpointer) window4, "show_help",
                     G_CALLBACK (on_show_help),
                     NULL);
-  
+
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (window4, window4, "window4");
   GLADE_HOOKUP_OBJECT (window4, hbox_w4_1, "hbox_w4_1");
 
-  
+
   return window4;
-  
-}  
+
+}

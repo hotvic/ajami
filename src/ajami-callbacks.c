@@ -1,7 +1,6 @@
 /*
  * This file is part of AJAMI.
  *
- * Copyright (C) 2003 Jack O'Quin
  * Copyright (C) 2014 Victor A. Santos <victoraur.santos@gmail.com>
  *
  * This software is free software: you can redistribute it and/or modify
@@ -19,21 +18,10 @@
  */
 
 
-#ifndef JACKSTATUS_H
-#define JACKSTATUS_H
+#include "config.h"
 
-#include <jack/transport.h>
+#include "ajami-callbacks.h"
+#include "ajami-appwindow.h"
+#include "ajami-i18n.h"
 
-typedef struct {
-    int            realtime;
-    int            active;
-    int            xruns;
-    float          cpu_load;
-    jack_nframes_t sample_rate;
-    jack_nframes_t buf_size;
-    jack_nframes_t latency;
-} io_jack_status_t;
 
-void io_get_status(io_jack_status_t *jp);
-
-#endif

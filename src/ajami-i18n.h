@@ -17,26 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "config.h"
 
-#include <stdio.h>
-
-#include <gtk/gtk.h>
-
-#include "ajami-app.h"
-
-
-int
-main(int argc, char *argv[])
-{
-    AjamiApp *app;
-    int       status;
-
-    app = ajami_app_new ();
-
-    status = g_application_run (G_APPLICATION (app), argc, argv);
-
-    g_object_unref (app);
-
-    return status;
-}
+#define _(String) (String)
+#define N_(String) String
+#define textdomain(Domain)
+#define bindtextdomain(Package, Directory)

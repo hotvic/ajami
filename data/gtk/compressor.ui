@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="ajami">
+  <requires lib="gtk+" version="3.10" />
+  <template class="AjamiCompressor" parent="GtkFrame">
+    <child>
+      <object class="GtkBox" id="outer_vbox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkBox" id="controls_hbox">
+            <property name="orientation">horizontal</property>
+            <child>
+              <object class="GtkBox" id="attack_vbox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel" id="attack_lbl">
+                    <property name="label">A</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkScale" id="attack_scale">
+                    <property name="orientation">vertical</property>
+                    <property name="vexpand">true</property>
+                    <property name="inverted">true</property>
+                    <property name="draw-value">true</property>
+                    <property name="value-pos">GTK_POS_TOP</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="release_vbox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel" id="release_lbl">
+                    <property name="label">R</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkScale" id="release_scale">
+                    <property name="orientation">vertical</property>
+                    <property name="vexpand">true</property>
+                    <property name="inverted">true</property>
+                    <property name="draw-value">true</property>
+                    <property name="value-pos">GTK_POS_TOP</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="threshold_vbox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel" id="threshold_lbl">
+                    <property name="label">T</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkScale" id="threshold_scale">
+                    <property name="orientation">vertical</property>
+                    <property name="vexpand">true</property>
+                    <property name="inverted">true</property>
+                    <property name="draw-value">true</property>
+                    <property name="value-pos">GTK_POS_TOP</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="ratio_vbox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel" id="ratio_lbl">
+                    <property name="label">r</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkScale" id="ratio_scale">
+                    <property name="orientation">vertical</property>
+                    <property name="vexpand">true</property>
+                    <property name="inverted">true</property>
+                    <property name="draw-value">true</property>
+                    <property name="value-pos">GTK_POS_TOP</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="knee_vbox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel" id="knee_lbl">
+                    <property name="label">K</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkScale" id="knee_scale">
+                    <property name="orientation">vertical</property>
+                    <property name="vexpand">true</property>
+                    <property name="inverted">true</property>
+                    <property name="draw-value">true</property>
+                    <property name="value-pos">GTK_POS_TOP</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="makeup_vbox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel" id="makeup_lbl">
+                    <property name="label">M</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="makeup_auto">
+                    <property name="label">0.0</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkScale" id="makeup_scale">
+                    <property name="orientation">vertical</property>
+                    <property name="vexpand">true</property>
+                    <property name="inverted">true</property>
+                    <property name="draw-value">false</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox" id="status_hbox">
+            <property name="orientation">horizontal</property>
+            <child>
+              <object class="GtkCheckButton" id="solo_chkbtn">
+                <property name="label" translatable="yes">Solo</property>
+              </object>
+              <packing>
+                <property name="expand">true</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="bypass_chkbtn">
+                <property name="label" translatable="yes">Bypass</property>
+              </object>
+              <packing>
+                <property name="expand">true</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="delay_chkbtn">
+                <property name="label" translatable="yes">Delay</property>
+              </object>
+              <packing>
+                <property name="expand">true</property>
+              </packing>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

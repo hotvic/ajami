@@ -28,7 +28,7 @@
 
 #include "config.h"
 #include "main.h"
-#include "callbacks.h"
+#include "ajami-callbacks.h"
 #include "geq.h"
 #include "spectrum.h"
 #include "intrim.h"
@@ -59,7 +59,7 @@ static char             *errstr = NULL;
 
 
 static s_state       *last_state = NULL;
-static int	      last_changed = S_NONE;
+static int        last_changed = S_NONE;
 
 static GList         *history = NULL;
 static GList         *undo_pos = NULL;
@@ -112,12 +112,12 @@ void state_init()
     unsigned int i;
 
     for (i=0; i<S_SIZE; i++) {
-	s_value[i] = 0.0f;
-	s_target[i] = 0.0f;
-	s_duration[i] = 0;
-	s_changed[i] = 0;
-	s_adjustment[i] = NULL;
-	s_callback[i] = NULL;
+        s_value[i] = 0.0f;
+        s_target[i] = 0.0f;
+        s_duration[i] = 0;
+        s_changed[i] = 0;
+        s_adjustment[i] = NULL;
+        s_callback[i] = NULL;
     }
 
 
@@ -166,14 +166,14 @@ void s_set_value_ui(int id, float value)
     s_value[id] = value;
 
     if (suppress_feedback) {
-	return;
+        return;
     }
     assert(id >= 0 && id < S_SIZE);
 
 
     if (last_changed != id) {
-	s_history_add(g_strdup_printf("%s = %f", s_description[id],
-		      s_value[id]));
+        s_history_add(g_strdup_printf("%s = %f", s_description[id],
+                                      s_value[id]));
     }
     last_state->value[id] = value;
 
@@ -181,17 +181,17 @@ void s_set_value_ui(int id, float value)
     /* This code is confusing in use, so I've removed it - swh */
 
     if (value - MIN_CHANGE < last_state->value[id] &&
-	value + MIN_CHANGE > last_state->value[id]) {
-	last_changed = S_NONE;
+            value + MIN_CHANGE > last_state->value[id]) {
+        last_changed = S_NONE;
     } else {
-	last_changed = id;
+        last_changed = id;
     }
 #else
     last_changed = id;
 #endif
 
     if (s_callback[id]) {
-	(*s_callback[id])(id, value);
+        (*s_callback[id])(id, value);
     }
 }
 
@@ -201,7 +201,7 @@ void s_set_value(int id, float value, int duration)
     s_duration[id] = duration;
     s_target[id] = value;
     if (s_adjustment[id]) {
-	gtk_adjustment_set_value(s_adjustment[id], value);
+        gtk_adjustment_set_value(s_adjustment[id], value);
     }
 }
 
@@ -210,7 +210,7 @@ void s_set_value_block(float *values, int base, int count)
     int i;
 
     for (i = 0 ; i < count ; i++) {
-	s_value[base + i] = values[i];
+        s_value[base + i] = values[i];
     }
     last_changed = base;
     s_set_events(base, values[i]);
@@ -230,7 +230,7 @@ void s_clear_history()
     GList *p;
 
     for (p=history; p; p=p->next) {
-	free(p->data);
+        free(p->data);
     }
     g_list_free(history);
     history = NULL;
@@ -250,12 +250,12 @@ void s_history_add(const char *description)
     memcpy(ns->value, s_value, S_SIZE * sizeof(float));
 
     if (undo_pos) {
-	it = undo_pos->next;
-	while (it) {
-	    free(it->data);
-	    it = it->next;
-	}
-	undo_pos->next = NULL;
+        it = undo_pos->next;
+        while (it) {
+            free(it->data);
+            it = it->next;
+        }
+        undo_pos->next = NULL;
     }
 
     history = g_list_append(history, ns);
@@ -274,12 +274,12 @@ void s_history_add_state(s_state state)
     memcpy(ns->value, state.value, S_SIZE * sizeof(float));
 
     if (undo_pos) {
-	it = undo_pos->next;
-	while (it) {
-	    free(it->data);
-	    it = it->next;
-	}
-	undo_pos->next = NULL;
+        it = undo_pos->next;
+        while (it) {
+            free(it->data);
+            it = it->next;
+        }
+        undo_pos->next = NULL;
     }
 
     history = g_list_append(history, ns);
@@ -292,7 +292,7 @@ static unsigned int compute_state_crc (s_state *state)
 {
     unsigned int        checksum, i;
     unsigned char       *buf;
-    unsigned int        crc_table[256] = 
+    unsigned int        crc_table[256] =
       {0x00000000,0x77073096,0xEE0E612C,0x990951BA,0x076DC419,0x706AF48F,
        0xE963A535,0x9E6495A3,0x0EDB8832,0x79DCB8A4,0xE0D5E91E,0x97D2D988,
        0x09B64C2B,0x7EB17CBD,0xE7B82D07,0x90BF1D91,0x1DB71064,0x6AB020F2,
@@ -342,7 +342,7 @@ static unsigned int compute_state_crc (s_state *state)
 
     buf = (unsigned char *) state->value;
 
-    for (i = 0 ; i < S_SIZE * sizeof (float) ; i++) 
+    for (i = 0 ; i < S_SIZE * sizeof (float) ; i++)
       checksum = crc_table[(checksum ^ buf[i]) & 0xff] ^ (checksum >> 8);
 
     checksum ^= ~0;
@@ -351,7 +351,7 @@ static unsigned int compute_state_crc (s_state *state)
     return (checksum);
 }
 
-void s_undo() 
+void s_undo()
 {
     GList *undo_next;
     int       scene, crc[2];
@@ -359,11 +359,11 @@ void s_undo()
 
 
     if (!undo_pos) {
-	return;
+        return;
     }
     undo_next = g_list_previous(undo_pos);
     if (!undo_next) {
-	return;
+        return;
     }
     undo_pos = undo_next;
     s_restore_state((s_state *)undo_pos->data);
@@ -384,7 +384,7 @@ void s_undo()
     last_changed = S_LOAD;
 }
 
-void s_redo() 
+void s_redo()
 {
     gboolean  restore;
     int       scene, crc[2];
@@ -416,7 +416,7 @@ void s_redo()
             crc[0] = compute_state_crc (st[0]);
             crc[1] = compute_state_crc (st[1]);
 
-            if (crc[0] == crc[1]) 
+            if (crc[0] == crc[1])
               {
                 set_scene_button (scene);
               }
@@ -449,11 +449,11 @@ void s_crossfade_to_state(s_state *state, float time)
     duration = (int)(sample_rate * time);
     suppress_feedback++;
     for (i=0; i<S_SIZE; i++) {
-	/* set the target and duration for crosssfade, but set the controls to
-	 * the endpoint */
-	s_target[i] = state->value[i];
-	s_duration[i] = duration;
-	s_set_events(i, state->value[i]);
+        /* set the target and duration for crosssfade, but set the controls to
+         * the endpoint */
+        s_target[i] = state->value[i];
+        s_duration[i] = duration;
+        s_set_events(i, state->value[i]);
     }
     suppress_feedback--;
 }
@@ -466,17 +466,17 @@ void s_restore_state(s_state *state)
 static void s_set_events(int id, float value)
 {
     if (s_callback[id]) {
-	(*s_callback[id])(id, value);
+        (*s_callback[id])(id, value);
     }
     if (s_adjustment[id]) {
-	gtk_adjustment_set_value(s_adjustment[id], value);
+        gtk_adjustment_set_value(s_adjustment[id], value);
     }
 }
 
 void s_set_description(int id, const char *desc)
 {
     if (last_changed != id) {
-	s_history_add(desc);
+        s_history_add(desc);
     }
     last_changed = id;
 }
@@ -500,7 +500,7 @@ void s_save_session_from_ui (GtkWidget *w, gpointer user_data)
 
 #endif
 }
-    
+
 void s_save_session (const gchar *fname)
 {
     xmlDocPtr doc;
@@ -515,13 +515,13 @@ void s_save_session (const gchar *fname)
 
     if (fname) {
         s_set_session_filename (fname);
-	s_update_title();
+        s_update_title();
     }
     if (!s_have_session_filename ()) {
-	errstr = g_strdup_printf("No session filename found at %s:%d, not saving\n",
+        errstr = g_strdup_printf("No session filename found at %s:%d, not saving\n",
                                  __FILE__, __LINE__);
-	message (GTK_MESSAGE_WARNING, errstr);
-	free(errstr);
+        ajami_message (GTK_MESSAGE_WARNING, errstr);
+        free(errstr);
     }
 
 
@@ -582,52 +582,52 @@ void s_save_session (const gchar *fname)
     /* Save current active state */
 
     for (i=0; i<S_SIZE; i++) {
-	node = xmlNewDocRawNode(doc, NULL, (const xmlChar *) "parameter", NULL);
-	snprintf(tmp, 255, "%g", s_value[i]);
-	xmlSetProp(node, (const xmlChar *) "name", (const xmlChar *) s_symbol[i]);
-	xmlSetProp(node, (const xmlChar *) "value", (const xmlChar *) tmp);
-	xmlAddChild(rootnode, node);
-	node = xmlNewText((xmlChar *) "\n");
-	xmlAddChild(rootnode, node);
+    node = xmlNewDocRawNode(doc, NULL, (const xmlChar *) "parameter", NULL);
+    snprintf(tmp, 255, "%g", s_value[i]);
+    xmlSetProp(node, (const xmlChar *) "name", (const xmlChar *) s_symbol[i]);
+    xmlSetProp(node, (const xmlChar *) "value", (const xmlChar *) tmp);
+    xmlAddChild(rootnode, node);
+    node = xmlNewText((xmlChar *) "\n");
+    xmlAddChild(rootnode, node);
     }
 
 
     /* Save scenes */
 
     for (j=0; j<NUM_SCENES; j++) {
-	s_state *st = get_scene(j);
-	sc_node = xmlNewDocRawNode(doc, NULL, (xmlChar *) "scene", NULL);
-	snprintf(tmp, 255, "%d", j);
-	xmlSetProp(sc_node, (xmlChar *) "number", (xmlChar *) tmp);
-	if (!st) {
-	    xmlAddChild(rootnode, sc_node);
-	    node = xmlNewText((xmlChar *) "\n");
-	    xmlAddChild(rootnode, node);
-	    continue;
-	}
-	xmlSetProp(sc_node, (xmlChar *) "name", (xmlChar *) get_scene_name(j));
-	if (curr_scene == j) {
-	    xmlSetProp(sc_node, (xmlChar *) "active", (xmlChar *) "true");
-	    xmlSetProp(sc_node, (xmlChar *) "changed", (xmlChar *) "false");
-	} else if (curr_scene == changed_scene_no(j)) {
-	    xmlSetProp(sc_node, (xmlChar *) "active", (xmlChar *) "true");
-	    xmlSetProp(sc_node, (xmlChar *) "changed", (xmlChar *) "true");
-	}
-	node = xmlNewText((xmlChar *) "\n");
-	xmlAddChild(sc_node, node);
-	xmlAddChild(rootnode, sc_node);
-	node = xmlNewText((xmlChar *) "\n");
-	xmlAddChild(rootnode, node);
+        s_state *st = get_scene(j);
+        sc_node = xmlNewDocRawNode(doc, NULL, (xmlChar *) "scene", NULL);
+        snprintf(tmp, 255, "%d", j);
+        xmlSetProp(sc_node, (xmlChar *) "number", (xmlChar *) tmp);
+        if (!st) {
+            xmlAddChild(rootnode, sc_node);
+            node = xmlNewText((xmlChar *) "\n");
+            xmlAddChild(rootnode, node);
+            continue;
+        }
+        xmlSetProp(sc_node, (xmlChar *) "name", (xmlChar *) get_scene_name(j));
+        if (curr_scene == j) {
+            xmlSetProp(sc_node, (xmlChar *) "active", (xmlChar *) "true");
+            xmlSetProp(sc_node, (xmlChar *) "changed", (xmlChar *) "false");
+        } else if (curr_scene == changed_scene_no(j)) {
+            xmlSetProp(sc_node, (xmlChar *) "active", (xmlChar *) "true");
+            xmlSetProp(sc_node, (xmlChar *) "changed", (xmlChar *) "true");
+        }
+        node = xmlNewText((xmlChar *) "\n");
+        xmlAddChild(sc_node, node);
+        xmlAddChild(rootnode, sc_node);
+        node = xmlNewText((xmlChar *) "\n");
+        xmlAddChild(rootnode, node);
 
-	for (i=0; i<S_SIZE; i++) {
-	    node = xmlNewDocRawNode(doc, NULL, (xmlChar *) "parameter", NULL);
-	    snprintf(tmp, 255, "%g", st->value[i]);
-	    xmlSetProp(node, (xmlChar *) "name", (xmlChar *) s_symbol[i]);
-	    xmlSetProp(node, (xmlChar *) "value", (xmlChar *) tmp);
-	    xmlAddChild(sc_node, node);
-	    node = xmlNewText((xmlChar *) "\n");
-	    xmlAddChild(sc_node, node);
-	}
+        for (i=0; i<S_SIZE; i++) {
+            node = xmlNewDocRawNode(doc, NULL, (xmlChar *) "parameter", NULL);
+            snprintf(tmp, 255, "%g", st->value[i]);
+            xmlSetProp(node, (xmlChar *) "name", (xmlChar *) s_symbol[i]);
+            xmlSetProp(node, (xmlChar *) "value", (xmlChar *) tmp);
+            xmlAddChild(sc_node, node);
+            node = xmlNewText((xmlChar *) "\n");
+            xmlAddChild(sc_node, node);
+        }
     }
     xmlSaveFile((const char *) s_get_session_filename (), doc);
     xmlFreeDoc(doc);
@@ -662,7 +662,7 @@ void s_load_session_from_ui (GtkWidget *w, gpointer user_data)
 
 #endif
 }
-    
+
 void s_load_session (const gchar *fname)
 {
     xmlSAXHandlerPtr handler;
@@ -676,26 +676,26 @@ void s_load_session (const gchar *fname)
     unset_scene_buttons ();
 
     if (fname) {
-	s_set_session_filename (fname);
+        s_set_session_filename (fname);
     }
     if (!s_have_session_filename ()) {
-	s_set_session_filename (default_session);
+        s_set_session_filename (default_session);
     }
 
     session_filename = s_get_session_filename ();
 
     /* Check to see if file is readable */
     if ((fd = open((const char *) session_filename, O_RDONLY)) >= 0) {
-	close(fd);
+        close(fd);
     } else {
-	errstr = g_strdup_printf("Error opening '%s'", session_filename);
-	message (GTK_MESSAGE_WARNING, errstr);
+        errstr = g_strdup_printf("Error opening '%s'", session_filename);
+        ajami_message (GTK_MESSAGE_WARNING, errstr);
         perror(errstr);
-	free(errstr);
+        free(errstr);
 
-	if (fname == NULL) {
-	    exit(1);
-	}
+        if (fname == NULL) {
+            exit(1);
+        }
     }
 
     s_update_title();
@@ -737,16 +737,16 @@ void s_load_session (const gchar *fname)
     }
 
 
-    /* run the SAX parser */    
+    /* run the SAX parser */
     scene_init();
     xmlSAXUserParseFile(handler, &gp, (const char *) session_filename);
 
     if (gp.scene == LOAD_ERROR) {
-	errstr = g_strdup_printf("Loading file '%s' failed", session_filename);
-	message (GTK_MESSAGE_WARNING, errstr);
+        errstr = g_strdup_printf("Loading file '%s' failed", session_filename);
+        ajami_message (GTK_MESSAGE_WARNING, errstr);
         perror(errstr);
-	free(errstr);
-	return;
+        free(errstr);
+        return;
     }
 
     s_history_add(g_strdup_printf("Load %s", session_filename));
@@ -809,7 +809,7 @@ void s_load_session (const gchar *fname)
       }
 
     if (!fname) {
-	s_set_session_filename (NULL);
+        s_set_session_filename (NULL);
     }
 
 
@@ -832,8 +832,8 @@ void s_load_session (const gchar *fname)
     if (!override_limiter_default) process_set_limiter_plugin (gp.limiter_plugin);
     override_limiter_default = FALSE;
 
-	if(gui_mode == 0) // Default mode
-		hdeq_set_xover ();
+    if(gui_mode == 0) // Default mode
+        hdeq_set_xover ();
     set_EQ_curve_values (0, 0.0);
 
     s_clear_history();
@@ -850,177 +850,177 @@ void s_startElement(void *user_data, const xmlChar *name, const xmlChar **attrs)
     int changed = 0;
 
     if (!strcmp((const char *) name, "jam-param-list")) {
-	return;
+        return;
     }
 
     if (!strcmp((const char *) name, "scene")) {
-	const char *sname = NULL;
+        const char *sname = NULL;
 
-	for (p=attrs; p && *p; p+=2) {
-	    if (!strcmp((const char *) *p, "name")) {
-		sname = (const char *) *(p+1);
-	    } else if (!strcmp((const char *) *p, "number")) {
-		gp->scene = atoi((const char *) *(p+1));
-	    } else if (!strcmp((const char *) *p, "active") &&
+        for (p=attrs; p && *p; p+=2) {
+            if (!strcmp((const char *) *p, "name")) {
+                sname = (const char *) *(p+1);
+            } else if (!strcmp((const char *) *p, "number")) {
+                gp->scene = atoi((const char *) *(p+1));
+            } else if (!strcmp((const char *) *p, "active") &&
                        !strcmp((const char *) *(p+1), "true")) {
-		active = 1;
-	    } else if (!strcmp((const char *) *p, "changed") &&
+                active = 1;
+            } else if (!strcmp((const char *) *p, "changed") &&
                        !strcmp((const char *) *(p+1), "true")) {
-		changed = 1;
-	    }
-	}
+                changed = 1;
+            }
+        }
 
 
         /*  Set the active scene number to be set after parsing all of the
             scenes in the XML file.  */
 
-	if (active) {
+        if (active) {
             saved_scene = gp->scene;
-	    set_scene(gp->scene);
-	}
-	if (changed) {
+            set_scene(gp->scene);
+        }
+        if (changed) {
             saved_scene = gp->scene + 100;
-	    set_num_scene_warning_button(changed_scene_no(gp->scene));
-	}
+            set_num_scene_warning_button(changed_scene_no(gp->scene));
+        }
 
-	if (sname && gp->scene > -1) {
-	    set_scene(gp->scene);
-	    set_scene_name(gp->scene, sname);
-	}
+        if (sname && gp->scene > -1) {
+            set_scene(gp->scene);
+            set_scene_name(gp->scene, sname);
+        }
 
-	return;
+        return;
     }
 
     /* if its a global setting */
     if (!strcmp((const char *) name, "global")) {
-	/* find the name, value and index attributes */
-	for (p=attrs; p && *p; p+=2) {
-	    if (!strcmp((const char *) *p, "name")) {
-		symbol = (const char *) *(p+1);
-	    } else if (!strcmp((const char *) *p, "value")) {
-		value = (const char *) *(p+1);
-	    } else if (!strcmp((const char *) *p, "index")) {
-		index = (const char *) *(p+1);
-	    }
-	}
+        /* find the name, value and index attributes */
+        for (p=attrs; p && *p; p+=2) {
+            if (!strcmp((const char *) *p, "name")) {
+                symbol = (const char *) *(p+1);
+            } else if (!strcmp((const char *) *p, "value")) {
+                value = (const char *) *(p+1);
+            } else if (!strcmp((const char *) *p, "index")) {
+                index = (const char *) *(p+1);
+            }
+        }
 
-	if (!strcmp(symbol, "mode")) {
-	    gp->mode = atoi(value);
-	} else if (!strcmp(symbol, "freq")) {
-	    gp->freq = atof(value);
-	} else if (!strcmp(symbol, "lgain")) {
-	    gp->lgain = atof(value);
-	} else if (!strcmp(symbol, "hgain")) {
-	    gp->hgain = atof(value);
-	} else if (!strcmp(symbol, "ct")) {
-	    gp->ct = atof(value);
-	} else if (!strcmp(symbol, "inwl")) {
-	    gp->inwl = atof(value);
-	} else if (!strcmp(symbol, "outwl")) {
-	    gp->outwl = atof(value);
-	} else if (!strcmp(symbol, "eq bypass")) {
-	    gp->eq_bypass = atof(value);
-	} else if (!strcmp(symbol, "comp bypass0")) {
-	    gp->comp_bypass[0] = atoi(value);
-	} else if (!strcmp(symbol, "comp bypass1")) {
-	    gp->comp_bypass[1] = atoi(value);
-	} else if (!strcmp(symbol, "comp bypass2")) {
-	    gp->comp_bypass[2] = atoi(value);
-	} else if (!strcmp(symbol, "limiter bypass")) {
-	    gp->limiter_bypass = atoi(value);
-	} else if (!strcmp(symbol, "output meter peak pref")) {
+        if (!strcmp(symbol, "mode")) {
+            gp->mode = atoi(value);
+        } else if (!strcmp(symbol, "freq")) {
+            gp->freq = atof(value);
+        } else if (!strcmp(symbol, "lgain")) {
+            gp->lgain = atof(value);
+        } else if (!strcmp(symbol, "hgain")) {
+            gp->hgain = atof(value);
+        } else if (!strcmp(symbol, "ct")) {
+            gp->ct = atof(value);
+        } else if (!strcmp(symbol, "inwl")) {
+            gp->inwl = atof(value);
+        } else if (!strcmp(symbol, "outwl")) {
+            gp->outwl = atof(value);
+        } else if (!strcmp(symbol, "eq bypass")) {
+            gp->eq_bypass = atof(value);
+        } else if (!strcmp(symbol, "comp bypass0")) {
+            gp->comp_bypass[0] = atoi(value);
+        } else if (!strcmp(symbol, "comp bypass1")) {
+            gp->comp_bypass[1] = atoi(value);
+        } else if (!strcmp(symbol, "comp bypass2")) {
+            gp->comp_bypass[2] = atoi(value);
+        } else if (!strcmp(symbol, "limiter bypass")) {
+            gp->limiter_bypass = atoi(value);
+        } else if (!strcmp(symbol, "output meter peak pref")) {
           gp->out_meter_peak_pref = (gboolean) atoi(value);
-	} else if (!strcmp(symbol, "rms meter peak pref")) {
+        } else if (!strcmp(symbol, "rms meter peak pref")) {
           gp->rms_meter_peak_pref = (gboolean) atoi(value);
-	} else if (!strcmp(symbol, "rms time slice")) {
+        } else if (!strcmp(symbol, "rms time slice")) {
           gp->rms_time_slice = atoi(value);
-	} else if (!strcmp(symbol, "limiter plugin")) {
+        } else if (!strcmp(symbol, "limiter plugin")) {
           gp->limiter_plugin = atoi(value);
-	} else if (!strcmp(symbol, "low delay time")) {
+        } else if (!strcmp(symbol, "low delay time")) {
           gp->xo_delay_time[XO_LOW] = atof(value);
-	} else if (!strcmp(symbol, "mid delay time")) {
+        } else if (!strcmp(symbol, "mid delay time")) {
           gp->xo_delay_time[XO_MID] = atof(value);
-	} else if (!strcmp(symbol, "low delay state")) {
+        } else if (!strcmp(symbol, "low delay state")) {
           gp->xo_delay_state[XO_LOW] = atoi(value);
-	} else if (!strcmp(symbol, "mid delay state")) {
+        } else if (!strcmp(symbol, "mid delay state")) {
           gp->xo_delay_state[XO_MID] = atoi(value);
-	} else if (!strcmp(symbol, "crossover type")) {
+        } else if (!strcmp(symbol, "crossover type")) {
           gp->iir_xover = atoi(value);
-	} else if (!strcmp(symbol, "mid delay state")) {
-	} else if ((const char *)strstr(symbol, "gang_") == symbol) {
-	    int ind = index ? atoi(index) : -1;
-	    int val = atoi(value);
+        } else if (!strcmp(symbol, "mid delay state")) {
+        } else if ((const char *)strstr(symbol, "gang_") == symbol) {
+            int ind = index ? atoi(index) : -1;
+            int val = atoi(value);
 
-	    if (ind >= 0 && ind < XO_BANDS) {
-		if (!strcmp(symbol, "gang_at")) {
-		    gp->gang_at[ind] = val;
-		} else if (!strcmp(symbol, "gang_re")) {
-		    gp->gang_re[ind] = val;
-		} else if (!strcmp(symbol, "gang_th")) {
-		    gp->gang_th[ind] = val;
-		} else if (!strcmp(symbol, "gang_ra")) {
-		    gp->gang_ra[ind] = val;
-		} else if (!strcmp(symbol, "gang_kn")) {
-		    gp->gang_kn[ind] = val;
-		} else if (!strcmp(symbol, "gang_ma")) {
-		    gp->gang_ma[ind] = val;
-		} else {
-		    errstr = g_strdup_printf("Unhandled gang: %s\n", symbol);
-		    message (GTK_MESSAGE_WARNING, errstr);
-		    free(errstr);
-		}
-	    } else {
-		errstr = g_strdup_printf("Unhandled index: %s\n", index);
-		message (GTK_MESSAGE_WARNING, errstr);
-		free(errstr);
-	    }
-	} else {
-	    errstr = g_strdup_printf("Unhandled global paramter: %s\n", symbol);
-	    message (GTK_MESSAGE_WARNING, errstr);
-	    free(errstr);
-	}
+            if (ind >= 0 && ind < XO_BANDS) {
+                if (!strcmp(symbol, "gang_at")) {
+                    gp->gang_at[ind] = val;
+                } else if (!strcmp(symbol, "gang_re")) {
+                    gp->gang_re[ind] = val;
+                } else if (!strcmp(symbol, "gang_th")) {
+                    gp->gang_th[ind] = val;
+                } else if (!strcmp(symbol, "gang_ra")) {
+                    gp->gang_ra[ind] = val;
+                } else if (!strcmp(symbol, "gang_kn")) {
+                    gp->gang_kn[ind] = val;
+                } else if (!strcmp(symbol, "gang_ma")) {
+                    gp->gang_ma[ind] = val;
+                } else {
+                    errstr = g_strdup_printf("Unhandled gang: %s\n", symbol);
+                    ajami_message (GTK_MESSAGE_WARNING, errstr);
+                    free(errstr);
+                }
+            } else {
+                errstr = g_strdup_printf("Unhandled index: %s\n", index);
+                ajami_message (GTK_MESSAGE_WARNING, errstr);
+                free(errstr);
+            }
+        } else {
+            errstr = g_strdup_printf("Unhandled global paramter: %s\n", symbol);
+            ajami_message (GTK_MESSAGE_WARNING, errstr);
+            free(errstr);
+        }
 
-	return;
+        return;
     }
 
     /* Check its a parameter element */
     if (strcmp((const char *) name, "parameter")) {
-	errstr = g_strdup_printf("Unhandled element: %s\n", name);
-	message (GTK_MESSAGE_WARNING, errstr);
-	free(errstr);
+        errstr = g_strdup_printf("Unhandled element: %s\n", name);
+        ajami_message (GTK_MESSAGE_WARNING, errstr);
+        free(errstr);
     }
 
     /* Find the name and value attributes */
     for (p=attrs; p && *p; p+=2) {
-	if (!strcmp((const char *) *p, "name")) {
-	    symbol = (const char *) *(p+1);
-	} else if (!strcmp((const char *) *p, "value")) {
-	    value = (const char *) *(p+1);
-	}
+        if (!strcmp((const char *) *p, "name")) {
+            symbol = (const char *) *(p+1);
+        } else if (!strcmp((const char *) *p, "value")) {
+            value = (const char *) *(p+1);
+        }
     }
 
     /* Find the matching symbol, this is horribly inefficient */
     for (i=0; i<S_SIZE && !found; i++) {
-	if (!strcmp(symbol, s_symbol[i])) {
-	    if (gp->scene == -1) {
-		s_value[i] = atof(value);
-		suppress_feedback++;
-		s_set_events(i, s_value[i]);
-		suppress_feedback--;
-	    } else {
-		s_state *st = get_scene(gp->scene);
-		if (st) {
-		    st->value[i] = atof(value);
-		} else {
+        if (!strcmp(symbol, s_symbol[i])) {
+            if (gp->scene == -1) {
+                s_value[i] = atof(value);
+                suppress_feedback++;
+                s_set_events(i, s_value[i]);
+                suppress_feedback--;
+            } else {
+                s_state *st = get_scene(gp->scene);
+                if (st) {
+                    st->value[i] = atof(value);
+                } else {
                   errstr = g_strdup_printf("Bad scene number %d\n", gp->scene);
-                  message (GTK_MESSAGE_WARNING, errstr);
+                  ajami_message (GTK_MESSAGE_WARNING, errstr);
                   free(errstr);
-		}
-	    }
-	    //printf("load %s = %g\n", symbol, s_value[i]);
-	    found = 1;
-	    break;
-	}
+                }
+            }
+            //printf("load %s = %g\n", symbol, s_value[i]);
+            found = 1;
+            break;
+        }
     }
     if (!found) {
 
@@ -1029,9 +1029,9 @@ void s_startElement(void *user_data, const xmlChar *name, const xmlChar **attrs)
 
       if (!strstr (symbol ,"stereo-balance"))
         {
-	  errstr = g_strdup_printf("Unknown symbol: %s in element %s\n",
-				   symbol, name);
-          message (GTK_MESSAGE_WARNING, errstr);
+          errstr = g_strdup_printf("Unknown symbol: %s in element %s\n",
+                                   symbol, name);
+          ajami_message (GTK_MESSAGE_WARNING, errstr);
           free(errstr);
         }
     }
@@ -1078,7 +1078,7 @@ void s_crossfade(const int nframes)
                 s_value[i] = s_target[i];
                 s_duration[i] = 0;
             }
-	    s_changed[i] = 1;
+        s_changed[i] = 1;
         }
     }
 }
@@ -1090,10 +1090,10 @@ void s_crossfade_ui()
 
     suppress_feedback++;
     for (i=0; i<S_SIZE; i++) {
-	if (s_changed[i]) {
-	    s_changed[i] = 0;
-	    s_set_events(i, s_value[i]);
-	}
+        if (s_changed[i]) {
+            s_changed[i] = 0;
+            s_set_events(i, s_value[i]);
+        }
     }
     suppress_feedback--;
 }
@@ -1110,19 +1110,19 @@ gchar *s_get_session_filename()
 
 void s_update_title()
 {
-    char *title; 
+    GString *title = g_string_new(client_name ? client_name : g_get_application_name());
     char *base;
     gchar *tmp;
 
-    /* name for title bar */
-    char *title_name = (client_name? client_name: PACKAGE);
+    tmp = g_strdup(s_get_session_filename());
+    base = basename(tmp);
 
-    tmp = g_strdup (s_get_session_filename ());
-    base = basename (tmp);
-    title = g_strdup_printf ("%s - %s - " PACKAGE_VERSION, title_name, base);
-    g_free (tmp);
-    gtk_window_set_title ((GtkWindow *) main_window, title);
-    g_free (title);
+    g_string_append_printf(title, " - %s", base);
+
+    gtk_window_set_title((GtkWindow *) ajami_get_main_window(), title->str);
+
+    g_free(tmp);
+    g_string_free(title, TRUE);
 }
 
 void s_set_session_filename(const gchar *fname)

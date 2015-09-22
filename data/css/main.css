@@ -1,7 +1,6 @@
 /*
  * This file is part of AJAMI.
  *
- * Copyright (C) 2003 Jack O'Quin
  * Copyright (C) 2014 Victor A. Santos <victoraur.santos@gmail.com>
  *
  * This software is free software: you can redistribute it and/or modify
@@ -19,21 +18,14 @@
  */
 
 
-#ifndef JACKSTATUS_H
-#define JACKSTATUS_H
+#compressor_low > GtkLabel:hover {
+  color: #0F0;
+}
 
-#include <jack/transport.h>
+#compressor_mid > GtkLabel:hover {
+  color: #0FF;
+}
 
-typedef struct {
-    int            realtime;
-    int            active;
-    int            xruns;
-    float          cpu_load;
-    jack_nframes_t sample_rate;
-    jack_nframes_t buf_size;
-    jack_nframes_t latency;
-} io_jack_status_t;
-
-void io_get_status(io_jack_status_t *jp);
-
-#endif
+#compressor_high > GtkLabel:hover {
+  color: #F00;
+}

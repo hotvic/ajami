@@ -21,11 +21,11 @@
 #include "process.h"
 #include "support.h"
 #include "main.h"
-#include "gtkmeter.h"
 #include "state.h"
 #include "db.h"
 #include "process.h"
 #include "limiter-ui.h"
+#include "ajamiobjects.h"
 
 
 void li_changed(int id, float value);
@@ -40,35 +40,35 @@ static GtkLabel *lh_label, *ll_label, *l_limiterlabel = NULL, *l_logscale_label 
 
 static char limiter_text[2][42] = {"<b>Fast-lookahead-limiter (Harris)</b>", "<b>Foo-limiter (Savolainen)</b>"};
 
-static GtkMeter *in_meter, *att_meter, *out_meter;
 static GtkAdjustment *in_meter_adj, *att_meter_adj, *out_meter_adj;
 static GtkScale *l_logscale_scale = NULL;
 
 
 void bind_limiter()
 {
+    AjamiLimiter *limiter_widget;
     GtkWidget *scale;
 
+    limiter_widget = ajami_get_limiter_widget();
 
-    l_limiterlabel = GTK_LABEL (lookup_widget (main_window, "limiterlabel"));
-    gtk_label_set_text (l_limiterlabel, limiter_text[process_get_limiter_plugin ()]);
-    gtk_label_set_use_markup (l_limiterlabel, TRUE);
+    ajami_limiter_set_label(limiter_widget, limiter_text[process_get_limiter_plugin()]);
 
+    /* TODO: add support to logscale in FOO plugin
     l_logscale_label = GTK_LABEL (lookup_widget (main_window, "logscale_label"));
     l_logscale_scale = GTK_SCALE (lookup_widget (main_window, "logscale_scale"));
     if (process_get_limiter_plugin () == FOO)
-      {
+    {
         limiter_logscale_set_state (TRUE);
-      }
+    }
     else
-      {
+    {
         limiter_logscale_set_state (FALSE);
-      }
+    }
     s_set_adjustment (S_LIM_LOGSCALE, gtk_range_get_adjustment (GTK_RANGE (GTK_WIDGET (l_logscale_scale))));
-    s_set_callback (S_LIM_LOGSCALE, logscale_changed);
+    s_set_callback (S_LIM_LOGSCALE, logscale_changed); */
 
 
-    s_set_callback(S_LIM_INPUT, li_changed);
+    /* s_set_callback(S_LIM_INPUT, li_changed);
 
     scale = lookup_widget(main_window, "lim_lh_scale");
     lh_adj = gtk_range_get_adjustment(GTK_RANGE(scale));
@@ -86,18 +86,14 @@ void bind_limiter()
     s_set_value(S_LIM_TIME,  0.05f, 0);
     s_set_value(S_LIM_LIMIT, 0.0f, 0);
 
-    in_meter = GTK_METER(lookup_widget(main_window, "lim_in_meter"));
-    att_meter = GTK_METER(lookup_widget(main_window, "lim_att_meter"));
-    out_meter = GTK_METER(lookup_widget(main_window, "lim_out_meter"));
-    in_meter_adj = gtk_meter_get_adjustment(in_meter);
-    att_meter_adj = gtk_meter_get_adjustment(att_meter);
-    out_meter_adj = gtk_meter_get_adjustment(out_meter);
+    in_meter_adj  = ajami_main_window_get_limiter_in_meter_adjustment(ajami_get_main_window());
+    att_meter_adj = ajami_main_window_get_limiter_att_meter_adjustment(ajami_get_main_window());
+    out_meter_adj = ajami_main_window_get_limiter_out_meter_adjustment(ajami_get_main_window());
 
-    /* Handle waveshaper boost stuff */
+    // Handle waveshaper boost stuff
     scale = lookup_widget(main_window, "boost_scale");
     s_set_adjustment(S_BOOST, gtk_range_get_adjustment(GTK_RANGE(scale)));
-    s_set_callback(S_BOOST, boost_changed);
-   
+    s_set_callback(S_BOOST, boost_changed); */
 }
 
 void li_changed(int id, float value)
@@ -110,10 +106,13 @@ void lh_changed(int id, float value)
     char text[256];
 
     const float val = powf(10.0f, value);
-    if (val >= 100.0f) {
-      snprintf(text, 255, _("%.3g s"), val * 0.001f);
-    } else {
-      snprintf(text, 255, _("%.4g ms"), val);
+    if (val >= 100.0f)
+    {
+        snprintf(text, 255, _("%.3g s"), val * 0.001f);
+    }
+    else
+    {
+        snprintf(text, 255, _("%.4g ms"), val);
     }
     gtk_label_set_text(lh_label, text);
 
@@ -125,7 +124,7 @@ void ll_changed(int id, float value)
     char text[256];
 
     limiter[limiter_plugin].limit = value;
-	        
+
     snprintf(text, 255, _("%.1f dB"), value);
     gtk_label_set_text(ll_label, text);
 }
@@ -137,7 +136,7 @@ void boost_changed(int id, float value)
 
 void logscale_changed(int id, float value)
 {
-  process_set_limiter_logscale (value);
+    process_set_limiter_logscale (value);
 }
 
 void limiter_meters_update()
@@ -155,30 +154,29 @@ void limiter_meters_update()
 
 void limiter_inmeter_reset_peak ()
 {
-  gtk_meter_reset_peak (in_meter);
+    ajami_limiter_reset_inmeter_peak(ajami_get_limiter_widget());
 }
 
 void limiter_outmeter_reset_peak ()
 {
-  gtk_meter_reset_peak (att_meter);
-  gtk_meter_reset_peak (out_meter);
+    ajami_limiter_reset_rel_outmeter_peak(ajami_get_limiter_widget());
+    ajami_limiter_reset_outmeter_peak(ajami_get_limiter_widget());
 }
 
 void limiter_set_label (int limiter_plugin)
 {
-  if (l_limiterlabel)
+    if (l_limiterlabel)
     {
-      gtk_label_set_text (l_limiterlabel, limiter_text[limiter_plugin]);
-      gtk_label_set_use_markup (l_limiterlabel, TRUE);
+        ajami_limiter_set_label(ajami_get_limiter_widget(), limiter_text[limiter_plugin]);
     }
 }
 
 void limiter_logscale_set_state (gboolean state)
 {
-  if (l_logscale_label)
+    if (l_logscale_label)
     {
-      gtk_widget_set_sensitive (GTK_WIDGET (l_logscale_label), state);
-      gtk_widget_set_sensitive (GTK_WIDGET (l_logscale_scale), state);
+        gtk_widget_set_sensitive (GTK_WIDGET (l_logscale_label), state);
+        gtk_widget_set_sensitive (GTK_WIDGET (l_logscale_scale), state);
     }
 }
 

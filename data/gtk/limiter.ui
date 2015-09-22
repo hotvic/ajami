@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="ajami">
+    <requires lib="gtk+" version="3.10"/>
+    <template class="AjamiLimiter" parent="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="height-request">24</property>
+        <property name="vexpand">true</property>
+        <child>
+            <object class="GtkFrame" id="frame">
+                <property name="label" translatable="yes">Limiter</property>
+                <child>
+                    <object class="GtkBox" id="limiter_vbox">
+                        <property name="orientation">vertical</property>
+                        <child>
+                            <object class="GtkBox" id="lim_in_hbox">
+                                <property name="orientation">horizontal</property>
+                                <child>
+                                    <object class="GtkLabel">
+                                        <property name="label" translatable="yes">Input</property>
+                                    </object>
+                                </child>
+                                <child>
+                                    <object class="GtkScale" id="in_scale">
+                                        <property name="hexpand">true</property>
+                                        <property name="orientation">horizontal</property>
+                                        <property name="value-pos">GTK_POS_RIGHT</property>
+                                    </object>
+                                </child>
+                            </object>
+                            <packing>
+                                <property name="expand">true</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <object class="HVMeter" id="inmeter">
+                                <property name="orientation">horizontal</property>
+                                <property name="inverted">false</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkBox" id="lim_lim_hbox">
+                                <property name="orientation">horizontal</property>
+                                <child>
+                                    <object class="GtkLabel">
+                                        <property name="label" translatable="yes">Limit</property>
+                                    </object>
+                                </child>
+                                <child>
+                                    <object class="GtkScale" id="lim_scale">
+                                        <property name="hexpand">true</property>
+                                        <property name="orientation">horizontal</property>
+                                        <property name="value-pos">GTK_POS_RIGHT</property>
+                                    </object>
+                                </child>
+                            </object>
+                            <packing>
+                                <property name="expand">true</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <object class="GtkBox" id="lim_rel_hbox">
+                                <property name="orientation">horizontal</property>
+                                <child>
+                                    <object class="GtkLabel">
+                                        <property name="label" translatable="yes">Release</property>
+                                    </object>
+                                </child>
+                                <child>
+                                    <object class="GtkScale" id="rel_scale">
+                                        <property name="hexpand">true</property>
+                                        <property name="orientation">horizontal</property>
+                                        <property name="value-pos">GTK_POS_RIGHT</property>
+                                    </object>
+                                </child>
+                            </object>
+                            <packing>
+                                <property name="expand">true</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <object class="HVMeter" id="rel_outmeter">
+                                <property name="orientation">horizontal</property>
+                                <property name="inverted">false</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="HVMeter" id="outmeter">
+                                <property name="orientation">horizontal</property>
+                                <property name="inverted">false</property>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
+            <packing>
+                <property name="expand">true</property>
+            </packing>
+        </child>
+    </template>
+</interface>

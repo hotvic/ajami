@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/ajami">
+  <gresource prefix="/org/ajami/ajami">
     <!-- UI files -->
-    <file preprocess="xml-stripblanks">ui/menus.ui</file>
-    <file preprocess="xml-stripblanks">ui/appwindow.ui</file>
-    <file preprocess="xml-stripblanks">ui/scenes.ui</file>
+    <file preprocess="xml-stripblanks">gtk/menus.ui</file>
+    <file preprocess="xml-stripblanks">gtk/appwindow.ui</file>
+    <file preprocess="xml-stripblanks">gtk/scenes.ui</file>
+    <file preprocess="xml-stripblanks">gtk/compressor.ui</file>
+    <file preprocess="xml-stripblanks">gtk/limiter.ui</file>
     <!-- Pixmaps -->
     <file preprocess="to-pixdata">pixmaps/LED_green_off.xpm</file>
     <file preprocess="to-pixdata">pixmaps/LED_green_on.xpm</file>

@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<interface domain="ajamin">
+  <!-- interface-requires gtk+ 3.10 -->
+  <menu id="menubar">
+    <submenu>
+      <attribute name="label">_File</attribute>
+      <section>
+        <item>
+          <attribute name="label" translatable="yes">_New</attribute>
+          <attribute name="action">win.new-preset</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">_Open</attribute>
+          <attribute name="action">win.open-preset</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">_Save</attribute>
+          <attribute name="action">win.save-preset</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">Save _As</attribute>
+          <attribute name="action">win.save-as-preset</attribute>
+        </item>
+      </section>
+      <section>
+        <item>
+          <attribute name="label" translatable="yes">_Quit</attribute>
+          <attribute name="action">app.quit</attribute>
+        </item>
+      </section>
+    </submenu>
+    <submenu>
+      <attribute name="label">Edit</attribute>
+      <section>
+        <item>
+          <attribute name="label" translatable="yes">_Undo</attribute>
+          <attribute name="action">win.undo</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">_Redo</attribute>
+          <attribute name="action">win.redo</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">_Preferences</attribute>
+          <attribute name="action">app.preferences</attribute>
+        </item>
+      </section>
+    </submenu>
+    <submenu>
+        <attribute name="label">Ports</attribute>
+    </submenu>
+    <submenu>
+        <attribute name="label">Help</attribute>
+    </submenu>
+  </menu>
+  <menu id="scene_menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Set</attribute>
+        <attribute name="action">win.set-scene</attribute>
+        <attribute name="icon">media-playback-start</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Clear</attribute>
+        <attribute name="action">win.clear-scene</attribute>
+        <attribute name="icon">edit-clear</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Name</attribute>
+        <attribute name="action">win.name-scene</attribute>
+        <attribute name="icon">document-properties</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Help</attribute>
+        <attribute name="action">win.help-scene</attribute>
+        <attribute name="icon">help-about</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>

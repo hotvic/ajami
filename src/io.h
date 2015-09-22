@@ -18,23 +18,24 @@
 #define IO_H
 
 #include <jack/types.h>
+#include "ajamiobjects.h"
 
 /* types of latency sources */
-#define LAT_BUFFERS	0		/* I/O buffering */
-#define LAT_FFT		1		/* Fourier transform */
-#define LAT_LIMITER	2		/* Limiter */
-#define LAT_NSOURCES	3
+#define LAT_BUFFERS 0       /* I/O buffering */
+#define LAT_FFT     1       /* Fourier transform */
+#define LAT_LIMITER 2       /* Limiter */
+#define LAT_NSOURCES    3
 
-extern jack_client_t *client;		/* JACK client structure */
-extern char *client_name;		/* JACK client name */
-extern int nchannels;			/* actual number of channels */
-extern int bchannels;		/* actual number of output channels */
+extern jack_client_t *client;       /* JACK client structure */
+extern char *client_name;       /* JACK client name */
+extern int nchannels;           /* actual number of channels */
+extern int bchannels;       /* actual number of output channels */
 extern jack_port_t *input_ports[];
 extern jack_port_t *output_ports[];
 
 void io_activate();
 void io_cleanup();
-void io_init(int argc, char *argv[]);
+void io_init(AjamiArgs* args);
 void io_set_latency(int latency_source, jack_nframes_t delay);
 
 #endif
