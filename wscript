@@ -15,7 +15,7 @@ def options(opt):
     opt.add_option('--disable-osc', action='store_true', default=False, help='do not include Open Sound Control interface')
 
 def configure(cnf):
-    cnf.check_waf_version(mini='1.8.13') # vala resource support
+    cnf.check_waf_version(mini='1.8.14')
 
     cnf.load('gnu_dirs compiler_c compiler_cxx vala glib2')
 
