@@ -539,7 +539,7 @@ void s_save_session (const gchar *fname)
 
 
     s_save_global_int(doc, "mode", process_get_spec_mode());
-    s_save_global_int(doc, "freq", get_spectrum_freq());
+    s_save_global_int(doc, "freq", ajami_spectrum_get_frquency(ajami_get_spectrum_widget()));
     s_save_global_float(doc, "ct", crossfade_time);
     s_save_global_float(doc, "inwl", intrim_inmeter_get_warn());
     s_save_global_float(doc, "outwl", intrim_outmeter_get_warn());

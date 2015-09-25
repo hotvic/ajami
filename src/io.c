@@ -806,7 +806,7 @@ void io_init(AjamiArgs* args)
         s_set_session_filename (session_file);
         } */
 
-    set_spectrum_freq(spectrum_freq);
+    ajami_spectrum_set_frequency(ajami_get_spectrum_widget(), spectrum_freq);
     s_set_crossfade_time(crossfade_time);
 
 

@@ -23,6 +23,18 @@ using Gtk;
 namespace Ajami {
     [GtkTemplate (ui="/org/ajami/ajami/gtk/compressor.ui")]
     public class Compressor : Gtk.Frame {
+        public Compressor() {
+            Object();
+        }
+
+        public void set_label(string label) {
+            (this.label_widget as Label).use_markup = true;
+            this.label = label;
+        }
+
+        public void set_disabled(bool disabled) {
+            base.set_sensitive(!disabled);
+        }
     }
 }
 

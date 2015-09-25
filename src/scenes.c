@@ -1,9 +1,9 @@
 /*
- *  scenes.c -- Scene changing buttons for the JAMin (JACK Audio Mastering 
+ *  scenes.c -- Scene changing buttons for the JAMin (JACK Audio Mastering
  *              interface) program.
  *
  *  Copyright (C) 2003 Jan C. Depner.
- *  
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -47,54 +47,33 @@
 #include "support.h"
 #include "interface.h"
 #include "hdeq.h"
+#include "ajamiobjects.h"
 
 
-static GtkMenu           *scene_menu;
-static GtkImage          *l_scene[NUM_SCENES], *buttons[4];
-static GtkEventBox       *l_scene_eventbox[NUM_SCENES];
-static char              l_scene_name[NUM_SCENES][100];
 static int               current_scene = -1, menu_scene, prev_scene = -999;
 static gboolean          scene_loaded[NUM_SCENES];
 static s_state           scene_state[NUM_SCENES];
-static GdkPixbuf         *LED_green_on = NULL, *LED_green_off = NULL, 
-                         *LED_yellow = NULL, *LED_red = NULL;
 
 
 /*  Initialize all scene related structures and get the widget addresses.  */
 
 void bind_scenes ()
 {
-    int             i, j;
-    char            *name;
-
-
- //   GtkTooltips *tooltips = gtk_tooltips_new();
+    int   i, j;
+    char *name;
 
     name = malloc(sizeof(char) * 32);
-
-    scene_menu = (GtkMenu *) create_scene_menu();
 
     current_scene = -1;
     menu_scene = -1;
 
-
-    /*  Looking up the widgets we'll need to work with based on the name
-        that was set in glade-2.  If you change the widget name in glade-2
-        you'll break the app.  */
-
     for (i = 0 ; i < NUM_SCENES ; i++)
-      {
+    {
         sprintf (name, "scene%d", i + 1);
-        l_scene[i] = GTK_IMAGE (lookup_widget (main_window, name));
 
         scene_state[i].description = name;
 
-        sprintf (name, "scene%d_eventbox", i + 1);
-        l_scene_eventbox[i] = 
-          GTK_EVENT_BOX (lookup_widget (main_window, name));
-
         scene_loaded[i] = FALSE;
-
 
         /*  Initialize the scene states.  */
 
@@ -109,154 +88,134 @@ void bind_scenes ()
         scene_state[i].value[S_NOTCH_FREQ(2)] = 710.0;
         scene_state[i].value[S_NOTCH_FREQ(3)] = 3719.0;
         scene_state[i].value[S_NOTCH_FREQ(4)] = 16903.0;
-
-
-        gtk_widget_set_tooltip_text ( GTK_WIDGET (l_scene_eventbox[i]), 
-                              g_strdup_printf 
-                              ("Scene %d, right click for menu", i + 1));
-      }
+    }
 
     free(name);
-
-
-    /*  We're cheating here.  I've set the first four images in the glade scene
-        "buttons" to be green_on, green_off, yellow, and red so I can grab
-        easily.  Don't change them in glade!  JCD  */
-
-    for (i = 0 ; i < 4 ; i++)
-      buttons[i] = GTK_IMAGE (gtk_image_new_from_pixbuf (gtk_image_get_pixbuf 
-                                                         (l_scene[i])));
-
-    LED_green_on = gtk_image_get_pixbuf (buttons[0]);
-    LED_green_off = gtk_image_get_pixbuf (buttons[1]);
-    LED_yellow = gtk_image_get_pixbuf (buttons[2]);
-    LED_red = gtk_image_get_pixbuf (buttons[3]);
 }
 
 
 /*  Select one of the scenes as the current scene or pop up the set/clear
     menu.  */
 
-void select_scene (int number, int button)
+/*void select_scene (int number, int button)
 {
     int             i, j;
     gboolean        warning;
 
 
-    /*  Check for modified scene.  */
+    // Check for modified scene.
 
     warning = FALSE;
     if (number > 99)
-      {
+    {
         number -= 100;
         warning = TRUE;
-      }
+    }
 
 
     switch (button)
-      {
-        /*  Left button selects the scene.  */
+    {
+    // Left button selects the scene.
 
-      case 1:
+    case 1:
         if (scene_loaded[number])
-          {
+        {
             for (i = 0 ; i < NUM_SCENES ; i++)
-              {
-                /*  The matching scene.  */
+            {
+                /*  The matching scene.
 
                 if (i == number)
-                  {
+                {
                     if (warning)
-                      {
+                    {
                         gtk_image_set_from_pixbuf (l_scene[i], LED_yellow);
 
                         current_scene = number;
-                      }
+                    }
                     else
-                      {
+                    {
                         current_scene = i;
 
 
-                        /*  This is a fix for an earlier screwup that may or
-                            may not exist in some saved .jam files.  Basically,
-                            the default notch frequencies were set to 0.0
-                            which is way wrong and causes problems during
-                            crossfading.  This code just checks them and 
-                            resets them to the default if they aren't set
-                            correctly.  */
+                        // This is a fix for an earlier screwup that may or
+                        // may not exist in some saved .jam files.  Basically,
+                        // the default notch frequencies were set to 0.0
+                        // which is way wrong and causes problems during
+                        // crossfading.  This code just checks them and
+                        // resets them to the default if they aren't set
+                        // correctly.
 
-                        /****************************************************/
+                        // *********************************************
 
                         for (j = 0 ; j < NOTCHES ; j++)
-                          {
+                        {
                             if (scene_state[i].value[(S_NOTCH_FREQ(j))] == 0.0)
-                              {
-                                scene_state[i].value[S_NOTCH_FREQ(j)] = 
-         //                         hdeq_get_notch_default_freq (j);
+                            {
+                                scene_state[i].value[S_NOTCH_FREQ(j)] =
+                                    //                         hdeq_get_notch_default_freq (j);
 
-                                scene_state[i].value[S_NOTCH_Q(j)] = 5.0;
+                                    scene_state[i].value[S_NOTCH_Q(j)] = 5.0;
                                 scene_state[i].value[S_NOTCH_GAIN(j)] = 0.0;
 
                                 if (!j || j == NOTCHES - 1)
                                     scene_state[i].value[S_NOTCH_Q(j)] = 0.0;
-                              }
-                          }
+                            }
+                        }
 
-                        /****************************************************/
+                        // *********************************************
 
 
                         s_crossfade_to_state (&scene_state[i], -1.0f);
 
-        //                set_EQ_curve_values (0, 0.0);
+                        // set_EQ_curve_values (0, 0.0);
 
                         s_history_add_state (scene_state[i]);
 
                         gtk_image_set_from_pixbuf (l_scene[i], LED_green_on);
-                      }
-                  }
+                    }
+                }
 
 
-                /*  Non-matching scenes - set to green off or red if not 
-                    loaded.  */
+                // Non-matching scenes - set to green off or red if not loaded.
 
                 else
-                  {
+                {
                     if (scene_loaded[i])
-                      {
+                    {
                         gtk_image_set_from_pixbuf (l_scene[i], LED_green_off);
-                      }
+                    }
                     else
-                      {
+                    {
                         gtk_image_set_from_pixbuf (l_scene[i], LED_red);
-                      }
-                  }
-              }
-          }
+                    }
+                }
+            }
+        }
         break;
 
 
-        /*  Middle button is ignored.  */
+    // Middle button is ignored.
 
-      case 2:
+    case 2:
         break;
 
 
-        /*  Right button pops up the set/clear menu.  */
+    // Right button pops up the set/clear menu.
 
-      case 3:
+    case 3:
         menu_scene = number % 100;
-        gtk_menu_popup (scene_menu, NULL, NULL, NULL, NULL, button, 
+        gtk_menu_popup (scene_menu, NULL, NULL, NULL, NULL, button,
                         gtk_get_current_event_time());
         break;
-      }
-}
+    }
+}*/
 
 
 /*  Returns the current active scene number or -1 if no scene is active.  */
 
 int get_current_scene ()
 {
-    return (current_scene);
+    return current_scene;
 }
 
 
@@ -264,14 +223,13 @@ int get_current_scene ()
 
 s_state *get_scene (int number)
 {
-  int       i;
+    int i;
 
+    i = number % 100;
 
-  i = number % 100;
+    if (!scene_loaded[i]) return NULL;
 
-  if (!scene_loaded[i]) return (NULL);
-
-  return (&scene_state[i]);
+    return &scene_state[i];
 }
 
 void scene_init()
@@ -286,14 +244,10 @@ void scene_init()
 
 void set_scene (int scene_num)
 {
-    int         i;
-
- //   GtkTooltips *tooltips = gtk_tooltips_new();
-
-
+    int i;
 
     /*  Only save the scene settings if we're going from the current settings.
-        That is, scene_num = -1.  Otherwise we may be in the middle of 
+        That is, scene_num = -1.  Otherwise we may be in the middle of
         crossfading to a new state.  */
 
     if (scene_num >= 0) menu_scene = prev_scene = scene_num;
@@ -301,14 +255,14 @@ void set_scene (int scene_num)
 
     /*  Grab the current state.  */
 
-    for (i = 0 ; i < S_SIZE ; i++) 
-      scene_state[menu_scene].value[i] = s_get_value(i);
+    for (i = 0 ; i < S_SIZE ; i++)
+        scene_state[menu_scene].value[i] = s_get_value(i);
 
-    scene_state[menu_scene].description = 
-      (char *) realloc (scene_state[menu_scene].description, 
-                        strlen (l_scene_name[menu_scene]) + 1);
+    /* scene_state[menu_scene].description =
+        (char *) realloc (scene_state[menu_scene].description,
+                          strlen (l_scene_name[menu_scene]) + 1);
 
-    strcpy (scene_state[menu_scene].description, l_scene_name[menu_scene]);
+    strcpy (scene_state[menu_scene].description, l_scene_name[menu_scene]); */
 
 
     /*  Set the scene loaded flag.  */
@@ -319,37 +273,35 @@ void set_scene (int scene_num)
     /*  Change the selected icon to green.  */
 
     for (i = 0 ; i < NUM_SCENES ; i++)
-      {
+    {
         /*  Matching scene.  */
 
         if (i == menu_scene)
-          {
-            gtk_image_set_from_pixbuf (l_scene[i], LED_green_on);
+        {
+            ajami_scenes_scene_set_active(ajami_get_scenes_widget(), i);
 
             current_scene = i;
-          }
+        }
 
 
         /*  Non-matching scene - set to green off or red.  */
 
         else
-          {
+        {
             if (scene_loaded[i])
-              {
-                gtk_image_set_from_pixbuf (l_scene[i], LED_green_off);
-              }
+            {
+                ajami_scenes_scene_set_disabled(ajami_get_scenes_widget(), i);
+            }
             else
-              {
-                gtk_image_set_from_pixbuf (l_scene[i], LED_red);
-              }
-          }
-      }
+            {
+                ajami_scenes_scene_set_unused(ajami_get_scenes_widget(), i);
+            }
+        }
+    }
 
 
     /*  Set the tooltip to the full name.  */
-
-    gtk_widget_set_tooltip_text ( GTK_WIDGET (l_scene_eventbox[menu_scene]), 
-                          scene_state[menu_scene].description );
+    ajami_scenes_scene_set_tooltip(ajami_get_scenes_widget(), menu_scene, scene_state[menu_scene].description);
 }
 
 
@@ -357,25 +309,23 @@ void set_scene (int scene_num)
 
 const char *get_scene_name (int number)
 {
-  int        i;
+    int i;
 
+    i = number % 100;
 
-  i = number % 100;
+    if (!scene_loaded[i]) return (NULL);
 
-  if (!scene_loaded[i]) return (NULL);
-  return (l_scene_name[i]);
+    return ajami_scenes_scene_get_name(ajami_get_scenes_widget(), i);
 }
 
 
-/*  Set the scene name.  If the scene_name passed in is null get the name 
+/*  Set the scene name.  If the scene_name passed in is null get the name
     from the scene_name text entry widget.  This is called from callbacks.c
     on a change to the scene_name widget.  */
 
 void set_scene_name (int number, const char *scene_name)
 {
-  //  GtkTooltips *tooltips = gtk_tooltips_new();
-    int         i;
-
+    int i;
 
     i = number % 100;
 
@@ -387,31 +337,27 @@ void set_scene_name (int number, const char *scene_name)
 
 
     if (scene_name != NULL)
-        strcpy (l_scene_name[i], scene_name);
+        ajami_scenes_scene_set_name(ajami_get_scenes_widget(), i, scene_name);
 
-    scene_state[i].description = 
-        (char *) realloc (scene_state[i].description, 
-        strlen (l_scene_name[i]) + 1);
+    scene_state[i].description =
+        (char *) realloc (scene_state[i].description,
+                          strlen (scene_name) + 1);
 
-    strcpy (scene_state[menu_scene].description, l_scene_name[i]);
+    strcpy (scene_state[menu_scene].description, scene_name);
 
 
     /*  Set the tooltip to the name.  */
 
-    gtk_widget_set_tooltip_text ( GTK_WIDGET (l_scene_eventbox[menu_scene]), 
-                          scene_state[menu_scene].description );
+    ajami_scenes_scene_set_tooltip(ajami_get_scenes_widget(), menu_scene, scene_state[menu_scene].description);
 }
 
 
-/*  Clear the scene state.  If scene_num is -1 use the last pressed scene 
+/*  Clear the scene state.  If scene_num is -1 use the last pressed scene
     button number.  */
 
 void clear_scene (int scene_num)
 {
-    int         i;
-
-
- //   GtkTooltips *tooltips = gtk_tooltips_new();
+    int i;
 
 
     /*  Strip off the warning if set.  */
@@ -422,42 +368,43 @@ void clear_scene (int scene_num)
     if (i >= 0) menu_scene = i;
 
 
-    gtk_widget_set_tooltip_text ( GTK_WIDGET (l_scene_eventbox[menu_scene]), 
-                          g_strdup_printf ("Scene %d, right click for menu", 
-                                           menu_scene + 1) );
+    ajami_scenes_scene_set_tooltip(ajami_get_scenes_widget(), menu_scene,
+                                   g_strdup_printf ("Scene %d, right click for menu",
+                                           menu_scene + 1));
 
 
     /*  Set the button to red.  */
 
-    gtk_image_set_from_pixbuf (l_scene[menu_scene], LED_red);
+    ajami_scenes_scene_set_unused(ajami_get_scenes_widget(), menu_scene);
 
     scene_loaded[menu_scene] = FALSE;
 
 
     /*  Resety the scene name to the default.  */
 
-    strcpy (l_scene_name[menu_scene], g_strdup_printf ("Scene %d", 
-                                                       menu_scene + 1));
+    ajami_scenes_scene_set_name(ajami_get_scenes_widget(), menu_scene,
+                                g_strdup_printf ("Scene %d",
+                                        menu_scene + 1));
 }
 
 
-/*  Set all of the buttons to unselected state.  This should be done whenever 
+/*  Set all of the buttons to unselected state.  This should be done whenever
     there is a state change.  */
 
 void unset_scene_buttons ()
 {
-    int         i;
+    int i;
 
 
     current_scene = -1;
     for (i = 0 ; i < NUM_SCENES ; i++)
-      {
-        gtk_image_set_from_pixbuf (l_scene[i], LED_red);
+    {
+        ajami_scenes_scene_set_unused(ajami_get_scenes_widget(), i);
 
         scene_loaded[i] = FALSE;
 
-        strcpy (l_scene_name[i], g_strdup_printf("Scene %d", i + 1));
-      }
+        ajami_scenes_scene_set_name(ajami_get_scenes_widget(), i, g_strdup_printf("Scene %d", i + 1));
+    }
 }
 
 
@@ -465,26 +412,26 @@ void unset_scene_buttons ()
 
 int get_previous_scene_num ()
 {
-  return (prev_scene);
+    return (prev_scene);
 }
 
 
-/*  Set the current scene button to a warning.  This is done whenever any 
+/*  Set the current scene button to a warning.  This is done whenever any
     state changes are made while a scene is active.  */
 
 void set_scene_warning_button ()
 {
-  int        i;
+    int i;
 
 
-  i = current_scene % 100;
+    i = current_scene % 100;
 
-  if (current_scene < 100 && current_scene > -1)
+    if (current_scene < 100 && current_scene > -1)
     {
-      prev_scene = i;
+        prev_scene = i;
 
-      gtk_image_set_from_pixbuf (l_scene[i], LED_yellow);
-      current_scene = changed_scene_no(i);
+        ajami_scenes_scene_set_warning(ajami_get_scenes_widget(), i);
+        current_scene = changed_scene_no(i);
     }
 }
 
@@ -499,34 +446,34 @@ void set_scene_button (int scene)
     /*  Change the selected icon to green/yes.  */
 
     for (i = 0 ; i < NUM_SCENES ; i++)
-      {
+    {
         if (i == scene)
-          {
-            gtk_image_set_from_pixbuf (l_scene[i], LED_green_on);
+        {
+            ajami_scenes_scene_set_active(ajami_get_scenes_widget(), i);
 
             current_scene = i;
-          }
+        }
         else
-          {
+        {
             if (scene_loaded[i])
-              {
-                gtk_image_set_from_pixbuf (l_scene[i], LED_green_off);
-              }
+            {
+                ajami_scenes_scene_set_disabled(ajami_get_scenes_widget(), i);
+            }
             else
-              {
-                gtk_image_set_from_pixbuf (l_scene[i], LED_red);
-              }
-          }
-      }
+            {
+                ajami_scenes_scene_set_unused(ajami_get_scenes_widget(), i);
+            }
+        }
+    }
 }
 
 
-/* Return the magic scene number that will be used to represent that scene if 
+/* Return the magic scene number that will be used to represent that scene if
    it has had unsaved changes made */
 
 int changed_scene_no(int s)
 {
-	return s + 100;
+    return s + 100;
 }
 
 
@@ -535,18 +482,14 @@ int changed_scene_no(int s)
 
 int is_changed_scene(int s)
 {
-	return s >= 100;
+    return s >= 100;
 }
 
 /*  Set a specific scene button to a warning.  Only done on load.  */
 
 void set_num_scene_warning_button (int scene)
 {
-  int        i;
+    int i;
 
-
-  i = scene % 100;
-
-
-  gtk_image_set_from_pixbuf (l_scene[i], LED_yellow);
+    ajami_scenes_scene_set_warning(ajami_get_scenes_widget(), scene);
 }

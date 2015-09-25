@@ -35,7 +35,31 @@ namespace Ajami {
             Object();
         }
 
-        public void scene_set_warning() {
+        public void scene_set_tooltip(int scene, string text) {
+
+        }
+
+        public void scene_set_active(int scene) {
+
+        }
+
+        public void scene_set_warning(int scene) {
+
+        }
+
+        public void scene_set_unused(int scene) {
+
+        }
+
+        public void scene_set_disabled(int scene) {
+
+        }
+
+        public string scene_get_name(int scene) {
+            return "";
+        }
+
+        public void scene_set_name(int scene, string name) {
 
         }
 

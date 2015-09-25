@@ -933,7 +933,7 @@ void process_set_spec_mode(int mode)
 {
     spectrum_mode = mode;
 
-    ajami_scenes_scene_set_warning(ajami_get_scenes_widget());
+    set_scene_warning_button();
 }
 
 int process_get_spec_mode()
@@ -1211,5 +1211,5 @@ void process_set_limiter_logscale(float value)
 {
     logscale_pending = value;
 
-    ajami_scenes_scene_set_warning(ajami_get_scenes_widget());
+    set_scene_warning_button();
 }

@@ -24,13 +24,15 @@ def build(bld):
     )
     valaobjs.source = 'ajamiapp.vala ajamiwindow.vala ajamiscenes.vala ajamicompressor.vala'
     valaobjs.source += ' ajamihelp.vala ajamilimiter.vala ajamiargs.vala ajami.vala'
+    valaobjs.source += ' ajamispectrum.vala'
 
     ajami = bld(
         features       = 'c cprogram glib2',
         target         = 'ajami',
         uselib         = 'GTK JACK LIBXML FFTW OSC M DL',
-        use            = 'ajamiobjects',
+        use            = 'ajamiobjects hvmeter',
         includes       = '.',
         source         = '../data/ajami.gresource.xml'
     )
-    ajami.source += ' io.c limiter-ui.c rms.c process.c state.c plugin.c'
+    ajami.source += ' io.c limiter-ui.c rms.c scenes.c process.c state.c'
+    ajami.source += ' hdeq.c plugin.c'

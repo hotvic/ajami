@@ -30,6 +30,10 @@ namespace Ajami {
         return Ajami.get_app().get_main_window().get_limiter_widget();
     }
 
+    public Spectrum get_spectrum_widget() {
+        return Ajami.get_app().get_main_window().get_spectrum_widget();
+    }
+
     public enum MeterSide {
         METER_L,
         METER_R
@@ -42,6 +46,9 @@ namespace Ajami {
 
         [GtkChild]
         private Limiter limiter;
+
+        [GtkChild]
+        private Spectrum spectrum;
 
         [GtkChild]
         private Scale in_amp_scale;
@@ -61,6 +68,12 @@ namespace Ajami {
         [GtkChild]
         private Meter outmeter_r;
 
+        [GtkChild]
+        private Scale cross_low_scale;
+
+        [GtkChild]
+        private Scale cross_high_scale;
+
 
         public MainWindow(Gtk.Application app) {
             Object(application: app);
@@ -74,6 +87,14 @@ namespace Ajami {
 
         public Limiter get_limiter_widget() {
             return limiter;
+        }
+
+        public Spectrum get_spectrum_widget() {
+            return spectrum;
+        }
+
+        public Gtk.Widget get_widget(Type type, string name) {
+            return this.get_template_child(type, name) as Gtk.Widget;
         }
 
         public void add_actions() {
@@ -107,6 +128,15 @@ namespace Ajami {
             } else {
                 this.outmeter_r.adjustment.set_value(value);
             }
+        }
+
+        /* Crossover */
+        public void set_cross_low_label(string label) {
+
+        }
+
+        public void set_cross_high_label(string label) {
+
         }
     }
 }

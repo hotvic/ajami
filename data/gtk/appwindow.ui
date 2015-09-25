@@ -158,7 +158,7 @@
                                                             </packing>
                                                         </child>
                                                         <child>
-                                                            <object class="GtkBox" id="spectrum_stack"/>
+                                                            <object class="AjamiSpectrum" id="spectrum"/>
                                                             <packing>
                                                                 <property name="name">spectrum</property>
                                                                 <property name="title" translatable="yes">Spectrum</property>
