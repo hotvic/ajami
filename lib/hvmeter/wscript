@@ -4,7 +4,7 @@
 
 def build(bld):
     hvmeter = bld(target='hvmeter', features='c cstlib')
-    hvmeter.source = 'hv-meter.vala'
+    hvmeter.source = 'hvmeter.vala'
     hvmeter.install_binding = False
     hvmeter.packages ='gtk+-3.0'
     hvmeter.uselib = 'GTK'
