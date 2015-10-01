@@ -20,6 +20,11 @@
 using Gtk;
 using HV;
 
+
+/* Pointer to Main Window */
+public Ajami.MainWindow main_window;
+
+
 namespace Ajami {
     /* Widgets helpers */
     public Scenes get_scenes_widget() {
@@ -32,6 +37,10 @@ namespace Ajami {
 
     public Spectrum get_spectrum_widget() {
         return Ajami.get_app().get_main_window().get_spectrum_widget();
+    }
+
+    public Compressor? get_comp_widget(CompID id) {
+        return Ajami.get_app().get_main_window().get_comp_widget(id);
     }
 
     public enum MeterSide {
@@ -51,6 +60,15 @@ namespace Ajami {
         private Spectrum spectrum;
 
         [GtkChild]
+        private Compressor compressor_low;
+
+        [GtkChild]
+        private Compressor compressor_mid;
+
+        [GtkChild]
+        private Compressor compressor_high;
+
+        [GtkChild]
         private Scale in_amp_scale;
 
         [GtkChild]
@@ -67,6 +85,12 @@ namespace Ajami {
 
         [GtkChild]
         private Meter outmeter_r;
+
+        [GtkChild]
+        private Meter rmsmeter_l;
+
+        [GtkChild]
+        private Meter rmsmeter_r;
 
         [GtkChild]
         private Scale cross_low_scale;
@@ -93,6 +117,19 @@ namespace Ajami {
             return spectrum;
         }
 
+        public Compressor get_comp_widget(CompID id) {
+            switch (id) {
+            case CompID.COMP_LOW:
+                return compressor_low;
+            case CompID.COMP_MID:
+                return compressor_mid;
+            case CompID.COMP_HIGH:
+                return compressor_high;
+            }
+
+            return null;
+        }
+
         public Gtk.Widget get_widget(Type type, string name) {
             return this.get_template_child(type, name) as Gtk.Widget;
         }
@@ -113,7 +150,7 @@ namespace Ajami {
             this.add_action(redo);
         }
 
-        /* In-Meter */
+        /* INTRIM */
         public void set_inmeter_value(MeterSide side, double value) {
             if (side == MeterSide.METER_L) {
                 this.inmeter_l.adjustment.set_value(value);
@@ -128,6 +165,50 @@ namespace Ajami {
             } else {
                 this.outmeter_r.adjustment.set_value(value);
             }
+        }
+
+        public void set_rmsmeter_value(MeterSide side, double value) {
+            if (side == MeterSide.METER_L) {
+                this.rmsmeter_l.adjustment.set_value(value);
+            } else {
+                this.rmsmeter_r.adjustment.set_value(value);
+            }
+        }
+
+        public float get_inmeter_peak(MeterSide side) {
+            return 0f;
+        }
+
+        public float get_outmeter_peak(MeterSide side) {
+            return 0f;
+        }
+
+        public float get_rmsmeter_peak(MeterSide side) {
+            return 0f;
+        }
+
+        public void reset_inmeter_peak() {
+
+        }
+
+        public void reset_outmeter_peak() {
+
+        }
+
+        public void reset_rmsmeter_peak() {
+
+        }
+
+        public void set_inmeter_warn_point(float point) {
+
+        }
+
+        public void set_outmeter_warn_point(float point) {
+
+        }
+
+        public void set_rmsmeter_warn_point(float point) {
+
         }
 
         /* Crossover */

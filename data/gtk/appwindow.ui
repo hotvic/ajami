@@ -233,6 +233,7 @@
                                         <property name="orientation">horizontal</property>
                                         <child>
                                             <object class="AjamiCompressor" id="compressor_low">
+                                                <property name="comp_id">0</property>
                                                 <property name="label">Low: %i - %i</property>
                                             </object>
                                             <packing>
@@ -241,6 +242,7 @@
                                         </child>
                                         <child>
                                             <object class="AjamiCompressor" id="compressor_mid">
+                                                <property name="comp_id">1</property>
                                                 <property name="label">Mid: %i - %i</property>
                                             </object>
                                             <packing>
@@ -249,6 +251,7 @@
                                         </child>
                                         <child>
                                             <object class="AjamiCompressor" id="compressor_high">
+                                                <property name="comp_id">2</property>
                                                 <property name="label">High: %i - %i</property>
                                             </object>
                                             <packing>

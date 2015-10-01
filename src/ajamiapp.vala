@@ -43,7 +43,7 @@ namespace Ajami {
         }
 
         public override void activate() {
-            window = new MainWindow(this);
+            main_window = new MainWindow(this);
 
             window.show_all();
         }

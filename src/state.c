@@ -29,6 +29,7 @@
 #include "config.h"
 #include "main.h"
 #include "ajami-callbacks.h"
+#include "ajamiobjects.h"
 #include "geq.h"
 #include "spectrum.h"
 #include "intrim.h"
@@ -483,22 +484,12 @@ void s_set_description(int id, const char *desc)
 
 void s_save_session_from_ui (GtkWidget *w, gpointer user_data)
 {
-#if GTK_VERSION_GE(2, 4)
-
     gchar *fname = NULL;
     GtkFileChooser *file_selector = (GtkFileChooser *) user_data;
 
     fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_selector));
     s_save_session (fname);
     g_free (fname);
-
-#else
-
-    GtkFileSelection *file_selector = (GtkFileSelection *) user_data;
-
-    s_save_session(gtk_file_selection_get_filename (GTK_FILE_SELECTION (file_selector)));
-
-#endif
 }
 
 void s_save_session (const gchar *fname)
@@ -539,7 +530,7 @@ void s_save_session (const gchar *fname)
 
 
     s_save_global_int(doc, "mode", process_get_spec_mode());
-    s_save_global_int(doc, "freq", ajami_spectrum_get_frquency(ajami_get_spectrum_widget()));
+    s_save_global_int(doc, "freq", ajami_spectrum_get_frequency(ajami_get_spectrum_widget()));
     s_save_global_float(doc, "ct", crossfade_time);
     s_save_global_float(doc, "inwl", intrim_inmeter_get_warn());
     s_save_global_float(doc, "outwl", intrim_outmeter_get_warn());
@@ -644,23 +635,12 @@ static void s_error(void *user_data, const char *msg, ...);
 
 void s_load_session_from_ui (GtkWidget *w, gpointer user_data)
 {
-#if GTK_VERSION_GE(2, 4)
-
     gchar *fname = NULL;
     GtkFileChooser *file_selector = (GtkFileChooser *) user_data;
 
     fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_selector));
     s_load_session (fname);
     g_free (fname);
-
-#else
-
-    GtkFileSelection *file_selector = (GtkFileSelection *) user_data;
-
-    s_load_session(gtk_file_selection_get_filename (GTK_FILE_SELECTION
-                                                (file_selector)));
-
-#endif
 }
 
 void s_load_session (const gchar *fname)
