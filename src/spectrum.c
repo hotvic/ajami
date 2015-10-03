@@ -38,102 +38,102 @@ static int spectrum_freq = 10, timeout_countdown = 0;
 
 void bind_spectrum()
 {
-    GtkWidget *root;
-    GtkWidget *hbox;
-    GtkWidget *vbox;
-    GtkWidget *label;
-    GtkWidget *meter;
-    GtkWidget *mscale;
-    int i, bin, band;
-    float band_freq[BANDS];
-    float band_bin_count[BANDS];
+    //GtkWidget *root;
+    //GtkWidget *hbox;
+    //GtkWidget *vbox;
+    //GtkWidget *label;
+    //GtkWidget *meter;
+    //GtkWidget *mscale;
+    //int i, bin, band;
+    //float band_freq[BANDS];
+    //float band_bin_count[BANDS];
 
-    root = lookup_widget(main_window, "spectrum_hbox");
-    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_box_pack_start(GTK_BOX(root), hbox, TRUE, TRUE, 0);
-    gtk_widget_show(hbox);
+    //root = lookup_widget(main_window, "spectrum_hbox");
+    //hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    //gtk_box_pack_start(GTK_BOX(root), hbox, TRUE, TRUE, 0);
+    //gtk_widget_show(hbox);
 
-    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
-    gtk_widget_show(vbox);
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
-//   mscale = gtk_meterscale_new(GTK_METERSCALE_RIGHT, LOWER_SPECTRUM_DB,
-//                               UPPER_SPECTRUM_DB);
-//    gtk_widget_show(mscale);
-//   gtk_box_pack_start(GTK_BOX(vbox), mscale, TRUE, TRUE, 0);
-    label = make_mini_label(" ");
-    gtk_widget_show(label);
-    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, TRUE, 0);
+    //vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
+    //gtk_widget_show(vbox);
+    //gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
+////   mscale = gtk_meterscale_new(GTK_METERSCALE_RIGHT, LOWER_SPECTRUM_DB,
+////                               UPPER_SPECTRUM_DB);
+////    gtk_widget_show(mscale);
+////   gtk_box_pack_start(GTK_BOX(vbox), mscale, TRUE, TRUE, 0);
+    //label = make_mini_label(" ");
+    //gtk_widget_show(label);
+    //gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, TRUE, 0);
 
-    for (i = 0; i < BANDS; i++)
-    {
-        vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
-        gtk_widget_show(vbox);
-        gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
+    //for (i = 0; i < BANDS; i++)
+    //{
+        //vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
+        //gtk_widget_show(vbox);
+        //gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 
-        adjustment[i] = GTK_ADJUSTMENT(gtk_adjustment_new(0.0,
-                                       , , 0.0, 0.0, 0.0));
-        meter = gtk_meter_new(adjustment[i],
-                              GTK_METER_UP, GTK_METERSCALE_TOP,
-                              LOWER_SPECTRUM_DB, UPPER_SPECTRUM_DB);
-        gtk_meter_set_adjustment(GTK_METER(meter), adjustment[i]);
-        gtk_widget_show(meter);
-        gtk_box_pack_start(GTK_BOX(vbox), meter, TRUE, TRUE, 0);
+        //adjustment[i] = GTK_ADJUSTMENT(gtk_adjustment_new(0.0,
+                                       //, , 0.0, 0.0, 0.0));
+        //meter = gtk_meter_new(adjustment[i],
+                              //GTK_METER_UP, GTK_METERSCALE_TOP,
+                              //LOWER_SPECTRUM_DB, UPPER_SPECTRUM_DB);
+        //gtk_meter_set_adjustment(GTK_METER(meter), adjustment[i]);
+        //gtk_widget_show(meter);
+        //gtk_box_pack_start(GTK_BOX(vbox), meter, TRUE, TRUE, 0);
 
-        label = make_mini_label(band_lbls[i]);
-        gtk_widget_show(label);
-        gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, TRUE, 0);
-    }
+        //label = make_mini_label(band_lbls[i]);
+        //gtk_widget_show(label);
+        //gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, TRUE, 0);
+    //}
 
-    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
-    gtk_widget_show(vbox);
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
-//   mscale = gtk_meterscale_new(GTK_METERSCALE_LEFT, LOWER_SPECTRUM_DB,
-//                               UPPER_SPECTRUM_DB);
-//   gtk_widget_show(mscale);
-//   gtk_box_pack_start(GTK_BOX(vbox), mscale, TRUE, TRUE, 0);
-    label = make_mini_label(" ");
-    gtk_widget_show(label);
-    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, TRUE, 0);
+    //vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
+    //gtk_widget_show(vbox);
+    //gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
+////   mscale = gtk_meterscale_new(GTK_METERSCALE_LEFT, LOWER_SPECTRUM_DB,
+////                               UPPER_SPECTRUM_DB);
+////   gtk_widget_show(mscale);
+////   gtk_box_pack_start(GTK_BOX(vbox), mscale, TRUE, TRUE, 0);
+    //label = make_mini_label(" ");
+    //gtk_widget_show(label);
+    //gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, TRUE, 0);
 
-    /* Calcuate the centre frequency for each band */
-    for (band=0; band<BANDS; band++)
-    {
-        band_freq[band] = 1000.0 * pow(10.0, (double)(band-16) * 0.1);
-        //printf("band %d is at %f Hz\n", band, band_freq[band]);
-        band_bin_count[band] = 0;
-    }
+    ///* Calcuate the centre frequency for each band */
+    //for (band=0; band<BANDS; band++)
+    //{
+        //band_freq[band] = 1000.0 * pow(10.0, (double)(band-16) * 0.1);
+        ////printf("band %d is at %f Hz\n", band, band_freq[band]);
+        //band_bin_count[band] = 0;
+    //}
 
-    for (bin=0; bin<BINS/2; bin++)
-    {
-        const float bin_freq = (bin + 0.5f) * sample_rate / BINS;
-        int nearest_band = 0;
-        float nearest_dist = 9999999.0f;
-        for (band=0; band<BANDS; band++)
-        {
-            if (fabs(bin_freq - band_freq[band]) < nearest_dist)
-            {
-                nearest_band = band;
-                nearest_dist = fabs(bin_freq - band_freq[band]);
-            }
-        }
-        bin_bands[bin] = nearest_band;
-        //printf("bin %d (%f Hz) is nearest band %d (%f Hz)\n", bin, bin_freq, nearest_band, band_freq[nearest_band]);
-        band_bin_count[nearest_band]++;
-    }
+    //for (bin=0; bin<BINS/2; bin++)
+    //{
+        //const float bin_freq = (bin + 0.5f) * sample_rate / BINS;
+        //int nearest_band = 0;
+        //float nearest_dist = 9999999.0f;
+        //for (band=0; band<BANDS; band++)
+        //{
+            //if (fabs(bin_freq - band_freq[band]) < nearest_dist)
+            //{
+                //nearest_band = band;
+                //nearest_dist = fabs(bin_freq - band_freq[band]);
+            //}
+        //}
+        //bin_bands[bin] = nearest_band;
+        ////printf("bin %d (%f Hz) is nearest band %d (%f Hz)\n", bin, bin_freq, nearest_band, band_freq[nearest_band]);
+        //band_bin_count[nearest_band]++;
+    //}
 
-    for (band=0; band<BANDS; band++)
-    {
-        if (band_bin_count[band] == 0)
-        {
-            band_bin[band] = band_freq[band] * BINS / sample_rate;
-            //printf("band %d is unassigned, use bin %d\n", band, band_bin[band]);
-        }
-        else
-        {
-            /* Mark for no reverse lookup */
-            band_bin[band] = -1;
-        }
-    }
+    //for (band=0; band<BANDS; band++)
+    //{
+        //if (band_bin_count[band] == 0)
+        //{
+            //band_bin[band] = band_freq[band] * BINS / sample_rate;
+            ////printf("band %d is unassigned, use bin %d\n", band, band_bin[band]);
+        //}
+        //else
+        //{
+            ///* Mark for no reverse lookup */
+            //band_bin[band] = -1;
+        //}
+    //}
 }
 
 gboolean spectrum_update(gpointer data)
@@ -147,7 +147,7 @@ gboolean spectrum_update(gpointer data)
 
     float decay_rate = 0.2f;
 
-    page = get_current_notebook1_page ();
+    // page = get_current_notebook1_page ();
     count = BINS / 2;
 
     if (page == 2)   // geq tab
@@ -169,7 +169,7 @@ gboolean spectrum_update(gpointer data)
                              single_levels[band_bin[i]+1]) * 0.5;
             }
 //        printf("spectrum: setting adj %i \n", i);
-            gtk_adjustment_set_value(adjustment[i], lin2db(levels[i]));
+            // gtk_adjustment_set_value(adjustment[i], lin2db(levels[i]));
         }
     }
     else if (page == 0)   // hdeq tab
@@ -183,7 +183,7 @@ gboolean spectrum_update(gpointer data)
             single_levels[i] *= 1.0f - decay_rate;
             single_levels[i] += bin_peak_read_and_clear(i) * decay_rate;
         }
-        draw_EQ_spectrum_curve (single_levels);
+        // draw_EQ_spectrum_curve (single_levels);
     }
 
     return (timeout_ret);
