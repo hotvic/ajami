@@ -25,6 +25,7 @@ def configure(cnf):
     cnf.check(lib='dl', mandatory=True)
     cnf.check(lib='pthread', mandatory=True)
     cnf.check_cfg(package='gtk+-3.0', uselib_store='GTK', args='--cflags --libs', mandatory=True)
+    cnf.check_cfg(package='gmodule-export-2.0', uselib_store='GMODULE', args='--libs', mandatory=True)
     cnf.check_cfg(package='jack', uselib_store='JACK', args='--cflags --libs', mandatory=True)
     cnf.check_cfg(package='libxml-2.0', uselib_store='LIBXML', args='--cflags --libs', mandatory=True)
 

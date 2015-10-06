@@ -7,7 +7,7 @@ namespace Ajami {
     public void message(Gtk.MessageType type, string message) {
         if (msg_dialog != null) msg_dialog.destroy();
 
-        msg_dialog = new MessageDialog(get_main_window(),
+        msg_dialog = new MessageDialog(main_window,
                                        DialogFlags.DESTROY_WITH_PARENT,
                                        type, Gtk.ButtonsType.CLOSE,
                                        "%s", message);

@@ -20,6 +20,18 @@
 using Gtk;
 
 
+/* C functions */
+extern void s_set_callback(int state_id, void *cb);
+extern void s_set_adjustment(int state_id, Adjustment adj);
+extern void at_changed(int id, float value);
+extern void re_changed(int id, float value);
+extern void th_changed(int id, float value);
+extern void ra_changed(int id, float value);
+extern void kn_changed(int id, float value);
+extern void ma_changed(int id, float value);
+extern void adj_cb(Adjustment adj, void *data);
+
+
 namespace Ajami {
     public enum CompID {
         COMP_LOW,
@@ -141,34 +153,40 @@ namespace Ajami {
 
         }
 
-        [GtkCallback]
-        public void at_changed() {
-
+        public ulong connect_at(int state_id) {
+            s_set_callback(state_id, (void *) at_changed);
+            s_set_adjustment(state_id, adj_at);
+            return Signal.connect(adj_at, "value-changed", (GLib.Callback) adj_cb, state_id.to_pointer());
         }
 
-        [GtkCallback]
-        public void re_changed() {
-
+        public ulong connect_re(int state_id) {
+            s_set_callback(state_id, (void *) re_changed);
+            s_set_adjustment(state_id, adj_re);
+            return Signal.connect(adj_re, "value-changed", (GLib.Callback) adj_cb, state_id.to_pointer());
         }
 
-        [GtkCallback]
-        public void th_changed() {
-
+        public ulong connect_th(int state_id) {
+            s_set_callback(state_id, (void *) th_changed);
+            s_set_adjustment(state_id, adj_th);
+            return Signal.connect(adj_th, "value-changed", (GLib.Callback) adj_cb, state_id.to_pointer());
         }
 
-        [GtkCallback]
-        public void ra_changed() {
-
+        public ulong connect_ra(int state_id) {
+            s_set_callback(state_id, (void *) ra_changed);
+            s_set_adjustment(state_id, adj_ra);
+            return Signal.connect(adj_ra, "value-changed", (GLib.Callback) adj_cb, state_id.to_pointer());
         }
 
-        [GtkCallback]
-        public void kn_changed() {
-
+        public ulong connect_kn(int state_id) {
+            s_set_callback(state_id, (void *) kn_changed);
+            s_set_adjustment(state_id, adj_kn);
+            return Signal.connect(adj_kn, "value-changed", (GLib.Callback) adj_cb, state_id.to_pointer());
         }
 
-        [GtkCallback]
-        public void ma_changed() {
-
+        public ulong connect_ma(int state_id) {
+            s_set_callback(state_id, (void *) ma_changed);
+            s_set_adjustment(state_id, adj_ma);
+            return Signal.connect(adj_ma, "value-changed", (GLib.Callback) adj_cb, state_id.to_pointer());
         }
     }
 }

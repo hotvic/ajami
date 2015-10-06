@@ -215,16 +215,16 @@ void bind_hdeq() {
     int i;
 
     l_low2mid = GTK_SCALE(ajami_main_window_get_widget(
-        ajami_get_main_window(), GTK_TYPE_SCALE, "cros_low_scale"));
+        main_window, GTK_TYPE_SCALE, "cros_low_scale"));
     l_mid2high = GTK_SCALE(ajami_main_window_get_widget(
-        ajami_get_main_window(), GTK_TYPE_SCALE, "cross_high_scale"));
+        main_window, GTK_TYPE_SCALE, "cross_high_scale"));
 
     l_comp[0] = AJAMI_COMPRESSOR(ajami_main_window_get_widget(
-        ajami_get_main_window(), AJAMI_TYPE_COMPRESSOR, "compressor_low"));
+        main_window, AJAMI_TYPE_COMPRESSOR, "compressor_low"));
     l_comp[1] = AJAMI_COMPRESSOR(ajami_main_window_get_widget(
-        ajami_get_main_window(), AJAMI_TYPE_COMPRESSOR, "compressor_mid"));
+        main_window, AJAMI_TYPE_COMPRESSOR, "compressor_mid"));
     l_comp[2] = AJAMI_COMPRESSOR(ajami_main_window_get_widget(
-        ajami_get_main_window(), AJAMI_TYPE_COMPRESSOR, "compressor_high"));
+        main_window, AJAMI_TYPE_COMPRESSOR, "compressor_high"));
 
     /* TODO: write HDEQ widget in Vala
     l_EQ_curve     = GTK_DRAWING_AREA (lookup_widget (main_window, "EQ_curve"));
@@ -320,7 +320,7 @@ void hdeq_low2mid_set(GtkRange* range) {
 
     lvalue = pow(10.0, value);
     label = g_strdup_printf("%05d", NINT(lvalue));
-    ajami_main_window_set_cross_low_label(ajami_get_main_window(), label);
+    ajami_main_window_set_cross_low_label(main_window, label);
     free(label);
 
     /*  Here we're setting the frequency of the low to mid band crossover.  */
@@ -417,7 +417,7 @@ void hdeq_mid2high_set(GtkRange* range) {
 
     mvalue = pow(10.0, value);
     label = g_strdup_printf("%05d", NINT(mvalue));
-    ajami_main_window_set_cross_high_label(ajami_get_main_window(), label);
+    ajami_main_window_set_cross_high_label(main_window, label);
     free(label);
 
     /*  Set the frequency of the mid to high band crossover.  */

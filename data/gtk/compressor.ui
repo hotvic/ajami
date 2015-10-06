@@ -5,39 +5,33 @@
         <property name="value">400</property>
         <property name="lower">10</property>
         <property name="upper">400</property>
-        <signal name="value-changed" handler="at_changed" />
     </object>
     <object class="GtkAdjustment" id="adj_re">
         <property name="value">10</property>
         <property name="lower">10</property>
         <property name="upper">800</property>
-        <signal name="value-changed" handler="re_changed" />
     </object>
     <object class="GtkAdjustment" id="adj_th">
         <property name="value">0</property>
         <property name="lower">-30</property>
         <property name="upper">0</property>
-        <signal name="value-changed" handler="th_changed" />
     </object>
     <object class="GtkAdjustment" id="adj_ra">
         <property name="value">1</property>
         <property name="lower">1</property>
         <property name="upper">20</property>
-        <signal name="value-changed" handler="ra_changed" />
     </object>
     <object class="GtkAdjustment" id="adj_kn">
         <property name="value">0</property>
         <property name="lower">0</property>
         <property name="upper">1</property>
         <property name="step-increment">0.1</property>
-        <signal name="value-changed" handler="kn_changed" />
     </object>
     <object class="GtkAdjustment" id="adj_ma">
         <property name="value">0</property>
         <property name="lower">0</property>
         <property name="upper">30</property>
         <property name="step-increment">1</property>
-        <signal name="value-changed" handler="ma_changed" />
     </object>
     <template class="AjamiCompressor" parent="GtkFrame">
         <child>
@@ -58,7 +52,7 @@
                                     <object class="GtkScale" id="attack_scale">
                                         <property name="adjustment">adj_at</property>
                                         <property name="orientation">vertical</property>
-                                        <property name="vexpand">true</property>
+                                        <property name="expand">true</property>
                                         <property name="inverted">true</property>
                                         <property name="draw-value">true</property>
                                         <property name="value-pos">GTK_POS_TOP</property>
@@ -78,7 +72,7 @@
                                     <object class="GtkScale" id="release_scale">
                                         <property name="adjustment">adj_re</property>
                                         <property name="orientation">vertical</property>
-                                        <property name="vexpand">true</property>
+                                        <property name="expand">true</property>
                                         <property name="inverted">true</property>
                                         <property name="draw-value">true</property>
                                         <property name="value-pos">GTK_POS_TOP</property>
@@ -98,7 +92,7 @@
                                     <object class="GtkScale" id="threshold_scale">
                                         <property name="adjustment">adj_th</property>
                                         <property name="orientation">vertical</property>
-                                        <property name="vexpand">true</property>
+                                        <property name="expand">true</property>
                                         <property name="inverted">true</property>
                                         <property name="draw-value">true</property>
                                         <property name="value-pos">GTK_POS_TOP</property>
@@ -118,7 +112,7 @@
                                     <object class="GtkScale" id="ratio_scale">
                                         <property name="adjustment">adj_ra</property>
                                         <property name="orientation">vertical</property>
-                                        <property name="vexpand">true</property>
+                                        <property name="expand">true</property>
                                         <property name="inverted">true</property>
                                         <property name="draw-value">true</property>
                                         <property name="value-pos">GTK_POS_TOP</property>
@@ -138,7 +132,7 @@
                                     <object class="GtkScale" id="knee_scale">
                                         <property name="adjustment">adj_kn</property>
                                         <property name="orientation">vertical</property>
-                                        <property name="vexpand">true</property>
+                                        <property name="expand">true</property>
                                         <property name="inverted">true</property>
                                         <property name="draw-value">true</property>
                                         <property name="value-pos">GTK_POS_TOP</property>
@@ -157,13 +151,17 @@
                                 <child>
                                     <object class="GtkToggleButton" id="makeup_auto">
                                         <property name="label">0.0</property>
+                                        <property name="expand">false</property>
                                     </object>
+                                    <packing>
+                                        <property name="expand">false</property>
+                                    </packing>
                                 </child>
                                 <child>
                                     <object class="GtkScale" id="makeup_scale">
                                         <property name="adjustment">adj_ma</property>
                                         <property name="orientation">vertical</property>
-                                        <property name="vexpand">true</property>
+                                        <property name="expand">true</property>
                                         <property name="inverted">true</property>
                                         <property name="draw-value">false</property>
                                     </object>

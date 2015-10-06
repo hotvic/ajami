@@ -241,7 +241,7 @@ void s_history_add(const char* description) {
 
     history = g_list_append(history, ns);
     undo_pos = g_list_last(history);
-    /* printf("add %s\n", description); */
+    printf("add %s\n", description);
     last_state = ns;
 }
 
@@ -1048,7 +1048,7 @@ void s_update_title() {
 
     g_string_append_printf(title, " - %s", base);
 
-    gtk_window_set_title((GtkWindow*)ajami_get_main_window(), title->str);
+    gtk_window_set_title((GtkWindow*) main_window, title->str);
 
     g_free(tmp);
     g_string_free(title, TRUE);

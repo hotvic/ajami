@@ -25,7 +25,6 @@ void intrim_set_out_meter_peak_pref (gboolean pref);
 gboolean intrim_get_out_meter_peak_pref ();
 void intrim_set_rms_meter_peak_pref (gboolean pref);
 gboolean intrim_get_rms_meter_peak_pref ();
-void update_pan_label(float balance);
 void intrim_inmeter_reset_peak();
 void intrim_outmeter_reset_peak();
 void intrim_rmsmeter_reset_peak ();

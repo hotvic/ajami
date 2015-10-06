@@ -28,19 +28,19 @@ public Ajami.MainWindow main_window;
 namespace Ajami {
     /* Widgets helpers */
     public Scenes get_scenes_widget() {
-        return Ajami.get_app().get_main_window().get_scenes_widget();
+        return main_window.get_scenes_widget();
     }
 
     public Limiter get_limiter_widget() {
-        return Ajami.get_app().get_main_window().get_limiter_widget();
+        return main_window.get_limiter_widget();
     }
 
     public Spectrum get_spectrum_widget() {
-        return Ajami.get_app().get_main_window().get_spectrum_widget();
+        return main_window.get_spectrum_widget();
     }
 
     public Compressor? get_comp_widget(CompID id) {
-        return Ajami.get_app().get_main_window().get_comp_widget(id);
+        return main_window.get_comp_widget(id);
     }
 
     public enum MeterSide {
@@ -117,7 +117,7 @@ namespace Ajami {
             return spectrum;
         }
 
-        public Compressor get_comp_widget(CompID id) {
+        public Compressor? get_comp_widget(CompID id) {
             switch (id) {
             case CompID.COMP_LOW:
                 return compressor_low;
@@ -131,6 +131,8 @@ namespace Ajami {
         }
 
         public Gtk.Widget get_widget(Type type, string name) {
+            stdout.printf("Trying to get '%s' widget...\n", name);
+
             return this.get_template_child(type, name) as Gtk.Widget;
         }
 

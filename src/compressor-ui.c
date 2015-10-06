@@ -55,13 +55,6 @@ static GtkAdjustment *le_meter_adj[XO_BANDS], *ga_meter_adj[XO_BANDS];
 
 /*  Variables used for ganging the compressor controls.  */
 
-static GtkLabel *lab_at[XO_BANDS];
-static GtkLabel *lab_re[XO_BANDS];
-static GtkLabel *lab_th[XO_BANDS];
-static GtkLabel *lab_ra[XO_BANDS];
-static GtkLabel *lab_kn[XO_BANDS];
-static GtkLabel *lab_ma[XO_BANDS];
-
 static GtkToggleButton *autobutton[XO_NBANDS];
 
 static gboolean gang_at[XO_BANDS];
@@ -126,6 +119,20 @@ void bind_compressors()
 
     for (i = 0; i < XO_BANDS; i++)
     {
+        gang_at[i] = FALSE;
+        gang_re[i] = FALSE;
+        gang_th[i] = FALSE;
+        gang_ra[i] = FALSE;
+        gang_kn[i] = FALSE;
+        gang_ma[i] = FALSE;
+
+        ajami_compressor_connect_at(w_comp[i], S_COMP_ATTACK(i));
+        ajami_compressor_connect_re(w_comp[i], S_COMP_RELEASE(i));
+        ajami_compressor_connect_th(w_comp[i], S_COMP_THRESH(i));
+        ajami_compressor_connect_ra(w_comp[i], S_COMP_RATIO(i));
+        ajami_compressor_connect_kn(w_comp[i], S_COMP_KNEE(i));
+        ajami_compressor_connect_ma(w_comp[i], S_COMP_MAKEUP(i));
+
         /* snprintf(name, 255, "comp_le_%d", i + 1);
         le_meter[i] = HV_METER(lookup_widget(main_window, name));
         le_meter_adj[i] = hv_meter_get_adjustment(le_meter[i]);

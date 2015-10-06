@@ -29,11 +29,11 @@ def build(bld):
     ajami = bld(
         features       = 'c cprogram glib2',
         target         = 'ajami',
-        uselib         = 'GTK JACK LIBXML FFTW OSC M DL',
+        uselib         = 'GTK JACK LIBXML FFTW OSC M DL GMODULE',
         use            = 'ajamiobjects hvmeter',
         includes       = '.',
         source         = '../data/ajami.gresource.xml'
     )
     ajami.source += ' io.c limiter-ui.c rms.c scenes.c process.c state.c'
     ajami.source += ' hdeq.c plugin.c compressor-ui.c intrim.c preferences.c'
-    ajami.source += ' spline.c geq.c'
+    ajami.source += ' spline.c geq.c stereo.c'

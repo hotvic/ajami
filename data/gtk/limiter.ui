@@ -35,6 +35,8 @@
                             <object class="HVMeter" id="inmeter">
                                 <property name="orientation">horizontal</property>
                                 <property name="inverted">false</property>
+                                <property name="hexpand">true</property>
+                                <property name="height-request">15</property>
                             </object>
                         </child>
                         <child>
@@ -81,12 +83,21 @@
                             <object class="HVMeter" id="rel_outmeter">
                                 <property name="orientation">horizontal</property>
                                 <property name="inverted">false</property>
+                                <property name="hexpand">true</property>
+                                <property name="height-request">10</property>
                             </object>
                         </child>
                         <child>
                             <object class="HVMeter" id="outmeter">
                                 <property name="orientation">horizontal</property>
                                 <property name="inverted">false</property>
+                                <property name="hexpand">true</property>
+                                <property name="height-request">15</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkCheckButton" id="limiter_bypass">
+                                <property name="label">Bypass Limiter</property>
                             </object>
                         </child>
                     </object>

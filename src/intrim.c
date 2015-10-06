@@ -30,7 +30,6 @@
 #include "ajamiobjects.h"
 
 
-static GtkLabel *pan_label[2];
 static GtkEntry *out_meter_text[2], *rms_meter_text[2];
 static float inmeter_warn_level, outmeter_warn_level, rmsmeter_warn_level;
 static gboolean out_meter_peak_pref = TRUE, rms_meter_peak_pref = TRUE;
@@ -68,11 +67,7 @@ void bind_intrim()
     ajami_main_window_set_rmsmeter_value(main_window, AJAMI_METER_SIDE_METER_R, -60.0);
 
     rms_meter_text[0] = GTK_ENTRY (lookup_widget (main_window, "rms_meter_text_l"));
-    rms_meter_text[1] = GTK_ENTRY (lookup_widget (main_window, "rms_meter_text_r"));
-
-    pan_label[0] = GTK_LABEL(lookup_widget(main_window, "pan_label"));
-    pan_label[1] = GTK_LABEL(lookup_widget(presets_window, "presets_pan_label")); */
-    update_pan_label(0.0);
+    rms_meter_text[1] = GTK_ENTRY (lookup_widget (main_window, "rms_meter_text_r")); */
 
     s_set_callback(S_IN_GAIN, intrim_cb);
     //s_set_adjustment(S_IN_GAIN, gtk_range_get_adjustment(GTK_RANGE(lookup_widget(main_window, "in_trim_scale"))));
@@ -105,7 +100,6 @@ void inpan_cb(int id, float value)
     in_pan_gain[1] = db2lin(value * 0.5f);
     in_gain[0] = in_trim_gain * in_pan_gain[0];
     in_gain[1] = in_trim_gain * in_pan_gain[1];
-    update_pan_label(value);
 }
 
 void in_meter_value(float amp[])
@@ -205,26 +199,6 @@ void intrim_set_rms_meter_peak_pref (gboolean pref)
 gboolean intrim_get_rms_meter_peak_pref ()
 {
     return (rms_meter_peak_pref);
-}
-
-void update_pan_label(float balance)
-{
-    char tmp[256];
-
-    if (balance < -0.5f)
-    {
-        snprintf(tmp, 255, _("left %.0fdB"), -balance);
-    }
-    else if (balance > 0.5f)
-    {
-        snprintf(tmp, 255, _("right %.0fdB"), balance);
-    }
-    else
-    {
-        sprintf(tmp, _("centre"));
-    }
-    gtk_label_set_label(pan_label[0], tmp);
-    gtk_label_set_label(pan_label[1], tmp);
 }
 
 void intrim_inmeter_reset_peak ()

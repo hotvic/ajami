@@ -20,16 +20,20 @@
 using Gtk;
 
 
+/* C functions */
+extern void state_init();
+extern void preferences_init();
+extern void s_clear_history();
+extern void bind_geq();
+extern void bind_hdeq();
+extern void bind_intrim();
+extern void bind_limiter();
+extern void bind_compressors();
+extern void bind_stereo();
+
+
 namespace Ajami {
-    /* Helpers */
-    public MainWindow get_main_window() {
-        return Ajami.get_app().get_main_window();
-    }
-
     public class Ajami : Gtk.Application {
-        private MainWindow window = null;
-
-
         public Ajami() {
             Object(application_id: "org.ajami.ajami", flags: 0);
 
@@ -43,9 +47,28 @@ namespace Ajami {
         }
 
         public override void activate() {
+            main_window.show_all();
+        }
+
+        public override void startup() {
+            base.startup();
+
+            /* Workaround for now */
+            Type meter = typeof(HV.Meter);
+
             main_window = new MainWindow(this);
 
-            window.show_all();
+            state_init();
+            preferences_init();
+
+            bind_geq();
+            bind_hdeq();
+            bind_intrim();
+            bind_limiter();
+            bind_compressors();
+            bind_stereo();
+
+            s_clear_history();
         }
 
         public void add_actions() {
@@ -58,13 +81,6 @@ namespace Ajami {
 
             this.add_action(quit);
             this.add_action(preferences);
-        }
-
-        public MainWindow? get_main_window() {
-            if (window != null && window is MainWindow)
-                return window;
-
-            return null;
         }
     }
 }
