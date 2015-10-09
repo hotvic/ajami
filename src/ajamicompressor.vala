@@ -164,11 +164,11 @@ namespace Ajami {
         }
 
         public void le_set_warn_point(float wp) {
-
+            comp_le.warn_point = wp;
         }
 
         public void ga_set_warn_point(float wp) {
-
+            comp_ga.warn_point = wp;
         }
 
         public void set_auto_ma_label(string text) {

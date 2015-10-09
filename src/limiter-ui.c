@@ -147,9 +147,9 @@ void limiter_meters_update()
     lim_peak[LIM_PEAK_IN] = 0.0f;
     lim_peak[LIM_PEAK_OUT] = 0.0f;
 
-    gtk_adjustment_set_value(in_meter_adj, peak_in);
-    gtk_adjustment_set_value(att_meter_adj, atten);
-    gtk_adjustment_set_value(out_meter_adj, peak_out);
+   // gtk_adjustment_set_value(in_meter_adj, peak_in);
+   // gtk_adjustment_set_value(att_meter_adj, atten);
+   // gtk_adjustment_set_value(out_meter_adj, peak_out);
 }
 
 void limiter_inmeter_reset_peak ()

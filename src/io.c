@@ -734,12 +734,12 @@ void io_init(AjamiArgs* args) {
     if (crossfade_time < 0.0 || crossfade_time > 2.0)
         crossfade_time = 1.0;
 
-    server_name = ajami_args_server_name;
-    client_name = ajami_args_client_name;
+    server_name   = ajami_args_server_name;
+    client_name   = ajami_args_client_name;
     connect_ports = !ajami_args_not_connect_ports;
     thread_option = ajami_args_single_thread;
-    trace_option = ajami_args_trace_buffer;
-    gui_mode = !ajami_args_presets_gui;
+    trace_option  = ajami_args_trace_buffer;
+    gui_mode      = ajami_args_presets_gui;
 
     if (ajami_args_use_iir)
         process_set_crossover_type(IIR);

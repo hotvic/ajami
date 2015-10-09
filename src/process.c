@@ -620,7 +620,6 @@ int process_signal(jack_nframes_t nframes,
             if (amp > in_peak[port])
             {
                 in_peak[port] = amp;
-                printf("\rIN peak (%d): %f", port, amp);
             }
 
             if (iir_xover)

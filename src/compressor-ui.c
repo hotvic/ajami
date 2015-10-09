@@ -78,42 +78,13 @@ static gulong sig_hand_kn[XO_BANDS];
 static gulong sig_hand_ma[XO_BANDS];
 static gboolean suspend_gang = FALSE;
 
-#define connect_scale(sym, i, member, state_id)                        \
-  gang_##sym[i] = FALSE;                                               \
-  snprintf(name, 255, "comp_" #sym "_label_%d", i + 1);                \
-  lab_##sym[i] = GTK_LABEL(lookup_widget(main_window, name));          \
-  snprintf(name, 255, "autobutton_%d", i + 1);                         \
-  autobutton[i] = GTK_TOGGLE_BUTTON(lookup_widget(main_window, name)); \
-  snprintf(name, 255, "comp_" #sym "_%d", i + 1);                      \
-  scale = lookup_widget(main_window, name);                            \
-  adj_##sym[i] = gtk_range_get_adjustment(GTK_RANGE(scale));           \
-  range_##sym[0][i] = gtk_adjustment_get_lower(adj_##sym[i]);          \
-  range_##sym[1][i] = gtk_adjustment_get_upper(adj_##sym[i]);          \
-  prev_value_##sym[i] = gtk_adjustment_get_value(adj_##sym[i]);        \
-  s_set_callback(state_id, sym##_changed);                             \
-  s_set_adjustment(state_id, adj_##sym[i]);                            \
-  s_set_value(state_id, compressors[i].member, 0);                     \
-  sig_hand_##sym[i] =                                                  \
-      g_signal_connect(G_OBJECT(adj_##sym[i]), "value-changed",        \
-                       G_CALLBACK(adj_cb), GINT_TO_POINTER(state_id));
-
-//  g_signal_connect(G_OBJECT(adj_##sym[i]), "value-changed",
-//G_CALLBACK(sym##_changed), (gpointer)i);
-//  gtk_adjustment_set_value(adj_##sym[i], compressors[i].member);
 
 void bind_compressors()
 {
-    GtkWidget *scale;
-    char name[256];
-    int i;
-
-    for (i = 0; i < XO_BANDS; i++)
+    for (int i = 0; i < XO_BANDS; i++)
     {
         w_comp[i] = ajami_get_comp_widget(i);
-    }
 
-    for (i = 0; i < XO_BANDS; i++)
-    {
         gang_at[i] = FALSE;
         gang_re[i] = FALSE;
         gang_th[i] = FALSE;
@@ -127,15 +98,6 @@ void bind_compressors()
         ajami_compressor_connect_ra(w_comp[i], S_COMP_RATIO(i));
         ajami_compressor_connect_kn(w_comp[i], S_COMP_KNEE(i));
         ajami_compressor_connect_ma(w_comp[i], S_COMP_MAKEUP(i));
-
-        /*
-        connect_scale(at, i, attack, S_COMP_ATTACK(i));
-        connect_scale(re, i, release, S_COMP_RELEASE(i));
-        connect_scale(th, i, threshold, S_COMP_THRESH(i));
-        connect_scale(ra, i, ratio, S_COMP_RATIO(i));
-        connect_scale(kn, i, knee, S_COMP_KNEE(i));
-        connect_scale(ma, i, makeup_gain, S_COMP_MAKEUP(i));
-        ma[i] = scale; */
 
         auto_gain[i] = 0;
     }
@@ -436,11 +398,10 @@ void calc_auto_gain(int i)
 
 void compressor_meters_update()
 {
-    int i;
-
-    for (i = 0; i < XO_BANDS; i++)
+    for (int i = 0; i < XO_BANDS; i++)
     {
         ajami_compressor_le_set_value(w_comp[i], compressors[i].amplitude);
+        printf("\r Compressor %d: %f", i, compressors[i].amplitude);
         ajami_compressor_ga_set_value(w_comp[i], compressors[i].gain_red);
     }
 }
