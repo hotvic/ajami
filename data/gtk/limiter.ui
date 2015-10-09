@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface domain="ajami">
     <requires lib="gtk+" version="3.10"/>
+    <!-- Adjustments -->
+    <object class="GtkAdjustment" id="adj_in">
+        <property name="value">0</property>
+        <property name="lower">-20</property>
+        <property name="upper">20</property>
+        <property name="step-increment">1</property>
+        <signal name="value_changed" handler="in_changed" />
+    </object>
+    <object class="GtkAdjustment" id="adj_lim">
+        <property name="value">0</property>
+        <property name="lower">-12</property>
+        <property name="upper">0</property>
+        <property name="step-increment">1</property>
+        <signal name="value_changed" handler="lim_changed" />
+    </object>
+    <object class="GtkAdjustment" id="adj_rel">
+        <property name="value">1</property>
+        <property name="lower">1</property>
+        <property name="upper">3.3</property>
+        <property name="step-increment">0.1</property>
+        <signal name="value_changed" handler="rel_changed" />
+    </object>
+    <object class="GtkAdjustment" id="adj_inmeter">
+        <property name="value">-40</property>
+        <property name="lower">-40</property>
+        <property name="upper">6</property>
+    </object>
+    <object class="GtkAdjustment" id="adj_outmeter">
+        <property name="value">-20</property>
+        <property name="lower">-20</property>
+        <property name="upper">0</property>
+    </object>
+    <object class="GtkAdjustment" id="adj_relmeter">
+        <property name="value">-20</property>
+        <property name="lower">-20</property>
+        <property name="upper">0</property>
+    </object>
     <template class="AjamiLimiter" parent="GtkBox">
         <property name="orientation">vertical</property>
         <property name="height-request">24</property>
@@ -20,7 +57,13 @@
                                     </object>
                                 </child>
                                 <child>
+                                    <object class="GtkLabel" id="lbl_in_val">
+                                        <property name="label" translatable="yes">0.0</property>
+                                    </object>
+                                </child>
+                                <child>
                                     <object class="GtkScale" id="in_scale">
+                                        <property name="adjustment">adj_in</property>
                                         <property name="hexpand">true</property>
                                         <property name="orientation">horizontal</property>
                                         <property name="value-pos">GTK_POS_RIGHT</property>
@@ -33,6 +76,7 @@
                         </child>
                         <child>
                             <object class="HVMeter" id="inmeter">
+                                <property name="adjustment">adj_inmeter</property>
                                 <property name="orientation">horizontal</property>
                                 <property name="inverted">false</property>
                                 <property name="hexpand">true</property>
@@ -48,7 +92,13 @@
                                     </object>
                                 </child>
                                 <child>
+                                    <object class="GtkLabel" id="lbl_lim_val">
+                                        <property name="label" translatable="yes">0.0</property>
+                                    </object>
+                                </child>
+                                <child>
                                     <object class="GtkScale" id="lim_scale">
+                                        <property name="adjustment">adj_lim</property>
                                         <property name="hexpand">true</property>
                                         <property name="orientation">horizontal</property>
                                         <property name="value-pos">GTK_POS_RIGHT</property>
@@ -68,7 +118,13 @@
                                     </object>
                                 </child>
                                 <child>
+                                    <object class="GtkLabel" id="lbl_rel_val">
+                                        <property name="label" translatable="yes">0 s</property>
+                                    </object>
+                                </child>
+                                <child>
                                     <object class="GtkScale" id="rel_scale">
+                                        <property name="adjustment">adj_rel</property>
                                         <property name="hexpand">true</property>
                                         <property name="orientation">horizontal</property>
                                         <property name="value-pos">GTK_POS_RIGHT</property>
@@ -80,7 +136,8 @@
                             </packing>
                         </child>
                         <child>
-                            <object class="HVMeter" id="rel_outmeter">
+                            <object class="HVMeter" id="relmeter">
+                                <property name="adjustment">adj_relmeter</property>
                                 <property name="orientation">horizontal</property>
                                 <property name="inverted">false</property>
                                 <property name="hexpand">true</property>
@@ -89,6 +146,7 @@
                         </child>
                         <child>
                             <object class="HVMeter" id="outmeter">
+                                <property name="adjustment">adj_outmeter</property>
                                 <property name="orientation">horizontal</property>
                                 <property name="inverted">false</property>
                                 <property name="hexpand">true</property>

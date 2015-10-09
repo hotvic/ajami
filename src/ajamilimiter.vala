@@ -20,14 +20,40 @@ namespace Ajami {
         private HV.Meter inmeter;
 
         [GtkChild]
-        private HV.Meter rel_outmeter;
+        private HV.Meter relmeter;
 
         [GtkChild]
         private HV.Meter outmeter;
 
+        [GtkChild]
+        private Label lbl_in_val;
+        [GtkChild]
+        private Label lbl_lim_val;
+        [GtkChild]
+        private Label lbl_rel_val;
 
-        public Limiter() {
-            Object();
+        public Scale w_s_in {
+            get { return in_scale; }
+        }
+
+        public Scale w_s_lim {
+            get { return lim_scale; }
+        }
+
+        public Scale w_s_rel {
+            get { return rel_scale; }
+        }
+
+        public Adjustment w_adj_inmeter {
+            get { return inmeter.adjustment; }
+        }
+
+        public Adjustment w_adj_relmeter {
+            get { return relmeter.adjustment; }
+        }
+
+        public Adjustment w_adj_outmeter {
+            get { return outmeter.adjustment; }
         }
 
         public void set_label(string text) {
@@ -35,16 +61,43 @@ namespace Ajami {
             (frame.label_widget as Label).use_markup = true;
         }
 
+        public void set_in_label(string label) {
+            lbl_in_val.label = label;
+        }
+
+        public void set_lim_label(string label) {
+            lbl_lim_val.label = label;
+        }
+
+        public void set_rel_label(string label) {
+            lbl_rel_val.label = label;
+        }
+
         public void reset_inmeter_peak() {
             inmeter.reset_peak();
         }
 
-        public void reset_rel_outmeter_peak() {
-            rel_outmeter.reset_peak();
+        public void reset_relmeter_peak() {
+            relmeter.reset_peak();
         }
 
         public void reset_outmeter_peak() {
             outmeter.reset_peak();
+        }
+
+        [GtkCallback]
+        public void in_changed() {
+            CAjami.State.set_value_ui(CAjami.State.LIM_INPUT, (float) in_scale.adjustment.value);
+        }
+
+        [GtkCallback]
+        public void lim_changed() {
+            CAjami.State.set_value_ui(CAjami.State.LIM_LIMIT, (float) lim_scale.adjustment.value);
+        }
+
+        [GtkCallback]
+        public void rel_changed() {
+            CAjami.State.set_value_ui(CAjami.State.LIM_TIME, (float) rel_scale.adjustment.value);
         }
     }
 }

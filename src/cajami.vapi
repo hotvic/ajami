@@ -31,24 +31,14 @@ namespace CAjami {
         [CCode (cname = "s_callback_func", has_target = false, has_type_id = false)]
         public delegate void Callback(int id, float val);
 
-        public const int S_NONE;
-        public const int S_LOAD;
         [CCode (cname = "S_IN_GAIN")]
         public const int IN_GAIN;
-        public const int S_OUT_GAIN;
-        public const int S_IN_PAN;
-        public const int S_EQ_GAIN;
-        public const int S_XOVER_FREQ;
-        public const int S_COMP_ATTACK;
-        public const int S_COMP_RELEASE;
-        public const int S_COMP_THRESH;
-        public const int S_COMP_RATIO;
-        public const int S_COMP_KNEE;
-        public const int S_COMP_MAKEUP;
-        public const int S_STEREO_WIDTH;
-        public const int S_LIM_INPUT;
-        public const int S_LIM_TIME;
-        public const int S_LIM_LIMIT;
+        [CCode (cname = "S_LIM_INPUT")]
+        public const int LIM_INPUT;
+        [CCode (cname = "S_LIM_TIME")]
+        public const int LIM_TIME;
+        [CCode (cname = "S_LIM_LIMIT")]
+        public const int LIM_LIMIT;
         public const int S_BOOST;
         public const int S_LIM_LOGSCALE;
         public const int S_NOTCH_GAIN;

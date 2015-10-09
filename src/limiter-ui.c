@@ -34,7 +34,7 @@ void ll_changed(int id, float value);
 void boost_changed(int id, float value);
 void logscale_changed (int id, float value);
 
-
+static AjamiLimiter *w_limiter;
 static GtkAdjustment *lh_adj, *ll_adj;
 static GtkLabel *lh_label, *ll_label, *l_limiterlabel = NULL, *l_logscale_label = NULL;
 
@@ -46,12 +46,11 @@ static GtkScale *l_logscale_scale = NULL;
 
 void bind_limiter()
 {
-    AjamiLimiter *limiter_widget;
     GtkWidget *scale;
 
-    limiter_widget = ajami_get_limiter_widget();
+    w_limiter = ajami_get_limiter_widget();
 
-    ajami_limiter_set_label(limiter_widget, limiter_text[process_get_limiter_plugin()]);
+    ajami_limiter_set_label(w_limiter, limiter_text[process_get_limiter_plugin()]);
 
     /* TODO: add support to logscale in FOO plugin
     l_logscale_label = GTK_LABEL (lookup_widget (main_window, "logscale_label"));
@@ -68,17 +67,18 @@ void bind_limiter()
     s_set_callback (S_LIM_LOGSCALE, logscale_changed); */
 
 
-    /* s_set_callback(S_LIM_INPUT, li_changed);
+    s_set_callback(S_LIM_INPUT, li_changed);
 
-    scale = lookup_widget(main_window, "lim_lh_scale");
+
+    scale  = ajami_limiter_get_w_s_rel(w_limiter);
     lh_adj = gtk_range_get_adjustment(GTK_RANGE(scale));
-    lh_label = GTK_LABEL(lookup_widget(main_window, "release_val_label"));
+
     s_set_adjustment(S_LIM_TIME, lh_adj);
     s_set_callback(S_LIM_TIME, lh_changed);
 
-    scale = lookup_widget(main_window, "lim_out_trim_scale");
+    scale  = ajami_limiter_get_w_s_lim(w_limiter);
     ll_adj = gtk_range_get_adjustment(GTK_RANGE(scale));
-    ll_label = GTK_LABEL(lookup_widget(main_window, "limit_val_label"));
+
     s_set_adjustment(S_LIM_LIMIT, ll_adj);
     s_set_callback(S_LIM_LIMIT, ll_changed);
 
@@ -86,14 +86,14 @@ void bind_limiter()
     s_set_value(S_LIM_TIME,  0.05f, 0);
     s_set_value(S_LIM_LIMIT, 0.0f, 0);
 
-    in_meter_adj  = ajami_main_window_get_limiter_in_meter_adjustment(ajami_get_main_window());
-    att_meter_adj = ajami_main_window_get_limiter_att_meter_adjustment(ajami_get_main_window());
-    out_meter_adj = ajami_main_window_get_limiter_out_meter_adjustment(ajami_get_main_window());
+    in_meter_adj  = ajami_limiter_get_w_adj_inmeter(w_limiter);
+    att_meter_adj = ajami_limiter_get_w_adj_relmeter(w_limiter);
+    out_meter_adj = ajami_limiter_get_w_adj_outmeter(w_limiter);
 
     // Handle waveshaper boost stuff
-    scale = lookup_widget(main_window, "boost_scale");
-    s_set_adjustment(S_BOOST, gtk_range_get_adjustment(GTK_RANGE(scale)));
-    s_set_callback(S_BOOST, boost_changed); */
+    // scale = lookup_widget(main_window, "boost_scale");
+    // s_set_adjustment(S_BOOST, gtk_range_get_adjustment(GTK_RANGE(scale)));
+    // s_set_callback(S_BOOST, boost_changed); */
 }
 
 void li_changed(int id, float value)
@@ -114,7 +114,7 @@ void lh_changed(int id, float value)
     {
         snprintf(text, 255, _("%.4g ms"), val);
     }
-    gtk_label_set_text(lh_label, text);
+    ajami_limiter_set_rel_label(w_limiter, text);
 
     limiter[limiter_plugin].release = powf(10.0f, value - 3.0f);
 }
@@ -126,7 +126,7 @@ void ll_changed(int id, float value)
     limiter[limiter_plugin].limit = value;
 
     snprintf(text, 255, _("%.1f dB"), value);
-    gtk_label_set_text(ll_label, text);
+    ajami_limiter_set_lim_label(w_limiter, text);
 }
 
 void boost_changed(int id, float value)
@@ -147,9 +147,9 @@ void limiter_meters_update()
     lim_peak[LIM_PEAK_IN] = 0.0f;
     lim_peak[LIM_PEAK_OUT] = 0.0f;
 
-   // gtk_adjustment_set_value(in_meter_adj, peak_in);
-   // gtk_adjustment_set_value(att_meter_adj, atten);
-   // gtk_adjustment_set_value(out_meter_adj, peak_out);
+    gtk_adjustment_set_value(in_meter_adj, peak_in);
+    gtk_adjustment_set_value(att_meter_adj, atten);
+    gtk_adjustment_set_value(out_meter_adj, peak_out);
 }
 
 void limiter_inmeter_reset_peak ()
@@ -159,7 +159,7 @@ void limiter_inmeter_reset_peak ()
 
 void limiter_outmeter_reset_peak ()
 {
-    ajami_limiter_reset_rel_outmeter_peak(ajami_get_limiter_widget());
+    ajami_limiter_reset_relmeter_peak(ajami_get_limiter_widget());
     ajami_limiter_reset_outmeter_peak(ajami_get_limiter_widget());
 }
 
@@ -167,7 +167,7 @@ void limiter_set_label (int limiter_plugin)
 {
     if (l_limiterlabel)
     {
-        ajami_limiter_set_label(ajami_get_limiter_widget(), limiter_text[limiter_plugin]);
+        ajami_limiter_set_label(w_limiter, limiter_text[limiter_plugin]);
     }
 }
 
