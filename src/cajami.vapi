@@ -24,6 +24,12 @@ namespace CAjami {
     public class HDEQ {
         [CCode (cname = "crossover_init")]
         public static void crossover_init();
+
+        [CCode (cname = "hdeq_low2mid_set")]
+        public static void low2mid_set(Gtk.Range range);
+
+        [CCode (cname = "hdeq_mid2high_set")]
+        public static void mid2high_set(Gtk.Range range);
     }
 
     [Compact]

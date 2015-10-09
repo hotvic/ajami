@@ -313,5 +313,15 @@ namespace Ajami {
         public void in_gain_changed() {
             CAjami.State.set_value_ui(CAjami.State.IN_GAIN, (float) in_amp_scale.adjustment.value);
         }
+
+        [GtkCallback]
+        public void low2mid_changed() {
+            CAjami.HDEQ.low2mid_set((Gtk.Range) cross_low_scale);
+        }
+
+        [GtkCallback]
+        public void mid2high_changed() {
+            CAjami.HDEQ.mid2high_set((Gtk.Range) cross_high_scale);
+        }
     }
 }

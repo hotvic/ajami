@@ -20,12 +20,14 @@
         <property name="lower">1.39794</property>
         <property name="upper">4.30103</property>
         <property name="step-increment">0.01</property>
+        <signal name="value_changed" handler="low2mid_changed" />
     </object>
     <object class="GtkAdjustment" id="cross_high_adj">
         <property name="value">3.19488</property>
         <property name="lower">1.39794</property>
         <property name="upper">6</property>
         <property name="step-increment">0.01</property>
+        <signal name="value_changed" handler="mid2high_changed" />
     </object>
     <object class="GtkAdjustment" id="inmeter_l_adj">
         <property name="value">0</property>
