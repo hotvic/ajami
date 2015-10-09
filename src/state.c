@@ -28,7 +28,6 @@
 
 #include "config.h"
 #include "main.h"
-#include "ajami-callbacks.h"
 #include "ajamiobjects.h"
 #include "geq.h"
 #include "spectrum.h"

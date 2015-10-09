@@ -77,7 +77,6 @@
 
 #include "hdeq.h"
 #include "main.h"
-#include "ajami-callbacks.h"
 #include "geq.h"
 #include "interface.h"
 #include "support.h"
