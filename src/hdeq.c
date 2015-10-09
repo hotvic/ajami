@@ -214,17 +214,14 @@ void clean_quit() {
 void bind_hdeq() {
     int i;
 
-    l_low2mid = GTK_SCALE(ajami_main_window_get_widget(
-        main_window, GTK_TYPE_SCALE, "cros_low_scale"));
-    l_mid2high = GTK_SCALE(ajami_main_window_get_widget(
-        main_window, GTK_TYPE_SCALE, "cross_high_scale"));
+    l_low2mid  = ajami_main_window_get_low2mid_scale(main_window);
+    l_mid2high = ajami_main_window_get_mid2high_scale(main_window);
 
-    l_comp[0] = AJAMI_COMPRESSOR(ajami_main_window_get_widget(
-        main_window, AJAMI_TYPE_COMPRESSOR, "compressor_low"));
-    l_comp[1] = AJAMI_COMPRESSOR(ajami_main_window_get_widget(
-        main_window, AJAMI_TYPE_COMPRESSOR, "compressor_mid"));
-    l_comp[2] = AJAMI_COMPRESSOR(ajami_main_window_get_widget(
-        main_window, AJAMI_TYPE_COMPRESSOR, "compressor_high"));
+    l_low2mid_adj = GTK_ADJUSTMENT(gtk_range_get_adjustment(GTK_RANGE(l_low2mid)));
+
+    for (i = 0; i < XO_BANDS; i++) {
+        l_comp[i] = ajami_main_window_get_comp_widget(main_window, i);
+    }
 
     /* TODO: write HDEQ widget in Vala
     l_EQ_curve     = GTK_DRAWING_AREA (lookup_widget (main_window, "EQ_curve"));
@@ -348,7 +345,7 @@ void hdeq_low2mid_set(GtkRange* range) {
 
     /*  Draw the last spectrum curve if the update frequency is not 0.  */
 
-    if (ajami_spectrum_get_frequency(ajami_get_spectrum_widget())) {
+    if (ajami_spectrum_get_frequency()) {
         /*  Set the foreground color for drawing the spectrum curve.  */
 
         // gdk_gc_set_foreground (EQ_gc, get_color (HDEQ_SPECTRUM_COLOR));
@@ -444,7 +441,7 @@ void hdeq_mid2high_set(GtkRange* range) {
 
     /*  Draw the last spectrum curve if the update frequency is not 0.  */
 
-    if (ajami_spectrum_get_frequency(ajami_get_spectrum_widget())) {
+    if (ajami_spectrum_get_frequency()) {
         /*  Set the foreground color for drawing the spectrum curve.  */
 
         //       gdk_gc_set_foreground (EQ_gc, get_color (HDEQ_SPECTRUM_COLOR));
@@ -593,7 +590,7 @@ void draw_EQ_spectrum_curve(float single_levels[]) {
                      EQ_curve_height);
         }
 
-        gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+        // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
     }
 }
 
@@ -681,7 +678,7 @@ void reset_hdeq() {
     /*  Redraw the EQ curve.  */
 
     //    draw_EQ_curve ();
-    gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+    // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 
     /*  Set the scene warning button so that people will know to save it.  */
 
@@ -1139,7 +1136,9 @@ void hdeq_curve_init(GtkWidget* widget) {
     EQ_realized = 1;
 }
 
-void hdeq_curve_update() { gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve)); }
+void hdeq_curve_update() {
+    // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+}
 
 /*  Don't let the notches overlap.  */
 
@@ -1633,7 +1632,7 @@ void hdeq_curve_motion(GdkEventMotion* event) {
             //  gdk_draw_pixmap (EQ_drawable, EQ_gc, hdeq_pixmap, 0, 0, 0, 0,
             //                   EQ_curve_width + 1, EQ_curve_height + 1);
 
-            gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+            // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 
             //           if (get_spectrum_freq ())
             //             {
@@ -1765,7 +1764,7 @@ void hdeq_curve_button_press(GdkEventButton* event) {
                             insert_notch();
                             set_EQ();
                             //         draw_EQ_curve ();
-                            gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+                            // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
                         } else {
                             EQ_notch_drag[i] = 1;
                         }
@@ -1990,7 +1989,7 @@ void hdeq_curve_button_press(GdkEventButton* event) {
             /*  Redraw the curve.  */
 
             //       draw_EQ_curve ();
-            gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+            // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
         }
         break;
 
@@ -2031,7 +2030,7 @@ void hdeq_curve_button_release(GdkEventButton* event) {
         /*  Set the graphic EQ sliders based on the hand-drawn curve.  */
 
         geq_set_sliders(EQ_length, EQ_freq_xinterp, EQ_freq_yinterp);
-        //  gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+        // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
         EQ_mod = 0;
 
         break;
@@ -2047,7 +2046,7 @@ void hdeq_curve_button_release(GdkEventButton* event) {
             EQ_input_points = 0;
 
             //       draw_EQ_curve ();
-            gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+            // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
         }
         break;
     }
@@ -2130,7 +2129,7 @@ void hdeq_popup(int action) {
 
         set_EQ();
         //      draw_EQ_curve ();
-        gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+        // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 
         /*  Set the scene warning button so that people will know to save it. */
 
@@ -2151,7 +2150,7 @@ void hdeq_popup(int action) {
             EQ_input_points = 0;
 
             //         draw_EQ_curve ();
-            gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+            // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
         }
         break;
     }
@@ -2200,7 +2199,7 @@ void set_EQ_curve_values(int id, float value) {
     /*  Redraw the curve.  */
 
     //   draw_EQ_curve ();
-    gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+    // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 }
 
 /*  Reset the crossovers.  */
@@ -2227,7 +2226,7 @@ void hdeq_set_lower_gain(float gain) {
     EQ_curve_range_y = EQ_gain_upper - EQ_gain_lower;
 
     // draw_EQ_curve ();
-    gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+    // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 
     set_scene_warning_button();
 }
@@ -2244,7 +2243,7 @@ void hdeq_set_upper_gain(float gain) {
     EQ_curve_range_y = EQ_gain_upper - EQ_gain_lower;
 
     // draw_EQ_curve ();
-    gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
+    // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 
     set_scene_warning_button();
 }
@@ -2278,7 +2277,7 @@ static void comp_write_annotation(int i, char* string) {
 
 void comp_curve_update(int i) {
 
-    gtk_widget_queue_draw(GTK_WIDGET(l_comp_curve[i]));
+    // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_comp_curve[i]));
 }
 
 /*  Draw the compressor curve (0-2).  */

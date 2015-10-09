@@ -21,16 +21,35 @@ namespace HV
     public class Meter : Gtk.DrawingArea, Gtk.Orientable
     {
         /* Property-backing fields */
-        private Gtk.Adjustment  _adjustment;
-        private Gtk.Orientation _orientation;
-        private bool            _inverted;
-        private float           _warn_point;
-        private float           _peak;
+        private Gtk.Adjustment  _adjustment  = null;
+        private Gtk.Orientation _orientation = Gtk.Orientation.VERTICAL;
+        private bool            _inverted   = false;
+        private float           _warn_point = 0.0f;
+        private float           _peak       = 0.0f;
 
         /* Properties */
         public Gtk.Adjustment adjustment {
-            get { return _get_adjustment(); }
-            set { _set_adjustment(value); }
+            get { return this._adjustment; }
+            set {
+                Gtk.Adjustment adj = value;
+
+                if (adj == null)
+                    adj = new Gtk.Adjustment(0, 0, 0, 0, 0, 0);
+
+                if (_adjustment != adj) {
+                    if (this._adjustment != null) {
+                        this._adjustment.changed.disconnect(adjustment_changed);
+                        this._adjustment.value_changed.disconnect(adjustment_value_changed);
+                    }
+
+                    this._adjustment = adj;
+
+                    this._adjustment.changed.connect(adjustment_changed);
+                    this._adjustment.value_changed.connect(adjustment_value_changed);
+
+                    adjustment_changed();
+                }
+            }
         }
 
         public Gtk.Orientation orientation {
@@ -45,7 +64,16 @@ namespace HV
 
         public float warn_point {
             get { return _warn_point; }
-            set { _set_warn_point(value); queue_draw(); }
+            set {
+                _warn_point = value;
+
+                if (_inverted)
+                    amber_frac = 1.0f - (iec_scale(_warn_point) - iec_lower) / (iec_upper - iec_lower);
+                else
+                    amber_frac = (iec_scale(_warn_point) - iec_lower) / (iec_upper - iec_lower);
+
+                queue_draw();
+            }
         }
 
         public float peak {
@@ -55,6 +83,11 @@ namespace HV
         private float iec_lower;
         private float iec_upper;
         private float amber_frac;
+
+        construct {
+            if (_adjustment == null || !(_adjustment is Gtk.Adjustment))
+                _adjustment = new Gtk.Adjustment(0, -60, 0, 0.1, 0, 0);
+        }
 
         public Meter(Gtk.Orientation ori, Gtk.Adjustment? adj = null)
         {
@@ -70,6 +103,9 @@ namespace HV
 
         public override bool draw(Cairo.Context cr)
         {
+            // don't draw anything without adjustment
+            if (!(_adjustment is Gtk.Adjustment)) return true;
+
             int xlen, ylen;
             Cairo.Pattern pat;
 
@@ -107,7 +143,7 @@ namespace HV
             cr.set_source(pat);
             cr.fill();
 
-            var val = iec_scale((float) adjustment.value);
+            var val = iec_scale((float) _adjustment.value);
             var frac = (val - iec_lower) / (iec_upper - iec_lower);
 
             float g_h, a_h, r_h;
@@ -328,36 +364,6 @@ namespace HV
             cr.fill();
         }
 
-        private unowned Gtk.Adjustment _get_adjustment() {
-            if (_adjustment == null) _adjustment = new Gtk.Adjustment(0, 0, 0, 0, 0, 0);
-
-            return _adjustment;
-        }
-
-        public void _set_adjustment(Gtk.Adjustment? value)
-        {
-            Gtk.Adjustment adj = value;
-
-            if (adj == null)
-                adj = new Gtk.Adjustment(0, 0, 0, 0, 0, 0);
-
-            if (_adjustment != adj)
-            {
-                if (_adjustment != null)
-                {
-                    _adjustment.changed.disconnect(adjustment_changed);
-                    _adjustment.value_changed.disconnect(adjustment_value_changed);
-                }
-
-                _adjustment = adj;
-
-                _adjustment.changed.connect(adjustment_changed);
-                _adjustment.value_changed.connect(adjustment_value_changed);
-
-                adjustment_changed();
-            }
-        }
-
         public void adjustment_changed()
         {
             iec_lower = iec_scale((float) _adjustment.lower);
@@ -372,16 +378,6 @@ namespace HV
                 _peak = (float) _adjustment.value;
 
             queue_draw();
-        }
-
-        public void _set_warn_point(float pt)
-        {
-            _warn_point = pt;
-
-            if (_inverted)
-                amber_frac = 1.0f - (iec_scale(_warn_point) - iec_lower) / (iec_upper - iec_lower);
-            else
-               amber_frac = (iec_scale(_warn_point) - iec_lower) / (iec_upper - iec_lower);
         }
 
         public void reset_peak()

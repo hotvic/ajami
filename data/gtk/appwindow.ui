@@ -7,12 +7,25 @@
         <property name="lower">-12</property>
         <property name="upper">12</property>
         <property name="step-increment">1</property>
+        <signal name="value_changed" handler="in_gain_changed" />
     </object>
     <object class="GtkAdjustment" id="in_stereo_adj">
         <property name="value">0</property>
         <property name="lower">-6</property>
         <property name="upper">6</property>
         <property name="step-increment">1</property>
+    </object>
+    <object class="GtkAdjustment" id="cross_low_adj">
+        <property name="value">2.22462</property>
+        <property name="lower">1.39794</property>
+        <property name="upper">4.30103</property>
+        <property name="step-increment">0.01</property>
+    </object>
+    <object class="GtkAdjustment" id="cross_high_adj">
+        <property name="value">3.19488</property>
+        <property name="lower">1.39794</property>
+        <property name="upper">6</property>
+        <property name="step-increment">0.01</property>
     </object>
     <object class="GtkAdjustment" id="inmeter_l_adj">
         <property name="value">0</property>
@@ -144,6 +157,7 @@
                                                         <property name="stack">main_stack</property>
                                                         <property name="halign">GTK_ALIGN_CENTER</property>
                                                         <property name="hexpand">true</property>
+                                                        <property name="stack">main_stack</property>
                                                     </object>
                                                 </child>
                                                 <child>
@@ -151,7 +165,9 @@
                                                         <property name="visible">false</property>
                                                         <property name="expand">true</property>
                                                         <child>
-                                                            <object class="GtkBox" id="geq_stack"/>
+                                                            <object class="AjamiGraphicEQ" id="geq">
+                                                                <property name="orientation">vertical</property>
+                                                            </object>
                                                             <packing>
                                                                 <property name="name">geq</property>
                                                                 <property name="title" translatable="yes">30 band EQ</property>
@@ -209,6 +225,7 @@
                                                 </child>
                                                 <child>
                                                     <object class="GtkScale" id="cross_low_scale">
+                                                        <property name="adjustment">cross_low_adj</property>
                                                         <property name="orientation">horizontal</property>
                                                         <property name="inverted">false</property>
                                                         <property name="draw-value">false</property>
@@ -218,6 +235,7 @@
                                                 </child>
                                                 <child>
                                                     <object class="GtkScale" id="cross_high_scale">
+                                                        <property name="adjustment">cross_high_adj</property>
                                                         <property name="orientation">horizontal</property>
                                                         <property name="inverted">false</property>
                                                         <property name="draw-value">false</property>

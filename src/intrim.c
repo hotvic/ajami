@@ -21,7 +21,10 @@
 #include <gtk/gtk.h>
 #include <math.h>
 #include <stdio.h>
-
+#include "io.h"
+#include "main.h"
+#include "compressor-ui.h"
+#include "limiter-ui.h"
 #include "process.h"
 #include "support.h"
 #include "intrim.h"
@@ -30,7 +33,6 @@
 #include "ajamiobjects.h"
 
 
-static GtkEntry *out_meter_text[2], *rms_meter_text[2];
 static float inmeter_warn_level, outmeter_warn_level, rmsmeter_warn_level;
 static gboolean out_meter_peak_pref = TRUE, rms_meter_peak_pref = TRUE;
 
@@ -45,40 +47,37 @@ float in_pan_gain[2] = {1.0f, 1.0f};
 
 void bind_intrim()
 {
+    GtkScale *in_gain, *out_gain, *in_stereo;
+
+    in_gain   = ajami_main_window_get_w_in_amp(main_window);
+    out_gain  = ajami_main_window_get_w_in_stereo(main_window);
+    in_stereo = ajami_main_window_get_w_out_amp(main_window);
+
     ajami_main_window_set_inmeter_value(main_window, AJAMI_METER_SIDE_METER_L, -60.0);
     ajami_main_window_set_inmeter_value(main_window, AJAMI_METER_SIDE_METER_R, -60.0);
+    ajami_main_window_set_outmeter_value(main_window, AJAMI_METER_SIDE_METER_L, -60.0);
+    ajami_main_window_set_outmeter_value(main_window, AJAMI_METER_SIDE_METER_R, -60.0);
+    ajami_main_window_set_rmsmeter_value(main_window, AJAMI_METER_SIDE_METER_L, -60.0);
+    ajami_main_window_set_rmsmeter_value(main_window, AJAMI_METER_SIDE_METER_R, -60.0);
 
     /* TODO: conditionally? set presets window meter values
     gtk_adjustment_set_value(in_meter_adj[2], -60.0);
     gtk_adjustment_set_value(in_meter_adj[3], -60.0); */
 
-    ajami_main_window_set_outmeter_value(main_window, AJAMI_METER_SIDE_METER_L, -60.0);
-    ajami_main_window_set_outmeter_value(main_window, AJAMI_METER_SIDE_METER_R, -60.0);
-
     /* TODO: conditionally? set presets window meter values
     gtk_adjustment_set_value(out_meter_adj[2], -60.0);
     gtk_adjustment_set_value(out_meter_adj[3], -60.0); */
 
-    /* TODO: find what is this and port
-    out_meter_text[0] = GTK_ENTRY (lookup_widget (main_window, "out_meter_text_l"));
-    out_meter_text[1] = GTK_ENTRY (lookup_widget (main_window, "out_meter_text_r"));
-
-    ajami_main_window_set_rmsmeter_value(main_window, AJAMI_METER_SIDE_METER_L, -60.0);
-    ajami_main_window_set_rmsmeter_value(main_window, AJAMI_METER_SIDE_METER_R, -60.0);
-
-    rms_meter_text[0] = GTK_ENTRY (lookup_widget (main_window, "rms_meter_text_l"));
-    rms_meter_text[1] = GTK_ENTRY (lookup_widget (main_window, "rms_meter_text_r")); */
-
     s_set_callback(S_IN_GAIN, intrim_cb);
-    //s_set_adjustment(S_IN_GAIN, gtk_range_get_adjustment(GTK_RANGE(lookup_widget(main_window, "in_trim_scale"))));
+    s_set_adjustment(S_IN_GAIN, gtk_range_get_adjustment(GTK_RANGE(in_gain)));
     //s_set_adjustment(S_IN_GAIN, gtk_range_get_adjustment(GTK_RANGE(lookup_widget(presets_window, "presets_in_trim_scale"))));
 
     s_set_callback(S_OUT_GAIN, outtrim_cb);
-    //s_set_adjustment(S_OUT_GAIN, gtk_range_get_adjustment(GTK_RANGE(lookup_widget(main_window, "out_trim_scale"))));
+    s_set_adjustment(S_OUT_GAIN, gtk_range_get_adjustment(GTK_RANGE(out_gain)));
     //s_set_adjustment(S_OUT_GAIN, gtk_range_get_adjustment(GTK_RANGE(lookup_widget(presets_window, "presets_out_trim_scale"))));
 
     s_set_callback(S_IN_PAN, inpan_cb);
-    //s_set_adjustment(S_IN_PAN, gtk_range_get_adjustment(GTK_RANGE(lookup_widget(main_window, "pan_scale"))));
+    s_set_adjustment(S_IN_PAN, gtk_range_get_adjustment(GTK_RANGE(in_stereo)));
     //s_set_adjustment(S_IN_PAN, gtk_range_get_adjustment(GTK_RANGE(lookup_widget(presets_window, "presets_pan_scale"))));
 }
 
@@ -104,8 +103,8 @@ void inpan_cb(int id, float value)
 
 void in_meter_value(float amp[])
 {
-    ajami_main_window_set_inmeter_value(main_window, AJAMI_METER_SIDE_METER_L, amp[0]);
-    ajami_main_window_set_inmeter_value(main_window, AJAMI_METER_SIDE_METER_R, amp[1]);
+    ajami_main_window_set_inmeter_value(main_window, AJAMI_METER_SIDE_METER_L, lin2db(amp[0]));
+    ajami_main_window_set_inmeter_value(main_window, AJAMI_METER_SIDE_METER_R, lin2db(amp[1]));
 
     /* TODO: conditionally? lookup presets window
     gtk_adjustment_set_value(in_meter_adj[2], lin2db(amp[0]));
@@ -123,8 +122,8 @@ void out_meter_value(float amp[])
     lamp[0] = lin2db (amp[0]);
     lamp[1] = lin2db (amp[1]);
 
-    ajami_main_window_set_outmeter_value(main_window, AJAMI_METER_SIDE_METER_L, amp[0]);
-    ajami_main_window_set_outmeter_value(main_window, AJAMI_METER_SIDE_METER_R, amp[1]);
+    ajami_main_window_set_outmeter_value(main_window, AJAMI_METER_SIDE_METER_L, lin2db(amp[0]));
+    ajami_main_window_set_outmeter_value(main_window, AJAMI_METER_SIDE_METER_R, lin2db(amp[1]));
 
     /* TODO: conditionally? lookup presets window
     gtk_adjustment_set_value(out_meter_adj[2], lin2db(amp[0]));
@@ -142,9 +141,9 @@ void out_meter_value(float amp[])
     }
 
     snprintf (tmp, 255, "%.1f", lamp[0]);
-    gtk_entry_set_text (out_meter_text[0], tmp);
+    ajami_main_window_set_out_text(main_window, 0, tmp);
     snprintf (tmp, 255, "%.1f", lamp[1]);
-    gtk_entry_set_text (out_meter_text[1], tmp);
+    ajami_main_window_set_out_text(main_window, 1, tmp);
 
     amp[0] = 0.0f;
     amp[1] = 0.0f;
@@ -173,12 +172,56 @@ void rms_meter_value(float amp[])
     }
 
     snprintf (tmp, 255, "%.1f", lamp[0]);
-    gtk_entry_set_text (rms_meter_text[0], tmp);
+    ajami_main_window_set_rmsout_text(main_window, 0, tmp);
     snprintf (tmp, 255, "%.1f", lamp[1]);
-    gtk_entry_set_text (rms_meter_text[1], tmp);
+    ajami_main_window_set_rmsout_text(main_window, 1, tmp);
 
     amp[0] = 0.0f;
     amp[1] = 0.0f;
+}
+
+gboolean update_meters() {
+    int glob, eq, comp[3], limiter;
+
+
+    in_meter_value(in_peak);
+    out_meter_value(out_peak);
+
+    /* Only update these meters if main window is displayed */
+    if (gui_mode == 0) {
+        rms_meter_value(rms_peak);
+        limiter_meters_update();
+        compressor_meters_update();
+        // spectrum_timeout_check();
+        s_crossfade_ui();
+    }
+    /* TODO: wtf is this ?
+    status_set_time(main_window); */
+
+
+    /*  Only update the remaining status once a second.  */
+
+    /* TODO: wtf is this ?
+    if (!(count = (count + 1) % 10)) {
+        status_update (main_window);
+    } */
+
+
+    /*  Only blink the bypass buttons twice a second when bypass is on.  */
+
+    /* TODO: implement bypass blink
+    if (!(count % 5)) {
+        process_get_bypass_states (&eq, comp, &limiter, &global);
+
+        if (global) callbacks_blink_bypass_button (GLOBAL_BYPASS, 0);
+        if (eq) callbacks_blink_bypass_button (EQ_BYPASS, 0);
+        if (comp[0] == BYPASS) callbacks_blink_bypass_button (LOW_COMP_BYPASS, 0);
+        if (comp[1] == BYPASS) callbacks_blink_bypass_button (MID_COMP_BYPASS, 0);
+        if (comp[2] == BYPASS) callbacks_blink_bypass_button (HIGH_COMP_BYPASS, 0);
+        if (limiter) callbacks_blink_bypass_button (LIMITER_BYPASS, 0);
+    } */
+
+    return TRUE;
 }
 
 void intrim_set_out_meter_peak_pref (gboolean pref)

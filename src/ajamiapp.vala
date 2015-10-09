@@ -21,6 +21,7 @@ using Gtk;
 
 
 /* C functions */
+extern void io_activate();
 extern void state_init();
 extern void preferences_init();
 extern void s_clear_history();
@@ -30,10 +31,14 @@ extern void bind_intrim();
 extern void bind_limiter();
 extern void bind_compressors();
 extern void bind_stereo();
-
+extern void limiter_meters_update();
+extern void compressor_meters_update();
+extern void s_crossfade_ui();
 
 namespace Ajami {
     public class Ajami : Gtk.Application {
+        private uint _to_count = 1;
+
         public Ajami() {
             Object(application_id: "org.ajami.ajami", flags: 0);
 
@@ -48,6 +53,9 @@ namespace Ajami {
 
         public override void activate() {
             main_window.show_all();
+            main_window.destroy.connect(() => {
+                this.quit();
+            });
         }
 
         public override void startup() {
@@ -55,6 +63,7 @@ namespace Ajami {
 
             /* Workaround for now */
             Type meter = typeof(HV.Meter);
+            Type geg   = typeof(GraphicEQ);
 
             main_window = new MainWindow(this);
 
@@ -69,6 +78,18 @@ namespace Ajami {
             bind_stereo();
 
             s_clear_history();
+
+            io_activate();
+
+            CAjami.State.load_session(null);
+
+            Timeout.add(40, CAjami.INTrim.update_meters);
+        }
+
+        public override void shutdown() {
+            base.shutdown();
+
+            // CAjami.IO.cleanup();
         }
 
         public void add_actions() {

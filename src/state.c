@@ -488,7 +488,7 @@ void s_save_session(const gchar* fname) {
 
     s_save_global_int(doc, "mode", process_get_spec_mode());
     s_save_global_int(
-        doc, "freq", ajami_spectrum_get_frequency(ajami_get_spectrum_widget()));
+        doc, "freq", ajami_spectrum_get_frequency());
     s_save_global_float(doc, "ct", crossfade_time);
     s_save_global_float(doc, "inwl", intrim_inmeter_get_warn());
     s_save_global_float(doc, "outwl", intrim_outmeter_get_warn());
@@ -698,7 +698,7 @@ void s_load_session(const gchar* fname) {
      * here */
 
     process_set_spec_mode(gp.mode);
-    ajami_spectrum_set_frequency(ajami_get_spectrum_widget(), gp.freq);
+    ajami_spectrum_set_frequency(gp.freq);
     hdeq_set_upper_gain(gp.hgain);
     geq_set_range(gtk_adjustment_get_lower(geq_get_adjustment(0)), gp.hgain);
     hdeq_set_lower_gain(gp.lgain);

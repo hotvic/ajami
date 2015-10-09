@@ -51,12 +51,7 @@ static GtkAdjustment*     adj_kn[XO_BANDS];
 static GtkAdjustment*     adj_ma[XO_BANDS];
 static int auto_gain[XO_BANDS];
 
-static GtkAdjustment *le_meter_adj[XO_BANDS], *ga_meter_adj[XO_BANDS];
-
 /*  Variables used for ganging the compressor controls.  */
-
-static GtkToggleButton *autobutton[XO_NBANDS];
-
 static gboolean gang_at[XO_BANDS];
 static gboolean gang_re[XO_BANDS];
 static gboolean gang_th[XO_BANDS];
@@ -133,14 +128,7 @@ void bind_compressors()
         ajami_compressor_connect_kn(w_comp[i], S_COMP_KNEE(i));
         ajami_compressor_connect_ma(w_comp[i], S_COMP_MAKEUP(i));
 
-        /* snprintf(name, 255, "comp_le_%d", i + 1);
-        le_meter[i] = HV_METER(lookup_widget(main_window, name));
-        le_meter_adj[i] = hv_meter_get_adjustment(le_meter[i]);
-
-        snprintf(name, 255, "comp_ga_%d", i + 1);
-        ga_meter[i] = HV_METER(lookup_widget(main_window, name));
-        ga_meter_adj[i] = hv_meter_get_adjustment(ga_meter[i]);
-
+        /*
         connect_scale(at, i, attack, S_COMP_ATTACK(i));
         connect_scale(re, i, release, S_COMP_RELEASE(i));
         connect_scale(th, i, threshold, S_COMP_THRESH(i));
@@ -411,7 +399,7 @@ void ma_changed(int id, float value)
                     g_signal_handler_unblock(adj_ma[j], sig_hand_ma[j]);
 
                     val = g_strdup_printf("%04.1f", new_value);
-                    gtk_button_set_label(GTK_BUTTON(autobutton[j]), val);
+                    ajami_compressor_set_auto_ma_label(w_comp[j], val);
                     free(val);
                 }
                 comp_curve_update(j);
@@ -424,7 +412,7 @@ void ma_changed(int id, float value)
     compressors[i].makeup_gain = value;
 
     val = g_strdup_printf("%04.1f", value);
-    gtk_button_set_label(GTK_BUTTON(autobutton[i]), val);
+    ajami_compressor_set_auto_ma_label(w_comp[i], val);
     free(val);
 
     comp_curve_update(i);
@@ -452,8 +440,8 @@ void compressor_meters_update()
 
     for (i = 0; i < XO_BANDS; i++)
     {
-        gtk_adjustment_set_value(le_meter_adj[i], compressors[i].amplitude);
-        gtk_adjustment_set_value(ga_meter_adj[i], compressors[i].gain_red);
+        ajami_compressor_le_set_value(w_comp[i], compressors[i].amplitude);
+        ajami_compressor_ga_set_value(w_comp[i], compressors[i].gain_red);
     }
 }
 

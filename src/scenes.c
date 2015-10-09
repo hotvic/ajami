@@ -301,7 +301,7 @@ void set_scene (int scene_num)
 
 
     /*  Set the tooltip to the full name.  */
-    ajami_scenes_scene_set_tooltip(ajami_get_scenes_widget(), menu_scene, scene_state[menu_scene].description);
+    // TODO: ajami_scenes_scene_set_tooltip(ajami_get_scenes_widget(), menu_scene, scene_state[menu_scene].description);
 }
 
 
@@ -348,7 +348,7 @@ void set_scene_name (int number, const char *scene_name)
 
     /*  Set the tooltip to the name.  */
 
-    ajami_scenes_scene_set_tooltip(ajami_get_scenes_widget(), menu_scene, scene_state[menu_scene].description);
+    // TODO: ajami_scenes_scene_set_tooltip(ajami_get_scenes_widget(), menu_scene, scene_state[menu_scene].description);
 }
 
 
@@ -368,9 +368,9 @@ void clear_scene (int scene_num)
     if (i >= 0) menu_scene = i;
 
 
-    ajami_scenes_scene_set_tooltip(ajami_get_scenes_widget(), menu_scene,
+    /* TODO: ajami_scenes_scene_set_tooltip(ajami_get_scenes_widget(), menu_scene,
                                    g_strdup_printf ("Scene %d, right click for menu",
-                                           menu_scene + 1));
+                                           menu_scene + 1)); */
 
 
     /*  Set the button to red.  */

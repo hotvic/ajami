@@ -292,16 +292,14 @@ void preferences_init() {
 void pref_set_all_values() {
     // gtk_spin_button_set_value (l_hdeq_lower_gain, hdeq_get_lower_gain ());
     // gtk_spin_button_set_value (l_hdeq_upper_gain, hdeq_get_upper_gain ());
-    gtk_spin_button_set_value(l_crossfade_time, s_get_crossfade_time());
+    /* gtk_spin_button_set_value(l_crossfade_time, s_get_crossfade_time());
     gtk_spin_button_set_value(l_inmeter_warn, intrim_inmeter_get_warn());
-    gtk_spin_button_set_value(
-        l_spectrum_freq,
-        ajami_spectrum_get_frequency(ajami_get_spectrum_widget()));
+    gtk_spin_button_set_value(l_spectrum_freq, ajami_spectrum_get_frequency());
     gtk_spin_button_set_value(l_rms_time_slice, process_get_rms_time_slice());
     gtk_spin_button_set_value(l_xo_delay_time_low,
                               process_get_xo_delay_time(XO_LOW));
     gtk_spin_button_set_value(l_xo_delay_time_mid,
-                              process_get_xo_delay_time(XO_MID));
+                              process_get_xo_delay_time(XO_MID)); */
 
     /* g_signal_handlers_block_by_func (l_out_meter_peak,
     on_out_meter_peak_button_clicked, NULL);
@@ -314,7 +312,7 @@ void pref_set_all_values() {
     g_signal_handlers_block_by_func (l_fft, on_FFTButton_clicked, NULL);
     g_signal_handlers_block_by_func (l_iir, on_IIRButton_clicked, NULL); */
 
-    gtk_toggle_button_set_active(l_out_meter_peak,
+    /* gtk_toggle_button_set_active(l_out_meter_peak,
                                  intrim_get_out_meter_peak_pref());
     gtk_toggle_button_set_active(l_out_meter_full,
                                  !intrim_get_out_meter_peak_pref());
@@ -323,7 +321,7 @@ void pref_set_all_values() {
     gtk_toggle_button_set_active(l_rms_meter_full,
                                  !intrim_get_rms_meter_peak_pref());
     gtk_toggle_button_set_active(l_fft, (process_get_crossover_type() == FFT));
-    gtk_toggle_button_set_active(l_iir, (process_get_crossover_type() == IIR));
+    gtk_toggle_button_set_active(l_iir, (process_get_crossover_type() == IIR)); */
 
     /* g_signal_handlers_unblock_by_func (l_out_meter_peak,
     on_out_meter_peak_button_clicked, NULL);
@@ -336,8 +334,8 @@ void pref_set_all_values() {
     g_signal_handlers_unblock_by_func (l_fft, on_FFTButton_clicked, NULL);
     g_signal_handlers_unblock_by_func (l_iir, on_IIRButton_clicked, NULL); */
 
-    gtk_combo_box_set_active(l_SpectrumComboBox, process_get_spec_mode());
-    gtk_combo_box_set_active(l_limiter_combo, process_get_limiter_plugin());
+    // gtk_combo_box_set_active(l_SpectrumComboBox, process_get_spec_mode());
+    // gtk_combo_box_set_active(l_limiter_combo, process_get_limiter_plugin());
 }
 
 GdkRGBA* get_color(int color_id) { return (&color[color_id]); }

@@ -20,7 +20,6 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <math.h>
-
 #include "geq.h"
 #include "hdeq.h"
 #include "process.h"
@@ -32,8 +31,10 @@
 #include "ajamiobjects.h"
 #include "help.h"
 
-GtkAdjustment* geqa[EQ_BANDS];
-GtkRange* geqr[EQ_BANDS];
+
+AjamiGraphicEQ* w_geq;
+GtkAdjustment*    geqa[EQ_BANDS];
+GtkRange*         geqr[EQ_BANDS];
 
 static int EQ_drawn = 0;
 static char* errstr = NULL;
@@ -54,24 +55,25 @@ void bind_geq() {
     //float last_bin, next_bin;
     //const double hz_per_bin = sample_rate / (double)BINS;
 
-    //for (i = 0; i < EQ_BANDS; i++) {
-        //geq_freqs[i] = 1000.0 * pow(10.0, (double)(i - 16) * 0.1);
+    w_geq = ajami_main_window_get_w_geq(main_window);
+
+    for (int i = 0; i < EQ_BANDS; i++) {
+        geq_freqs[i] = 1000.0 * pow(10.0, (double)(i - 16) * 0.1);
         ///* printf("GEQ band %d = %g Hz\n", i, geq_freqs[i]); */
-    //}
+    }
 
-    //for (i = 0; i < EQ_BANDS; i++) {
-        //sprintf(name, "eqb%d", i + 1);
-        //geqr[i] = GTK_RANGE(lookup_widget(main_window, name));
-        //geqa[i] = GTK_ADJUSTMENT(gtk_range_get_adjustment(GTK_RANGE(geqr[i])));
-        //g_signal_connect(G_OBJECT(geqa[i]), "value-changed",
-                         //G_CALLBACK(eqb_changed), GINT_TO_POINTER(i + 1));
-        //g_signal_connect(G_OBJECT(geqa[i]), "value-changed",
-                         //G_CALLBACK(hdeq_eqb_mod), NULL);
-    //}
+    for (int i = 0; i < EQ_BANDS; i++) {
+        geqr[i] = GTK_RANGE(ajami_graphic_eq_get_w_eq_band(w_geq, i));
+        geqa[i] = GTK_ADJUSTMENT(gtk_range_get_adjustment(GTK_RANGE(geqr[i])));
+        g_signal_connect(G_OBJECT(geqa[i]), "value-changed",
+                         G_CALLBACK(eqb_changed), GINT_TO_POINTER(i + 1));
+        g_signal_connect(G_OBJECT(geqa[i]), "value-changed",
+                         G_CALLBACK(hdeq_eqb_mod), NULL);
+    }
 
-    //for (i = 0; i < BANDS + 1; i++) {
-        //geq_gains[i] = 1.0f;
-    //}
+    for (int i = 0; i < BANDS + 1; i++) {
+        geq_gains[i] = 1.0f;
+    }
 
     //bin = 0;
     //while (bin <= geq_freqs[0] / hz_per_bin && bin < (BINS / 2) - 1) {

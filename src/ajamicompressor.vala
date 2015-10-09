@@ -17,7 +17,9 @@
  * along with Ajami.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 using Gtk;
+using HV;
 
 
 /* C functions */
@@ -84,6 +86,14 @@ namespace Ajami {
         [GtkChild]
         private Scale makeup_scale;
 
+        [GtkChild]
+        private ToggleButton makeup_auto;
+
+        [GtkChild]
+        private Meter comp_le;
+
+        [GtkChild]
+        private Meter comp_ga;
 
         construct {
         }
@@ -145,12 +155,24 @@ namespace Ajami {
             SignalHandler.unblock_by_func(adj_ma, (void *) ma_changed, this);
         }
 
-        public void ga_set_warn_point(float wp) {
+        public void le_set_value(float val) {
+            comp_le.adjustment.set_value(val);
+        }
 
+        public void ga_set_value(float val) {
+            comp_ga.adjustment.set_value(val);
         }
 
         public void le_set_warn_point(float wp) {
 
+        }
+
+        public void ga_set_warn_point(float wp) {
+
+        }
+
+        public void set_auto_ma_label(string text) {
+            makeup_auto.set_label(text);
         }
 
         public ulong connect_at(int state_id) {

@@ -75,6 +75,9 @@ namespace Ajami {
         private Scale in_stereo_scale;
 
         [GtkChild]
+        private Scale out_amp_scale;
+
+        [GtkChild]
         private Meter inmeter_l;
 
         [GtkChild]
@@ -98,6 +101,55 @@ namespace Ajami {
         [GtkChild]
         private Scale cross_high_scale;
 
+        [GtkChild]
+        private GraphicEQ geq;
+
+        [GtkChild]
+        private Entry out_out_l_entry;
+        [GtkChild]
+        private Entry out_out_r_entry;
+        [GtkChild]
+        private Entry out_rms_l_entry;
+        [GtkChild]
+        private Entry out_rms_r_entry;
+
+        [GtkChild]
+        private Adjustment inmeter_l_adj;
+        [GtkChild]
+        private Adjustment inmeter_r_adj;
+        [GtkChild]
+        private Adjustment outmeter_l_adj;
+        [GtkChild]
+        private Adjustment outmeter_r_adj;
+        [GtkChild]
+        private Adjustment rmsmeter_l_adj;
+        [GtkChild]
+        private Adjustment rmsmeter_r_adj;
+
+
+        public Scale low2mid_scale {
+            get { return cross_low_scale; }
+        }
+
+        public Scale mid2high_scale {
+            get { return cross_high_scale; }
+        }
+
+        public Scale w_in_amp {
+            get { return in_amp_scale; }
+        }
+
+        public Scale w_in_stereo {
+            get { return in_stereo_scale; }
+        }
+
+        public Scale w_out_amp {
+            get { return out_amp_scale; }
+        }
+
+        public GraphicEQ w_geq {
+            get { return geq; }
+        }
 
         public MainWindow(Gtk.Application app) {
             Object(application: app);
@@ -130,12 +182,6 @@ namespace Ajami {
             return null;
         }
 
-        public Gtk.Widget get_widget(Type type, string name) {
-            stdout.printf("Trying to get '%s' widget...\n", name);
-
-            return this.get_template_child(type, name) as Gtk.Widget;
-        }
-
         public void add_actions() {
             var new_preset = new SimpleAction("new-preset", null);
             var open_preset = new SimpleAction("open-preset", null);
@@ -155,50 +201,78 @@ namespace Ajami {
         /* INTRIM */
         public void set_inmeter_value(MeterSide side, double value) {
             if (side == MeterSide.METER_L) {
-                this.inmeter_l.adjustment.set_value(value);
+                this.inmeter_l_adj.value = value;
             } else {
-                this.inmeter_r.adjustment.set_value(value);
+                this.inmeter_r_adj.value = value;
             }
         }
 
         public void set_outmeter_value(MeterSide side, double value) {
             if (side == MeterSide.METER_L) {
-                this.outmeter_l.adjustment.set_value(value);
+                this.outmeter_l_adj.value = value;
             } else {
-                this.outmeter_r.adjustment.set_value(value);
+                this.outmeter_r_adj.value = value;
             }
         }
 
         public void set_rmsmeter_value(MeterSide side, double value) {
             if (side == MeterSide.METER_L) {
-                this.rmsmeter_l.adjustment.set_value(value);
+                this.rmsmeter_l_adj.value = value;
             } else {
-                this.rmsmeter_r.adjustment.set_value(value);
+                this.rmsmeter_r_adj.value = value;
+            }
+        }
+
+        public void set_out_text(MeterSide side, string text) {
+            if (side == MeterSide.METER_L) {
+                this.out_out_l_entry.set_text(text);
+            } else {
+                this.out_out_r_entry.set_text(text);
+            }
+        }
+
+        public void set_rmsout_text(MeterSide side, string text) {
+            if (side == MeterSide.METER_L) {
+                this.out_rms_l_entry.set_text(text);
+            } else {
+                this.out_rms_r_entry.set_text(text);
             }
         }
 
         public float get_inmeter_peak(MeterSide side) {
-            return 0f;
+            if (side == MeterSide.METER_L)
+                return this.inmeter_l.peak;
+
+            return this.inmeter_r.peak;
         }
 
         public float get_outmeter_peak(MeterSide side) {
-            return 0f;
+            if (side == MeterSide.METER_L)
+                return this.outmeter_l.peak;
+
+            return this.outmeter_r.peak;
         }
 
         public float get_rmsmeter_peak(MeterSide side) {
-            return 0f;
+            if (side == MeterSide.METER_L)
+                return this.rmsmeter_l.peak;
+
+            return this.rmsmeter_r.peak;
         }
 
         public void reset_inmeter_peak() {
-
+            this.inmeter_l.reset_peak();
+            this.inmeter_r.reset_peak();
         }
 
         public void reset_outmeter_peak() {
-
+            this.outmeter_l.reset_peak();
+            this.outmeter_r.reset_peak();
         }
 
         public void reset_rmsmeter_peak() {
-
+            this.rmsmeter_l.reset_peak();
+            this.rmsmeter_r.reset_peak();
         }
 
         public void set_inmeter_warn_point(float point) {
@@ -220,6 +294,11 @@ namespace Ajami {
 
         public void set_cross_high_label(string label) {
 
+        }
+
+        [GtkCallback]
+        public void in_gain_changed() {
+            CAjami.State.set_value_ui(CAjami.State.IN_GAIN, (float) in_amp_scale.adjustment.value);
         }
     }
 }

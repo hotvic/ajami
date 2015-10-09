@@ -33,6 +33,16 @@
         <property name="upper">30</property>
         <property name="step-increment">1</property>
     </object>
+    <object class="GtkAdjustment" id="adj_comp_le">
+        <property name="value">0</property>
+        <property name="lower">-40</property>
+        <property name="upper">0</property>
+    </object>
+    <object class="GtkAdjustment" id="adj_comp_ga">
+        <property name="value">0</property>
+        <property name="lower">-40</property>
+        <property name="upper">0</property>
+    </object>
     <template class="AjamiCompressor" parent="GtkFrame">
         <child>
             <object class="GtkBox" id="outer_vbox">
@@ -166,6 +176,28 @@
                                         <property name="draw-value">false</property>
                                     </object>
                                 </child>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkBox" id="meter_vbox">
+                        <property name="orientation">vertical</property>
+                        <child>
+                            <object class="HVMeter" id="comp_le">
+                                <property name="adjustment">adj_comp_le</property>
+                                <property name="orientation">horizontal</property>
+                                <property name="hexpand">true</property>
+                                <property name="height-request">15</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="HVMeter" id="comp_ga">
+                                <property name="adjustment">adj_comp_ga</property>
+                                <property name="orientation">horizontal</property>
+                                <property name="inverted">true</property>
+                                <property name="hexpand">true</property>
+                                <property name="height-request">10</property>
                             </object>
                         </child>
                     </object>

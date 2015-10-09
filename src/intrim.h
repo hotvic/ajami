@@ -34,6 +34,7 @@ void intrim_rmsmeter_set_warn (float level);
 float intrim_inmeter_get_warn ();
 float intrim_outmeter_get_warn ();
 float intrim_rmsmeter_get_warn ();
+gboolean update_meters();
 
 extern float in_gain[], out_gain;
 extern float in_trim_gain;
