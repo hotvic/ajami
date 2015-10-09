@@ -188,7 +188,6 @@ gboolean update_meters() {
     out_meter_value(out_peak);
 
     /* Only update these meters if main window is displayed */
-    printf("GUI Mode: %d\n", gui_mode);
     if (gui_mode == 0) {
         rms_meter_value(rms_peak);
         limiter_meters_update();

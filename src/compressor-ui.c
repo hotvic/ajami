@@ -401,7 +401,6 @@ void compressor_meters_update()
     for (int i = 0; i < XO_BANDS; i++)
     {
         ajami_compressor_le_set_value(w_comp[i], compressors[i].amplitude);
-        printf("\r Compressor %d: %f", i, compressors[i].amplitude);
         ajami_compressor_ga_set_value(w_comp[i], compressors[i].gain_red);
     }
 }
