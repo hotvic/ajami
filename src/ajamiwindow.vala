@@ -126,6 +126,10 @@ namespace Ajami {
         [GtkChild]
         private Adjustment rmsmeter_r_adj;
 
+        [GtkChild]
+        private Label cross_low_lbl;
+        [GtkChild]
+        private Label cross_high_lbl;
 
         public Scale low2mid_scale {
             get { return cross_low_scale; }
@@ -155,6 +159,12 @@ namespace Ajami {
             Object(application: app);
 
             add_actions();
+        }
+
+        public override void show() {
+            base.show();
+
+            CAjami.HDEQ.crossover_init();
         }
 
         public Scenes get_scenes_widget() {
@@ -276,24 +286,27 @@ namespace Ajami {
         }
 
         public void set_inmeter_warn_point(float point) {
-
+            inmeter_l.warn_point = point;
+            inmeter_r.warn_point = point;
         }
 
         public void set_outmeter_warn_point(float point) {
-
+            outmeter_l.warn_point = point;
+            outmeter_r.warn_point = point;
         }
 
         public void set_rmsmeter_warn_point(float point) {
-
+            rmsmeter_l.warn_point = point;
+            rmsmeter_r.warn_point = point;
         }
 
         /* Crossover */
         public void set_cross_low_label(string label) {
-
+            cross_low_lbl.label = label;
         }
 
         public void set_cross_high_label(string label) {
-
+            cross_high_lbl.label = label;
         }
 
         [GtkCallback]

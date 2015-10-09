@@ -211,14 +211,12 @@ void clean_quit() {
 }
 
 void bind_hdeq() {
-    int i;
-
     l_low2mid  = ajami_main_window_get_low2mid_scale(main_window);
     l_mid2high = ajami_main_window_get_mid2high_scale(main_window);
 
     l_low2mid_adj = GTK_ADJUSTMENT(gtk_range_get_adjustment(GTK_RANGE(l_low2mid)));
 
-    for (i = 0; i < XO_BANDS; i++) {
+    for (int i = 0; i < XO_BANDS; i++) {
         l_comp[i] = ajami_main_window_get_comp_widget(main_window, i);
     }
 
@@ -252,7 +250,7 @@ void bind_hdeq() {
     EQ_notch_default[3] = 3719.0;
     EQ_notch_default[4] = 16903.0;
 
-    for (i = 0; i < NOTCHES; i++) {
+    for (int i = 0; i < NOTCHES; i++) {
         EQ_notch_gain[i] = 0.0;
         EQ_notch_width[i] = 5;
         EQ_notch_drag[i] = 0;
@@ -274,12 +272,11 @@ float hdeq_get_notch_default_freq(int i) { return (EQ_notch_default[i]); }
 void hdeq_low2mid_set(GtkRange* range) {
     double value, other_value, lvalue, mvalue, hvalue;
     char* label = NULL;
-    int i;
 
     /*  Get the value from the crossover range widget.  */
 
     value = gtk_range_get_value(range);
-    other_value = gtk_range_get_value((GtkRange*)l_mid2high);
+    other_value = gtk_range_get_value((GtkRange*) l_mid2high);
     s_set_value_ui(S_XOVER_FREQ(0), value);
 
     /*  Don't let the two sliders cross each other and desensitize the mid
@@ -291,7 +288,7 @@ void hdeq_low2mid_set(GtkRange* range) {
 
         s_suppress_push();
 
-        gtk_range_set_value((GtkRange*)l_mid2high, value);
+        gtk_range_set_value((GtkRange*) l_mid2high, value);
 
         /*  This lets the state functions behave normally again.  */
 
@@ -357,7 +354,7 @@ void hdeq_low2mid_set(GtkRange* range) {
         // cairo_fill (cr);
         //  cairo_destroy(cr);
 
-        for (i = 0; i < EQ_INTERP; i++) {
+        for (int i = 0; i < EQ_INTERP; i++) {
             //    if (i) gdk_draw_line (EQ_drawable, EQ_gc, spectrum_x[i - 1],
             //    spectrum_y[i - 1],
             //                          spectrum_x[i], spectrum_y[i]);
@@ -374,7 +371,6 @@ void hdeq_low2mid_set(GtkRange* range) {
 void hdeq_mid2high_set(GtkRange* range) {
     double value, other_value, lvalue, mvalue, hvalue;
     char* label = NULL;
-    int i;
 
     /*  Get the value from the crossover range widget.  */
 
@@ -447,7 +443,7 @@ void hdeq_mid2high_set(GtkRange* range) {
         color = get_color(HDEQ_SPECTRUM_COLOR);
         //      cairo_set_source_rgb (EQ_cr,color->red,color->green,
         //      color->blue);
-        for (i = 0; i < EQ_INTERP; i++) {
+        for (int i = 0; i < EQ_INTERP; i++) {
             //     if (i) gdk_draw_line (EQ_drawable, EQ_gc, spectrum_x[i - 1],
             //     spectrum_y[i - 1],
             //                           spectrum_x[i], spectrum_y[i]);

@@ -100,7 +100,7 @@ namespace Ajami {
 
         public void set_text(string label) {
             (this.label_widget as Label).use_markup = true;
-            this.label = label;
+            (this.label_widget as Label).label = label;
         }
 
         public void set_disabled(bool disabled) {

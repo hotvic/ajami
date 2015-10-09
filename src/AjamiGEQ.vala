@@ -31,6 +31,7 @@ namespace Ajami {
                 var scale_box = new Box(Orientation.VERTICAL, 0);
 
                 bands[i] = new Scale.with_range(Orientation.VERTICAL, -12, 12, 0.1);
+                bands[i].inverted = true;
                 scale_box.pack_start(bands[i], true, true, 0);
 
                 bands_box.pack_start(scale_box, true, true, 0);

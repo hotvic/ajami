@@ -179,17 +179,13 @@ void geq_set_sliders(int length, float x[], float y[]) {
 }
 
 void geq_set_range(double min, double max) {
-    int i;
-
-    for (i = 0; i < EQ_BANDS; i++) {
+    for (int i = 0; i < EQ_BANDS; i++) {
         gtk_range_set_range(geqr[i], min, max);
     }
 }
 
 void geq_get_freqs_and_gains(float* freqs, float* gains) {
-    int i;
-
-    for (i = 0; i < EQ_BANDS; i++) {
+    for (int i = 0; i < EQ_BANDS; i++) {
         freqs[i] = geq_freqs[i];
         gains[i] = geq_gains[i];
     }

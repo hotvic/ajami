@@ -20,6 +20,13 @@
 
 namespace CAjami {
     [Compact]
+    [CCode (cheader_filename = "hdeq.h")]
+    public class HDEQ {
+        [CCode (cname = "crossover_init")]
+        public static void crossover_init();
+    }
+
+    [Compact]
     [CCode (cheader_filename = "intrim.h")]
     public class INTrim {
         [CCode (cname = "update_meters")]
