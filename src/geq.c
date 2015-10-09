@@ -50,10 +50,9 @@ gboolean eqb_changed(GtkAdjustment* adj, gpointer user_data);
 void geq_set_gains();
 
 void bind_geq() {
-    //char name[16];
-    //int i, bin;
-    //float last_bin, next_bin;
-    //const double hz_per_bin = sample_rate / (double)BINS;
+    int bin;
+    float last_bin, next_bin;
+    const double hz_per_bin = sample_rate / (double) BINS;
 
     w_geq = ajami_main_window_get_w_geq(main_window);
 
@@ -75,31 +74,28 @@ void bind_geq() {
         geq_gains[i] = 1.0f;
     }
 
-    //bin = 0;
-    //while (bin <= geq_freqs[0] / hz_per_bin && bin < (BINS / 2) - 1) {
-        //bin_base[bin] = 0;
-        //bin_delta[bin++] = 0.0f;
-    //}
+    bin = 0;
+    while (bin <= geq_freqs[0] / hz_per_bin && bin < (BINS / 2) - 1) {
+        bin_base[bin] = 0;
+        bin_delta[bin++] = 0.0f;
+    }
 
-    //for (i = 1; i < BANDS - 1 && bin < (BINS / 2) - 1 &&
-                //geq_freqs[i + 1] < sample_rate / 2;
-         //i++) {
-        //last_bin = bin;
-        //next_bin = geq_freqs[i + 1] / hz_per_bin;
-        //while (bin <= next_bin) {
-            //bin_base[bin] = i;
-            //bin_delta[bin] =
-                //(float)(bin - last_bin) / (float)(next_bin - last_bin);
-            //bin++;
-        //}
-    //}
+    for (int i = 1; i < BANDS - 1 && bin < (BINS / 2) - 1 && geq_freqs[i + 1] < sample_rate / 2; i++) {
+        last_bin = bin;
+        next_bin = geq_freqs[i + 1] / hz_per_bin;
+        while (bin <= next_bin) {
+            bin_base[bin] = i;
+            bin_delta[bin] = (float) (bin - last_bin) / (float) (next_bin - last_bin);
+            bin++;
+        }
+    }
 
-    //for (; bin < (BINS / 2); bin++) {
-        //bin_base[bin] = BANDS - 1;
-        //bin_delta[bin] = 0.0f;
-    //}
+    for (; bin < (BINS / 2); bin++) {
+        bin_base[bin] = BANDS - 1;
+        bin_delta[bin] = 0.0f;
+    }
 
-    //geq_set_gains();
+    geq_set_gains();
 }
 
 void geq_set_gains() {
