@@ -64,8 +64,26 @@ namespace Ajami {
             this.scenes[scene].ev.set_tooltip_markup(text);
         }
 
-        public void set_scene_state() {
+        public void set_scene_state(int id, SceneState state) {
+            if (id < 0 || id > 20) return;
+            if (state < SceneState.NONE || state > SceneState.LAST) return;
 
+            scenes[id].state = state;
+
+            switch (state) {
+            case SceneState.ON:
+                scenes[id].img.resource = "/org/ajami/ajami/pixmaps/LED_green_on.xpm";
+                break;
+            case SceneState.OFF:
+                scenes[id].img.resource = "/org/ajami/ajami/pixmaps/LED_green_off.xpm";
+                break;
+            case SceneState.WARNING:
+                scenes[id].img.resource = "/org/ajami/ajami/pixmaps/LED_yellow.xpm";
+                break;
+            case SceneState.UNUSED:
+                scenes[id].img.resource = "/org/ajami/ajami/pixmaps/LED_red.xpm";
+                break;
+            }
         }
 
         public void scene_set_active(int scene) {
