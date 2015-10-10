@@ -564,7 +564,7 @@ void s_save_session(const gchar* fname) {
         if (curr_scene == j) {
             xmlSetProp(sc_node, (xmlChar*)"active", (xmlChar*)"true");
             xmlSetProp(sc_node, (xmlChar*)"changed", (xmlChar*)"false");
-        } else if (curr_scene == changed_scene_no(j)) {
+        } else if (curr_scene == j) {
             xmlSetProp(sc_node, (xmlChar*)"active", (xmlChar*)"true");
             xmlSetProp(sc_node, (xmlChar*)"changed", (xmlChar*)"true");
         }
@@ -817,8 +817,8 @@ void s_startElement(void* user_data, const xmlChar* name,
             set_scene(gp->scene);
         }
         if (changed) {
-            saved_scene = gp->scene + 100;
-            set_num_scene_warning_button(changed_scene_no(gp->scene));
+            saved_scene = gp->scene;
+            set_num_scene_warning_button(gp->scene);
         }
 
         if (sname && gp->scene > -1) {

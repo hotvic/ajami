@@ -21,45 +21,67 @@ using Gtk;
 
 
 namespace Ajami {
+    public enum SceneState {
+        NONE,
+        ON,
+        OFF,
+        WARNING,
+        UNUSED,
+        LAST
+    }
+
+    public struct Scene {
+        public int        id;
+        public string     name;
+        public SceneState state;
+        public EventBox   ev;
+        public Image      img;
+    }
+
     [GtkTemplate (ui="/org/ajami/ajami/gtk/scenes.ui")]
     public class Scenes : Gtk.Box {
-        private Gtk.EventBox scenes[20];
-        private int _current_scene;
+        private Scene scenes[20];
 
         public int current_scene {
-            get { return _current_scene; }
-            set { _current_scene = value; }
+            get; set; default = 0;
         }
 
         construct {
             for (int i = 0; i < 20; i++) {
-                var icn_scene = new Gtk.Image.from_resource("/org/ajami/ajami/pixmaps/LED_red.xpm");
+                scenes[i].id    = i;
+                scenes[i].name  = "Scene %d".printf(i + 1);
+                scenes[i].state = SceneState.UNUSED;
+                scenes[i].img   = new Gtk.Image.from_resource("/org/ajami/ajami/pixmaps/LED_red.xpm");
+                scenes[i].ev    = new Gtk.EventBox();
 
-                this.scenes[i] = new Gtk.EventBox();
-                this.scenes[i].add(icn_scene);
+                scenes[i].ev.add(scenes[i].img);
 
-                this.pack_start(this.scenes[i], true, true, 0);
+                this.pack_start(scenes[i].ev, true, true, 0);
             }
         }
 
         public void scene_set_tooltip(int scene, string text) {
+            this.scenes[scene].ev.set_tooltip_markup(text);
+        }
+
+        public void set_scene_state() {
 
         }
 
         public void scene_set_active(int scene) {
-            (this.scenes[scene].get_child() as Gtk.Image).resource = "/org/ajami/ajami/pixmaps/LED_green_on.xpm";
+            scenes[scene].img.resource = "/org/ajami/ajami/pixmaps/LED_green_on.xpm";
         }
 
         public void scene_set_warning(int scene) {
-            (this.scenes[scene].get_child() as Gtk.Image).resource = "/org/ajami/ajami/pixmaps/LED_yellow.xpm";
+            scenes[scene].img.resource = "/org/ajami/ajami/pixmaps/LED_yellow.xpm";
         }
 
         public void scene_set_unused(int scene) {
-            (this.scenes[scene].get_child() as Gtk.Image).resource = "/org/ajami/ajami/pixmaps/LED_green_off.xpm";
+            scenes[scene].img.resource = "/org/ajami/ajami/pixmaps/LED_red.xpm";
         }
 
         public void scene_set_disabled(int scene) {
-            (this.scenes[scene].get_child() as Gtk.Image).resource = "/org/ajami/ajami/pixmaps/LED_red.xpm";
+            scenes[scene].img.resource = "/org/ajami/ajami/pixmaps/LED_green_off.xpm";
         }
 
         public string scene_get_name(int scene) {

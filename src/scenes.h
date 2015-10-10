@@ -38,8 +38,6 @@ int get_previous_scene_num ();
 void set_scene_warning_button ();
 void set_scene_button (int scene);
 void set_num_scene_warning_button (int scene);
-int changed_scene_no(int s);
-int is_changed_scene(int s);
 void scene_init();
 
 #endif

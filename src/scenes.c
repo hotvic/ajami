@@ -431,7 +431,7 @@ void set_scene_warning_button ()
         prev_scene = i;
 
         ajami_scenes_scene_set_warning(ajami_get_scenes_widget(), i);
-        current_scene = changed_scene_no(i);
+        current_scene = i;
     }
 }
 
@@ -465,24 +465,6 @@ void set_scene_button (int scene)
             }
         }
     }
-}
-
-
-/* Return the magic scene number that will be used to represent that scene if
-   it has had unsaved changes made */
-
-int changed_scene_no(int s)
-{
-    return s + 100;
-}
-
-
-/* return TRUE if the scene number passed in represents a changed scene and
-   FALSE otherwise */
-
-int is_changed_scene(int s)
-{
-    return s >= 100;
 }
 
 /*  Set a specific scene button to a warning.  Only done on load.  */
