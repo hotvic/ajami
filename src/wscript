@@ -24,9 +24,9 @@ def build(bld):
         vapi_dirs        = '.',
         includes         = '.',
     )
-    valaobjs.source = 'ajamiapp.vala ajamiwindow.vala ajamiscenes.vala ajamicompressor.vala'
-    valaobjs.source += ' ajamihelp.vala ajamilimiter.vala ajamiargs.vala ajami.vala'
-    valaobjs.source += ' AjamiGEQ.vala ajamispectrum.vala'
+    valaobjs.source = 'Ajami.vala AjamiApp.vala AjamiWindow.vala AjamiScenes.vala AjamiCompressor.vala'
+    valaobjs.source += ' AjamiHelp.vala AjamiLimiter.vala AjamiArgs.vala AjamiGEQ.vala'
+    valaobjs.source += ' AjamiSpectrum.vala'
 
     ajami = bld(
         features       = 'c cprogram glib2',

@@ -2203,8 +2203,6 @@ void hdeq_set_xover() {
     process_set_low2mid_xover((float)pow(10.0, s_get_value(S_XOVER_FREQ(0))));
     process_set_mid2high_xover((float)pow(10.0, s_get_value(S_XOVER_FREQ(1))));
 
-    printf("%f %f \n", s_get_value(S_XOVER_FREQ(0)),
-           s_get_value(S_XOVER_FREQ(1)));
     hdeq_low2mid_init();
     hdeq_mid2high_init();
 }

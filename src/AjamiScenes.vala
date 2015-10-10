@@ -23,6 +23,7 @@ using Gtk;
 namespace Ajami {
     [GtkTemplate (ui="/org/ajami/ajami/gtk/scenes.ui")]
     public class Scenes : Gtk.Box {
+        private Gtk.EventBox scenes[20];
         private int _current_scene;
 
         public int current_scene {
@@ -30,9 +31,15 @@ namespace Ajami {
             set { _current_scene = value; }
         }
 
-        public Scenes()
-        {
-            Object();
+        construct {
+            for (int i = 0; i < 20; i++) {
+                var icn_scene = new Gtk.Image.from_resource("/org/ajami/ajami/pixmaps/LED_red.xpm");
+
+                this.scenes[i] = new Gtk.EventBox();
+                this.scenes[i].add(icn_scene);
+
+                this.pack_start(this.scenes[i], true, true, 0);
+            }
         }
 
         public void scene_set_tooltip(int scene, string text) {
@@ -40,19 +47,19 @@ namespace Ajami {
         }
 
         public void scene_set_active(int scene) {
-
+            (this.scenes[scene].get_child() as Gtk.Image).resource = "/org/ajami/ajami/pixmaps/LED_green_on.xpm";
         }
 
         public void scene_set_warning(int scene) {
-
+            (this.scenes[scene].get_child() as Gtk.Image).resource = "/org/ajami/ajami/pixmaps/LED_yellow.xpm";
         }
 
         public void scene_set_unused(int scene) {
-
+            (this.scenes[scene].get_child() as Gtk.Image).resource = "/org/ajami/ajami/pixmaps/LED_green_off.xpm";
         }
 
         public void scene_set_disabled(int scene) {
-
+            (this.scenes[scene].get_child() as Gtk.Image).resource = "/org/ajami/ajami/pixmaps/LED_red.xpm";
         }
 
         public string scene_get_name(int scene) {
@@ -63,7 +70,6 @@ namespace Ajami {
 
         }
 
-        [GtkCallback]
         public bool scene_button_press(Gdk.EventButton event) {
 
             return true;
