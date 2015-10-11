@@ -724,7 +724,7 @@ jack_client_t* io_jack_open() {
  *  DSP_INIT -> DSP_STOPPED     when -d command option set
  *  DSP_INIT <unchanged>        otherwise
  */
-void io_init(AjamiArgs* args) {
+void io_init() {
     int chan;
     int spectrum_freq = ajami_args_update_frequency;
     float crossfade_time = ajami_args_crossfade_time;

@@ -18,7 +18,6 @@
 #define IO_H
 
 #include <jack/types.h>
-#include "ajamiobjects.h"
 
 /* types of latency sources */
 #define LAT_BUFFERS 0       /* I/O buffering */
@@ -35,7 +34,7 @@ extern jack_port_t *output_ports[];
 
 void io_activate();
 void io_cleanup();
-void io_init(AjamiArgs* args);
+void io_init();
 void io_set_latency(int latency_source, jack_nframes_t delay);
 
 #endif

@@ -90,7 +90,7 @@ namespace Ajami {
         public override void shutdown() {
             base.shutdown();
 
-            // CAjami.IO.cleanup();
+            CAjami.IO.cleanup();
         }
 
         public void add_actions() {
