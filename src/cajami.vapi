@@ -22,6 +22,9 @@ namespace CAjami {
     [Compact]
     [CCode (cheader_filename = "hdeq.h")]
     public class HDEQ {
+        [CCode (cname = "bind_hdeq")]
+        public static void bind();
+
         [CCode (cname = "crossover_init")]
         public static void crossover_init();
 
@@ -33,56 +36,88 @@ namespace CAjami {
     }
 
     [Compact]
+    [CCode (cheader_filename = "geq.h")]
+    public class GraphicEQ {
+        [CCode (cname = "bind_geq")]
+        public static void bind();
+    }
+
+    [Compact]
     [CCode (cheader_filename = "intrim.h")]
     public class INTrim {
+        [CCode (cname = "bind_intrim")]
+        public static void bind();
+
         [CCode (cname = "update_meters")]
         public static bool update_meters();
     }
 
+    [Compact]
+    [CCode (cheader_filename = "limiter-ui.h")]
+    public class Limiter {
+        [CCode (cname = "bind_limiter")]
+        public static void bind();
+    }
+
+    [Compact]
+    [CCode (cheader_filename = "compressor-ui.h")]
+    public class Compressor {
+        [CCode (cname = "bind_compressors")]
+        public static void bind();
+    }
+
+    [Compact]
+    [CCode (cheader_filename = "stereo.h")]
+    public class Stereo {
+        [CCode (cname = "bind_stereo")]
+        public static void bind();
+    }
+
+    [Compact]
+    [CCode (cheader_filename = "scenes.h")]
+    public class Scenes {
+        [CCode (cname = "bind_scenes")]
+        public static void bind();
+    }
+
+    [CCode (cname = "s_callback_func", has_target = false, has_type_id = false)]
+    public delegate void StateCallback(int id, float val);
+
+    [Compact]
     [CCode (cprefix = "s_", cheader_filename = "state.h")]
-    namespace State {
-        [CCode (cname = "s_callback_func", has_target = false, has_type_id = false)]
-        public delegate void Callback(int id, float val);
-
+    public class State {
         [CCode (cname = "S_IN_GAIN")]
-        public const int IN_GAIN;
+        public static const int IN_GAIN;
         [CCode (cname = "S_LIM_INPUT")]
-        public const int LIM_INPUT;
+        public static const int LIM_INPUT;
         [CCode (cname = "S_LIM_TIME")]
-        public const int LIM_TIME;
+        public static const int LIM_TIME;
         [CCode (cname = "S_LIM_LIMIT")]
-        public const int LIM_LIMIT;
-        public const int S_BOOST;
-        public const int S_LIM_LOGSCALE;
-        public const int S_NOTCH_GAIN;
-        public const int S_NOTCH_FREQ;
-        public const int S_NOTCH_Q;
-        public const int S_NOTCH_FLAG;
-        public const int S_SIZE;
+        public static const int LIM_LIMIT;
 
-        [CCode (cname = "s_init")]
-        public void init();
+        [CCode (cname = "state_init")]
+        public static void init();
 
         [CCode (cname = "s_clear_history")]
-        public void clear_history();
+        public static void clear_history();
 
         [CCode (cname = "s_load_session")]
-        public void load_session(string? fname);
+        public static void load_session(string? fname);
 
         [CCode (cname = "s_set_adjustment")]
-        public void set_adjustment(int id, Gtk.Adjustment adj);
+        public static void set_adjustment(int id, Gtk.Adjustment adj);
 
         [CCode (cname = "s_set_callback")]
-        public void set_callback(int id, void* cb);
+        public static void set_callback(int id, void* cb);
 
         [CCode (cname = "s_set_value_ui")]
-        public void set_value_ui(int id, float val);
+        public static void set_value_ui(int id, float val);
 
         [CCode (cname = "s_undo")]
-        public void undo();
+        public static void undo();
 
         [CCode (cname = "s_redo")]
-        public void redo();
+        public static void redo();
     }
 
     [Compact]
@@ -90,14 +125,11 @@ namespace CAjami {
     public class IO {
         [CCode (cname = "io_init")]
         public static void init();
+
+        [CCode (cname = "io_init")]
+        public static void activate();
+
         [CCode (cname = "io_cleanup")]
         public static void cleanup();
-    }
-
-    [Compact]
-    [CCode (cprefix = "scenes_", cheader_filename = "scenes.h")]
-    public class Scenes {
-        [CCode (cname = "bind_scenes")]
-        public static void bind();
     }
 }

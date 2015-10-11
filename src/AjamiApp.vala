@@ -21,19 +21,8 @@ using Gtk;
 
 
 /* C functions */
-extern void io_activate();
-extern void state_init();
 extern void preferences_init();
-extern void s_clear_history();
-extern void bind_geq();
-extern void bind_hdeq();
-extern void bind_intrim();
-extern void bind_limiter();
-extern void bind_compressors();
-extern void bind_stereo();
-extern void limiter_meters_update();
-extern void compressor_meters_update();
-extern void s_crossfade_ui();
+
 
 namespace Ajami {
     public class Ajami : Gtk.Application {
@@ -67,20 +56,20 @@ namespace Ajami {
 
             main_window = new MainWindow(this);
 
-            state_init();
+            CAjami.State.init();
             preferences_init();
 
-            bind_geq();
-            bind_hdeq();
-            bind_intrim();
-            bind_limiter();
-            bind_compressors();
-            bind_stereo();
+            CAjami.GraphicEQ.bind();
+            CAjami.HDEQ.bind();
+            CAjami.INTrim.bind();
+            CAjami.Limiter.bind();
+            CAjami.Compressor.bind();
+            CAjami.Stereo.bind();
             CAjami.Scenes.bind();
 
-            s_clear_history();
+            CAjami.State.clear_history();
 
-            io_activate();
+            CAjami.IO.activate();
 
             CAjami.State.load_session(null);
 
