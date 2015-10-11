@@ -64,6 +64,12 @@ namespace Ajami {
             this.scenes[scene].ev.set_tooltip_markup(text);
         }
 
+        public SceneState get_scene_state(int id) {
+            if (id < 0 || id > 20) return SceneState.NONE;
+
+            return scenes[id].state;
+        }
+
         public void set_scene_state(int id, SceneState state) {
             if (id < 0 || id > 20) return;
             if (state < SceneState.NONE || state > SceneState.LAST) return;
@@ -102,16 +108,15 @@ namespace Ajami {
             scenes[scene].img.resource = "/org/ajami/ajami/pixmaps/LED_green_off.xpm";
         }
 
-        public string scene_get_name(int scene) {
-            return "";
+        public string scene_get_name(int id) {
+            return scenes[id].name;
         }
 
-        public void scene_set_name(int scene, string name) {
-
+        public void scene_set_name(int id, string name) {
+            scenes[id].name = name;
         }
 
         public bool scene_button_press(Gdk.EventButton event) {
-
             return true;
         }
     }
