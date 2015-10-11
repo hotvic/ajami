@@ -26,11 +26,6 @@ public Ajami.MainWindow main_window;
 
 
 namespace Ajami {
-    /* Widgets helpers */
-    public Scenes get_scenes_widget() {
-        return main_window.get_scenes_widget();
-    }
-
     public Limiter get_limiter_widget() {
         return main_window.get_limiter_widget();
     }
@@ -155,6 +150,10 @@ namespace Ajami {
             get { return geq; }
         }
 
+        public Scenes w_scenes {
+            get { return scenes; }
+        }
+
         public MainWindow(Gtk.Application app) {
             Object(application: app);
 
@@ -167,9 +166,7 @@ namespace Ajami {
             CAjami.HDEQ.crossover_init();
         }
 
-        public Scenes get_scenes_widget() {
-            return scenes;
-        }
+
 
         public Limiter get_limiter_widget() {
             return limiter;

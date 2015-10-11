@@ -93,4 +93,11 @@ namespace CAjami {
         [CCode (cname = "io_cleanup")]
         public static void cleanup();
     }
+
+    [Compact]
+    [CCode (cprefix = "scenes_", cheader_filename = "scenes.h")]
+    public class Scenes {
+        [CCode (cname = "bind_scenes")]
+        public static void bind();
+    }
 }

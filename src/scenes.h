@@ -1,17 +1,21 @@
 /*
- *  Copyright (C) 2003 Jan C. Depner, Steve Harris
+ * Copyright (C) 2015 Victor A. Santos <victoraur.santos@gmail.com>
+ * Copyright (C) 2003 Jan C. Depner, Steve Harris
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This file is part of Ajami.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * Ajami is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  $Id: scenes.h,v 1.16 2004/10/01 15:26:46 theno23 Exp $
+ * Ajami is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Ajami.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef SCENES_H
@@ -40,5 +44,5 @@ void set_scene_button (int scene);
 void set_num_scene_warning_button (int scene);
 void scene_init();
 
-#endif
+#endif /* SCENES_H */
 

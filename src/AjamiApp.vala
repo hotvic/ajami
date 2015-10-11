@@ -76,6 +76,7 @@ namespace Ajami {
             bind_limiter();
             bind_compressors();
             bind_stereo();
+            CAjami.Scenes.bind();
 
             s_clear_history();
 

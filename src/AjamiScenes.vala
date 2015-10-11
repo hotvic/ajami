@@ -64,7 +64,7 @@ namespace Ajami {
             }
         }
 
-        public void scene_set_tooltip(int scene, string text) {
+        public void set_scene_tooltip(int scene, string text) {
             this.scenes[scene].ev.set_tooltip_markup(text);
         }
 
@@ -77,6 +77,7 @@ namespace Ajami {
         public void set_scene_state(int id, SceneState state) {
             if (id < 0 || id > 20) return;
             if (state < SceneState.NONE || state > SceneState.LAST) return;
+            if (state == SceneState.ON && get_scene_state(id) == SceneState.UNUSED) return;
 
             scenes[id].state = state;
 
@@ -94,30 +95,20 @@ namespace Ajami {
                 scenes[id].img.resource = "/org/ajami/ajami/pixmaps/LED_red.xpm";
                 break;
             }
+
+            if (state == SceneState.ON) current_scene = id;
         }
 
-        public void scene_set_active(int scene) {
-            scenes[scene].img.resource = "/org/ajami/ajami/pixmaps/LED_green_on.xpm";
-        }
-
-        public void scene_set_warning(int scene) {
-            scenes[scene].img.resource = "/org/ajami/ajami/pixmaps/LED_yellow.xpm";
-        }
-
-        public void scene_set_unused(int scene) {
-            scenes[scene].img.resource = "/org/ajami/ajami/pixmaps/LED_red.xpm";
-        }
-
-        public void scene_set_disabled(int scene) {
-            scenes[scene].img.resource = "/org/ajami/ajami/pixmaps/LED_green_off.xpm";
-        }
-
-        public string scene_get_name(int id) {
+        public string get_scene_name(int id) {
             return scenes[id].name;
         }
 
-        public void scene_set_name(int id, string name) {
-            scenes[id].name = name;
+        public void set_scene_name(int id, string? name) {
+            string str = name;
+
+            if (str == null) str = "Scene %d".printf(id + 1);
+
+            scenes[id].name = str;
         }
 
         public bool scene_button_press(Gdk.EventButton event) {

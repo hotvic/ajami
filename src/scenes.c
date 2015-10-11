@@ -1,46 +1,37 @@
 /*
- *  scenes.c -- Scene changing buttons for the JAMin (JACK Audio Mastering
- *              interface) program.
+ * Copyright (C) 2015 Victor A. Santos <victoraur.santos@gmail.com>
+ * Copyright (C) 2003 Jan C. Depner, Steve Harris
  *
- *  Copyright (C) 2003 Jan C. Depner.
+ * This file is part of Ajami.
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * Ajami is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * Ajami is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with Ajami.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 
 /*
-
-    A few programmer notes:
-
-    We're trying to stay away from extern'ed global variables as much as
-    possible (I've been tainted by C++  ;-)  If you need to access a variable
-    that is used here (set or get) write a liitle one line function that
-    returns or sets it.  You can call it scenes_set_... or scenes_get_...  Yes,
-    there is some overhead associated with it but it makes tracking things
-    much easier.
-
-    Scene numbers for scenes that have been modified are set to the scene
-    number plus 100 (yeah, I know, it's kinda cheesy but it works).  A scene
-    number of -1 means use whatever scene is current or last had its button
-    pressed.
-
-*/
+ * A few programmer notes:
+ *
+ * We're trying to stay away from extern'ed global variables as much as
+ * possible (I've been tainted by C++  ;-)  If you need to access a variable
+ * that is used here (set or get) write a liitle one line function that
+ * returns or sets it.  You can call it scenes_set_... or scenes_get_...  Yes,
+ * there is some overhead associated with it but it makes tracking things
+ * much easier.
+ */
 
 
 #include <glib.h>
-
 #include "scenes.h"
 #include "state.h"
 #include "main.h"
@@ -50,34 +41,26 @@
 #include "ajamiobjects.h"
 
 
-static int               current_scene = -1, menu_scene, prev_scene = -999;
+static AjamiScenes*      w_scenes;
+static int               menu_scene;
 static gboolean          scene_loaded[NUM_SCENES];
 static s_state           scene_state[NUM_SCENES];
 
 
-/*  Initialize all scene related structures and get the widget addresses.  */
-
+/* Initialize all scene related structures and get the widget addresses. */
 void bind_scenes ()
 {
-    int   i, j;
-    char *name;
+    w_scenes = ajami_main_window_get_w_scenes(main_window);
 
-    name = malloc(sizeof(char) * 32);
-
-    current_scene = -1;
-    menu_scene = -1;
-
-    for (i = 0 ; i < NUM_SCENES ; i++)
+    for (int i = 0 ; i < NUM_SCENES ; i++)
     {
-        sprintf (name, "scene%d", i + 1);
-
-        scene_state[i].description = name;
+        scene_state[i].description = ajami_scenes_get_scene_name(w_scenes, i);
 
         scene_loaded[i] = FALSE;
 
         /*  Initialize the scene states.  */
-
-        for (j = 0 ; j < S_SIZE ; j++) scene_state[i].value[j] = 0.0;
+        for (int j = 0 ; j < S_SIZE ; j++)
+            scene_state[i].value[j] = 0.0;
 
         scene_state[i].value[S_NOTCH_Q(1)] = 5.0;
         scene_state[i].value[S_NOTCH_Q(2)] = 5.0;
@@ -89,15 +72,12 @@ void bind_scenes ()
         scene_state[i].value[S_NOTCH_FREQ(3)] = 3719.0;
         scene_state[i].value[S_NOTCH_FREQ(4)] = 16903.0;
     }
-
-    free(name);
 }
 
 
-/*  Select one of the scenes as the current scene or pop up the set/clear
-    menu.  */
-
-/*void select_scene (int number, int button)
+/* Select one of the scenes as the current scene or pop up the set/clear menu. */
+/*
+void select_scene (int number, int button)
 {
     int             i, j;
     gboolean        warning;
@@ -211,25 +191,19 @@ void bind_scenes ()
 }*/
 
 
-/*  Returns the current active scene number or -1 if no scene is active.  */
-
+/* Returns the current active scene number or -1 if no scene is active. */
 int get_current_scene ()
 {
-    return current_scene;
+    return ajami_scenes_get_current_scene(w_scenes);
 }
 
 
-/*  Returns the requested scene state or NULL if that scene is not loaded.  */
-
+/* Returns the requested scene state or NULL if that scene is not loaded. */
 s_state *get_scene (int number)
 {
-    int i;
+    if (!scene_loaded[number]) return NULL;
 
-    i = number % 100;
-
-    if (!scene_loaded[i]) return NULL;
-
-    return &scene_state[i];
+    return &scene_state[number];
 }
 
 void scene_init()
@@ -238,240 +212,168 @@ void scene_init()
 }
 
 
-/*  Set the scene state from the current settings.  Get the scene name from
-    the scene_name text entry widget.  If scene_num is -1 use the last pressed
-    scene button number (menu_scene).  */
-
+/* Set the scene state from the current settings. Get the scene name from
+ * the scene widget. If scene_num is -1 use the last pressed scene button number (menu_scene).
+ */
 void set_scene (int scene_num)
 {
-    int i;
+    /* Only save the scene settings if we're going from the current settings.
+     * That is, scene_num = -1.  Otherwise we may be in the middle of
+     * crossfading to a new state.
+     */
 
-    /*  Only save the scene settings if we're going from the current settings.
-        That is, scene_num = -1.  Otherwise we may be in the middle of
-        crossfading to a new state.  */
+    if (scene_num >= 0) {
+        menu_scene = scene_num;
+        ajami_scenes_set_prev_scene(w_scenes, scene_num);
+    }
 
-    if (scene_num >= 0) menu_scene = prev_scene = scene_num;
 
-
-    /*  Grab the current state.  */
-
-    for (i = 0 ; i < S_SIZE ; i++)
+    /* Grab the current state. */
+    for (int i = 0 ; i < S_SIZE ; i++)
         scene_state[menu_scene].value[i] = s_get_value(i);
 
-    /* scene_state[menu_scene].description =
-        (char *) realloc (scene_state[menu_scene].description,
-                          strlen (l_scene_name[menu_scene]) + 1);
-
-    strcpy (scene_state[menu_scene].description, l_scene_name[menu_scene]); */
+    scene_state[menu_scene].description = ajami_scenes_get_scene_name(w_scenes, scene_num);
 
 
-    /*  Set the scene loaded flag.  */
-
+    /* Set the scene loaded flag. */
     scene_loaded[menu_scene] = TRUE;
 
 
-    /*  Change the selected icon to green.  */
-
-    for (i = 0 ; i < NUM_SCENES ; i++)
+    /* Change the selected icon to green. */
+    for (int i = 0 ; i < NUM_SCENES ; i++)
     {
-        /*  Matching scene.  */
-
+        /* Matching scene. */
         if (i == menu_scene)
         {
-            ajami_scenes_scene_set_active(ajami_get_scenes_widget(), i);
-
-            current_scene = i;
+            ajami_scenes_set_scene_state(w_scenes, i, AJAMI_SCENE_STATE_ON);
+            ajami_scenes_set_current_scene(w_scenes, i);
         }
-
-
-        /*  Non-matching scene - set to green off or red.  */
-
         else
         {
             if (scene_loaded[i])
             {
-                ajami_scenes_scene_set_disabled(ajami_get_scenes_widget(), i);
+                ajami_scenes_set_scene_state(w_scenes, i, AJAMI_SCENE_STATE_OFF);
             }
             else
             {
-                ajami_scenes_scene_set_unused(ajami_get_scenes_widget(), i);
+                ajami_scenes_set_scene_state(w_scenes, i, AJAMI_SCENE_STATE_UNUSED);
             }
         }
     }
 
-
-    /*  Set the tooltip to the full name.  */
-    // TODO: ajami_scenes_scene_set_tooltip(ajami_get_scenes_widget(), menu_scene, scene_state[menu_scene].description);
+    /* Set the tooltip to the full name. */
+    ajami_scenes_set_scene_tooltip(w_scenes, menu_scene, scene_state[menu_scene].description);
 }
 
 
-/* Gets the scene name for scene "number".  */
-
+/* Gets the scene name for scene "number". */
 const char *get_scene_name (int number)
 {
-    int i;
+    if (!scene_loaded[number]) return NULL;
 
-    i = number % 100;
-
-    if (!scene_loaded[i]) return (NULL);
-
-    return ajami_scenes_scene_get_name(ajami_get_scenes_widget(), i);
+    return ajami_scenes_get_scene_name(w_scenes, number);
 }
 
 
-/*  Set the scene name.  If the scene_name passed in is null get the name
-    from the scene_name text entry widget.  This is called from callbacks.c
-    on a change to the scene_name widget.  */
-
+/* Set the scene name. If the scene_name passed in is null get the name
+ * from the scene widget. This is called from callbacks.c
+ * on a change to the scene widget. */
 void set_scene_name (int number, const char *scene_name)
 {
-    int i;
-
-    i = number % 100;
-
-
-    /*  If we are trying to modify the name without anything loaded, bypass
-        this.  */
-
+    /* If we are trying to modify the name without anything loaded, bypass this. */
     if (menu_scene < 0) return;
 
-
     if (scene_name != NULL)
-        ajami_scenes_scene_set_name(ajami_get_scenes_widget(), i, scene_name);
+        ajami_scenes_set_scene_name(w_scenes, number, scene_name);
 
-    scene_state[i].description =
-        (char *) realloc (scene_state[i].description,
-                          strlen (scene_name) + 1);
+    scene_state[number].description = g_strdup(scene_name);
 
-    strcpy (scene_state[menu_scene].description, scene_name);
-
-
-    /*  Set the tooltip to the name.  */
-
-    // TODO: ajami_scenes_scene_set_tooltip(ajami_get_scenes_widget(), menu_scene, scene_state[menu_scene].description);
+    /* Set the tooltip to the name. */
+    ajami_scenes_set_scene_tooltip(w_scenes, menu_scene, scene_state[menu_scene].description);
 }
 
 
-/*  Clear the scene state.  If scene_num is -1 use the last pressed scene
-    button number.  */
-
+/* Clear the scene state. If scene_num is -1 use the last pressed scene button number. */
 void clear_scene (int scene_num)
 {
-    int i;
+    if (scene_num >= 0) menu_scene = scene_num;
 
 
-    /*  Strip off the warning if set.  */
-
-    i = scene_num % 100;
+    ajami_scenes_set_scene_tooltip(w_scenes, menu_scene, g_strdup_printf ("Scene %d, right click for menu", menu_scene + 1));
 
 
-    if (i >= 0) menu_scene = i;
-
-
-    /* TODO: ajami_scenes_scene_set_tooltip(ajami_get_scenes_widget(), menu_scene,
-                                   g_strdup_printf ("Scene %d, right click for menu",
-                                           menu_scene + 1)); */
-
-
-    /*  Set the button to red.  */
-
-    ajami_scenes_scene_set_unused(ajami_get_scenes_widget(), menu_scene);
+    /* Set the button to red. */
+    ajami_scenes_set_scene_state(w_scenes, menu_scene, AJAMI_SCENE_STATE_UNUSED);
 
     scene_loaded[menu_scene] = FALSE;
 
 
-    /*  Resety the scene name to the default.  */
-
-    ajami_scenes_scene_set_name(ajami_get_scenes_widget(), menu_scene,
-                                g_strdup_printf ("Scene %d",
-                                        menu_scene + 1));
+    /* Reset the scene name to the default. */
+    ajami_scenes_set_scene_name(w_scenes, menu_scene, NULL);
 }
 
 
-/*  Set all of the buttons to unselected state.  This should be done whenever
-    there is a state change.  */
-
+/* Set all of the buttons to unselected state. This should be done whenever there is a state change. */
 void unset_scene_buttons ()
 {
-    int i;
+    ajami_scenes_set_current_scene(w_scenes, -1);
 
-
-    current_scene = -1;
-    for (i = 0 ; i < NUM_SCENES ; i++)
+    for (int i = 0 ; i < NUM_SCENES; i++)
     {
-        ajami_scenes_scene_set_unused(ajami_get_scenes_widget(), i);
+        ajami_scenes_set_scene_state(w_scenes, i, AJAMI_SCENE_STATE_UNUSED);
 
         scene_loaded[i] = FALSE;
 
-        ajami_scenes_scene_set_name(ajami_get_scenes_widget(), i, g_strdup_printf("Scene %d", i + 1));
+        ajami_scenes_set_scene_name(w_scenes, i, NULL);
     }
 }
 
 
-/*  This is used in state.c to find out if we need to undo/redo.  */
-
+/* This is used in state.c to find out if we need to undo/redo. */
 int get_previous_scene_num ()
 {
-    return (prev_scene);
+    return ajami_scenes_get_prev_scene(w_scenes);
 }
 
 
-/*  Set the current scene button to a warning.  This is done whenever any
-    state changes are made while a scene is active.  */
-
+/* Set the current scene button to a warning. This is done whenever any
+ * state changes are made while a scene is active. */
 void set_scene_warning_button ()
 {
-    int i;
+    int cur = ajami_scenes_get_current_scene(w_scenes);
 
-
-    i = current_scene % 100;
-
-    if (current_scene < 100 && current_scene > -1)
-    {
-        prev_scene = i;
-
-        ajami_scenes_scene_set_warning(ajami_get_scenes_widget(), i);
-        current_scene = i;
-    }
+    ajami_scenes_set_prev_scene(w_scenes, cur);
+    ajami_scenes_set_scene_state(w_scenes, cur, AJAMI_SCENE_STATE_WARNING);
 }
 
 
-/*  Set the specified scene button to active.  Only done on undo/redo.  */
-
+/* Set the specified scene button to active. Only done on undo/redo. */
 void set_scene_button (int scene)
 {
-    int i;
-
-
-    /*  Change the selected icon to green/yes.  */
-
-    for (i = 0 ; i < NUM_SCENES ; i++)
+    /* Change the selected icon to green/yes. */
+    for (int i = 0 ; i < NUM_SCENES; i++)
     {
         if (i == scene)
         {
-            ajami_scenes_scene_set_active(ajami_get_scenes_widget(), i);
-
-            current_scene = i;
+            ajami_scenes_set_scene_state(w_scenes, i, AJAMI_SCENE_STATE_ON);
+            ajami_scenes_set_current_scene(w_scenes, i);
         }
         else
         {
             if (scene_loaded[i])
             {
-                ajami_scenes_scene_set_disabled(ajami_get_scenes_widget(), i);
+                ajami_scenes_set_scene_state(w_scenes, i, AJAMI_SCENE_STATE_OFF);
             }
             else
             {
-                ajami_scenes_scene_set_unused(ajami_get_scenes_widget(), i);
+                ajami_scenes_set_scene_state(w_scenes, i, AJAMI_SCENE_STATE_UNUSED);
             }
         }
     }
 }
 
-/*  Set a specific scene button to a warning.  Only done on load.  */
-
+/* Set a specific scene button to a warning. Only done on load. */
 void set_num_scene_warning_button (int scene)
 {
-    int i;
-
-    ajami_scenes_scene_set_warning(ajami_get_scenes_widget(), scene);
+    ajami_scenes_set_scene_state(w_scenes, scene, AJAMI_SCENE_STATE_WARNING);
 }
