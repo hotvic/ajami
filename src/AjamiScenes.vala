@@ -43,7 +43,11 @@ namespace Ajami {
         private Scene scenes[20];
 
         public int current_scene {
-            get; set; default = 0;
+            get; set; default = -1;
+        }
+
+        public int prev_scene {
+            get; set; default = -1;
         }
 
         construct {
