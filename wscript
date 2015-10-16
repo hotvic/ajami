@@ -8,16 +8,27 @@ top = '.'
 out = 'build'
 
 def options(opt):
-    opt.load('gnu_dirs compiler_c compiler_cxx vala glib2')
+    opt.load('gnu_dirs compiler_c vala glib2')
 
+    opt.add_option('--clang', action='store_true', default=False, help='Use clang as compiler')
     opt.add_option('--debug', action='store_true', default=False, help='pass debug options to compiler')
     opt.add_option('--enable-double-fft', action='store_true', default=False, help='Enable double precision fourier transform code - not recommended')
     opt.add_option('--disable-osc', action='store_true', default=False, help='do not include Open Sound Control interface')
 
 def configure(cnf):
+    from waflib.Tools.compiler_c import c_compiler
+
     cnf.check_waf_version(mini='1.8.14')
 
-    cnf.load('gnu_dirs compiler_c compiler_cxx vala glib2')
+    # use clang as compiler
+    if cnf.options.clang:
+        c_compiler['linux'] = ['clang']
+
+        if cnf.options.debug:
+            cnf.env.CFLAGS = ['-fsanitize=address']
+            cnf.env.LINKFLAGS = ['-fsanitize=address']
+
+    cnf.load('gnu_dirs compiler_c vala glib2')
 
     cnf.env['INSTALL_DATA_DIR'] = '{0}/share/{1}'.format(cnf.env['PREFIX'], APPNAME)
 
