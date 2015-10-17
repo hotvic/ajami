@@ -86,12 +86,20 @@ namespace Ajami {
             var quit = new SimpleAction("quit", null);
             var preferences = new SimpleAction("preferences", null);
 
+            preferences.activate.connect(act_preferences);
+
             quit.activate.connect(() => {
                 this.quit();
             });
 
             this.add_action(quit);
             this.add_action(preferences);
+        }
+
+        public void act_preferences() {
+            var prefs = new Preferences();
+
+            prefs.show_all();
         }
     }
 }

@@ -25,7 +25,7 @@ def build(bld):
     )
     valaobjs.source = 'Ajami.vala AjamiApp.vala AjamiWindow.vala AjamiScenes.vala AjamiCompressor.vala'
     valaobjs.source += ' AjamiHelp.vala AjamiLimiter.vala AjamiArgs.vala AjamiGEQ.vala'
-    valaobjs.source += ' AjamiSpectrum.vala'
+    valaobjs.source += ' AjamiSpectrum.vala AjamiPreferences.vala'
 
     ajami = bld(
         features       = 'c cprogram glib2',

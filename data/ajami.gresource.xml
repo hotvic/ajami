@@ -7,6 +7,7 @@
     <file preprocess="xml-stripblanks">gtk/scenes.ui</file>
     <file preprocess="xml-stripblanks">gtk/compressor.ui</file>
     <file preprocess="xml-stripblanks">gtk/limiter.ui</file>
+    <file preprocess="xml-stripblanks">gtk/preferences.ui</file>
     <!-- Pixmaps -->
     <file preprocess="to-pixdata">pixmaps/LED_green_off.xpm</file>
     <file preprocess="to-pixdata">pixmaps/LED_green_on.xpm</file>
