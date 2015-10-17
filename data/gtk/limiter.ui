@@ -49,32 +49,6 @@
                     <object class="GtkBox" id="limiter_vbox">
                         <property name="orientation">vertical</property>
                         <child>
-                            <object class="GtkBox" id="lim_in_hbox">
-                                <property name="orientation">horizontal</property>
-                                <child>
-                                    <object class="GtkLabel">
-                                        <property name="label" translatable="yes">Input</property>
-                                    </object>
-                                </child>
-                                <child>
-                                    <object class="GtkLabel" id="lbl_in_val">
-                                        <property name="label" translatable="yes">0.0</property>
-                                    </object>
-                                </child>
-                                <child>
-                                    <object class="GtkScale" id="in_scale">
-                                        <property name="adjustment">adj_in</property>
-                                        <property name="hexpand">true</property>
-                                        <property name="orientation">horizontal</property>
-                                        <property name="value-pos">GTK_POS_RIGHT</property>
-                                    </object>
-                                </child>
-                            </object>
-                            <packing>
-                                <property name="expand">true</property>
-                            </packing>
-                        </child>
-                        <child>
                             <object class="HVMeter" id="inmeter">
                                 <property name="adjustment">adj_inmeter</property>
                                 <property name="orientation">horizontal</property>
@@ -84,56 +58,99 @@
                             </object>
                         </child>
                         <child>
-                            <object class="GtkBox" id="lim_lim_hbox">
-                                <property name="orientation">horizontal</property>
+                            <object class="GtkGrid">
+                                <child>
+                                    <object class="GtkLabel">
+                                        <property name="label" translatable="yes">Input</property>
+                                    </object>
+                                    <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">0</property>
+                                    </packing>
+                                </child>
+                                <child>
+                                    <object class="GtkLabel" id="lbl_in_val">
+                                        <property name="label" translatable="yes">0.0 db</property>
+                                    </object>
+                                    <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">0</property>
+                                    </packing>
+                                </child>
+                                <child>
+                                    <object class="GtkScale" id="in_scale">
+                                        <property name="adjustment">adj_in</property>
+                                        <property name="hexpand">true</property>
+                                        <property name="orientation">horizontal</property>
+                                        <property name="draw_value">false</property>
+                                    </object>
+                                    <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">0</property>
+                                    </packing>
+                                </child>
                                 <child>
                                     <object class="GtkLabel">
                                         <property name="label" translatable="yes">Limit</property>
                                     </object>
+                                    <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">1</property>
+                                    </packing>
                                 </child>
                                 <child>
                                     <object class="GtkLabel" id="lbl_lim_val">
-                                        <property name="label" translatable="yes">0.0</property>
+                                        <property name="label" translatable="yes">0.0 db</property>
                                     </object>
+                                    <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">1</property>
+                                    </packing>
                                 </child>
                                 <child>
                                     <object class="GtkScale" id="lim_scale">
                                         <property name="adjustment">adj_lim</property>
                                         <property name="hexpand">true</property>
                                         <property name="orientation">horizontal</property>
-                                        <property name="value-pos">GTK_POS_RIGHT</property>
+                                        <property name="draw_value">false</property>
                                     </object>
+                                    <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">1</property>
+                                    </packing>
                                 </child>
-                            </object>
-                            <packing>
-                                <property name="expand">true</property>
-                            </packing>
-                        </child>
-                        <child>
-                            <object class="GtkBox" id="lim_rel_hbox">
-                                <property name="orientation">horizontal</property>
                                 <child>
                                     <object class="GtkLabel">
                                         <property name="label" translatable="yes">Release</property>
+                                        <property name="margin_right">5</property>
                                     </object>
+                                    <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">2</property>
+                                    </packing>
                                 </child>
                                 <child>
                                     <object class="GtkLabel" id="lbl_rel_val">
                                         <property name="label" translatable="yes">0 s</property>
                                     </object>
+                                    <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">2</property>
+                                    </packing>
                                 </child>
                                 <child>
                                     <object class="GtkScale" id="rel_scale">
                                         <property name="adjustment">adj_rel</property>
                                         <property name="hexpand">true</property>
                                         <property name="orientation">horizontal</property>
-                                        <property name="value-pos">GTK_POS_RIGHT</property>
+                                        <property name="draw_value">false</property>
                                     </object>
+                                    <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">2</property>
+                                    </packing>
                                 </child>
                             </object>
-                            <packing>
-                                <property name="expand">true</property>
-                            </packing>
                         </child>
                         <child>
                             <object class="HVMeter" id="relmeter">
