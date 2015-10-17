@@ -61,10 +61,6 @@ namespace Ajami {
             (frame.label_widget as Label).use_markup = true;
         }
 
-        public void set_in_label(string label) {
-            lbl_in_val.label = label;
-        }
-
         public void set_lim_label(string label) {
             lbl_lim_val.label = label;
         }
@@ -88,6 +84,11 @@ namespace Ajami {
         [GtkCallback]
         public void in_changed() {
             CAjami.State.set_value_ui(CAjami.State.LIM_INPUT, (float) in_scale.adjustment.value);
+
+            /* Value label update */
+            in_scale.value_changed.connect(() => {
+                lbl_in_val.label = "%.1f dB".printf(in_scale.adjustment.value);
+            });
         }
 
         [GtkCallback]

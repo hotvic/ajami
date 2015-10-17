@@ -70,7 +70,7 @@
                                 </child>
                                 <child>
                                     <object class="GtkLabel" id="lbl_in_val">
-                                        <property name="label" translatable="yes">0.0 db</property>
+                                        <property name="label" translatable="yes">0.0 dB</property>
                                     </object>
                                     <packing>
                                         <property name="left-attach">1</property>
@@ -100,7 +100,7 @@
                                 </child>
                                 <child>
                                     <object class="GtkLabel" id="lbl_lim_val">
-                                        <property name="label" translatable="yes">0.0 db</property>
+                                        <property name="label" translatable="yes">0.0 dB</property>
                                     </object>
                                     <packing>
                                         <property name="left-attach">1</property>
