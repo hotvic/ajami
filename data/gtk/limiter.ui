@@ -122,7 +122,7 @@
                                 <child>
                                     <object class="GtkLabel">
                                         <property name="label" translatable="yes">Release</property>
-                                        <property name="margin_right">5</property>
+                                        <property name="margin_end">5</property>
                                     </object>
                                     <packing>
                                         <property name="left-attach">0</property>
