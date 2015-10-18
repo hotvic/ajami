@@ -85,7 +85,6 @@
 #include "state.h"
 #include "db.h"
 #include "transport.h"
-#include "scenes.h"
 #include "spectrum.h"
 #include "preferences.h"
 #include "ajamiobjects.h"
@@ -677,7 +676,7 @@ void reset_hdeq() {
 
     /*  Set the scene warning button so that people will know to save it.  */
 
-    set_scene_warning_button();
+    ajami_scenes_current_set_warning(w_scenes);
 }
 
 /*  Place the sliding notch filters in the hand drawn EQ curve.  */
@@ -2060,7 +2059,7 @@ void hdeq_curve_button_release(GdkEventButton* event) {
     /*  Set the scene warning button because we've (probably) changed
         something.  */
 
-    set_scene_warning_button();
+    ajami_scenes_current_set_warning(w_scenes);
 }
 
 /*  Handle a button press in the HDEQ popup menu.  */
@@ -2128,7 +2127,7 @@ void hdeq_popup(int action) {
 
         /*  Set the scene warning button so that people will know to save it. */
 
-        set_scene_warning_button();
+        ajami_scenes_current_set_warning(w_scenes);
 
         break;
 
@@ -2221,7 +2220,7 @@ void hdeq_set_lower_gain(float gain) {
     // draw_EQ_curve ();
     // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 
-    set_scene_warning_button();
+    ajami_scenes_current_set_warning(w_scenes);
 }
 
 /*  Set the upper gain limit for the hdeq and the geq.  */
@@ -2238,7 +2237,7 @@ void hdeq_set_upper_gain(float gain) {
     // draw_EQ_curve ();
     // TODO: gtk_widget_queue_draw(GTK_WIDGET(l_EQ_curve));
 
-    set_scene_warning_button();
+    ajami_scenes_current_set_warning(w_scenes);
 }
 
 float hdeq_get_lower_gain() { return (EQ_gain_lower); }

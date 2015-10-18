@@ -27,7 +27,6 @@
 #include "main.h"
 #include "db.h"
 #include "state.h"
-#include "scenes.h"
 #include "ajamiobjects.h"
 #include "help.h"
 
@@ -204,7 +203,7 @@ gboolean eqb_changed(GtkAdjustment* adj, gpointer user_data) {
         in order to set the state values.  */
 
     if (!EQ_drawn) {
-        set_scene_warning_button();
+        ajami_scenes_current_set_warning(w_scenes);
         //      draw_EQ_curve ();
         hdeq_curve_update();
     }

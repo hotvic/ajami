@@ -150,8 +150,8 @@ namespace Ajami {
             get { return geq; }
         }
 
-        public Scenes w_scenes {
-            get { return scenes; }
+        construct {
+            w_scenes = scenes;
         }
 
         public MainWindow(Gtk.Application app) {

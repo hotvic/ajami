@@ -35,6 +35,6 @@ def build(bld):
         includes       = '.',
         source         = '../data/ajami.gresource.xml'
     )
-    ajami.source += ' io.c limiter-ui.c rms.c scenes.c process.c state.c'
+    ajami.source += ' io.c limiter-ui.c rms.c process.c state.c'
     ajami.source += ' hdeq.c plugin.c compressor-ui.c intrim.c preferences.c'
     ajami.source += ' spline.c geq.c stereo.c'

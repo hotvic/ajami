@@ -23,7 +23,6 @@
 #include "main.h"
 #include "compressor-ui.h"
 #include "state.h"
-#include "scenes.h"
 #include "preferences.h"
 #include "hdeq.h"
 #include "ajamiobjects.h"
@@ -414,7 +413,7 @@ void comp_set_auto(int band, int state)
         calc_auto_gain(band);
     }
 
-    set_scene_warning_button();
+    ajami_scenes_current_set_warning(w_scenes);
 }
 
 comp_settings comp_get_settings(int band)

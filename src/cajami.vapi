@@ -86,14 +86,57 @@ namespace CAjami {
     [Compact]
     [CCode (cprefix = "s_", cheader_filename = "state.h")]
     public class State {
+        /* state consts */
+        [CCode (cname = "S_NONE")]
+        public static const int NONE;
+        [CCode (cname = "S_LOAD")]
+        public static const int LOAD;
         [CCode (cname = "S_IN_GAIN")]
         public static const int IN_GAIN;
+        [CCode (cname = "S_OUT_GAIN")]
+        public static const int OUT_GAIN;
+        [CCode (cname = "S_IN_PAN")]
+        public static const int IN_PAN;
         [CCode (cname = "S_LIM_INPUT")]
         public static const int LIM_INPUT;
         [CCode (cname = "S_LIM_TIME")]
         public static const int LIM_TIME;
         [CCode (cname = "S_LIM_LIMIT")]
         public static const int LIM_LIMIT;
+        [CCode (cname = "S_BOOST")]
+        public static const int BOOST;
+        [CCode (cname = "S_LIM_LOGSCALE")]
+        public static const int LIM_LOGSCALE;
+        [CCode (cname = "S_SIZE")]
+        public static const int SIZE;
+
+        /* function-like state macros */
+        [CCode (cname = "S_EQ_GAIN")]
+        public static int EQ_GAIN(int n);
+        [CCode (cname = "S_XOVER_FREQ")]
+        public static int XOVER_FREQ(int n);
+        [CCode (cname = "S_COMP_ATTACK")]
+        public static int COMP_ATTACK(int n);
+        [CCode (cname = "S_COMP_RELEASE")]
+        public static int COMP_RELEASE(int n);
+        [CCode (cname = "S_COMP_THRESH")]
+        public static int COMP_THRESH(int n);
+        [CCode (cname = "S_COMP_RATIO")]
+        public static int COMP_RATIO(int n);
+        [CCode (cname = "S_COMP_KNEE")]
+        public static int COMP_KNEE(int n);
+        [CCode (cname = "S_COMP_MAKEUP")]
+        public static int COMP_MAKEUP(int n);
+        [CCode (cname = "S_STEREO_WIDTH")]
+        public static int STEREO_WIDTH(int n);
+        [CCode (cname = "S_NOTCH_GAIN")]
+        public static int NOTCH_GAIN(int n);
+        [CCode (cname = "S_NOTCH_FREQ")]
+        public static int NOTCH_FREQ(int n);
+        [CCode (cname = "S_NOTCH_Q")]
+        public static int NOTCH_Q(int n);
+        [CCode (cname = "S_NOTCH_FLAG")]
+        public static int NOTCH_FLAG(int n);
 
         [CCode (cname = "state_init")]
         public static void init();
@@ -112,6 +155,9 @@ namespace CAjami {
 
         [CCode (cname = "s_set_value_ui")]
         public static void set_value_ui(int id, float val);
+
+        [CCode (cname = "s_get_value")]
+        public static float get_value(int id);
 
         [CCode (cname = "s_undo")]
         public static void undo();

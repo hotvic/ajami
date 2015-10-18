@@ -66,14 +66,9 @@ void s_set_override_limiter_default();
 #define S_NOTCH_FLAG(n) (1071 + n)
 #define S_SIZE 1076
 
-typedef struct {
-    char *description;
-    float value[S_SIZE];
-} s_state;
-
-void s_restore_state(s_state * state);
-void s_crossfade_to_state(s_state * state, float time);
-void s_history_add_state(s_state state);
+void s_restore_state(void* state);
+void s_crossfade_to_state(void* state, float time);
+void s_history_add_state(void* state);
 
 extern float s_value[S_SIZE];
 

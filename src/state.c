@@ -28,18 +28,17 @@
 
 #include "config.h"
 #include "main.h"
-#include "ajamiobjects.h"
 #include "geq.h"
 #include "spectrum.h"
 #include "intrim.h"
 #include "state.h"
 #include "io.h"
 #include "process.h"
-#include "scenes.h"
 #include "hdeq.h"
 #include "compressor-ui.h"
 #include "help.h"
 #include "preferences.h"
+#include "ajamiobjects.h"
 
 /* A scene value to indicate that loading failed */
 #define LOAD_ERROR -2
@@ -56,7 +55,7 @@ static GtkAdjustment* s_adjustment[S_SIZE];
 static s_callback_func s_callback[S_SIZE];
 static char* errstr = NULL;
 
-static s_state* last_state = NULL;
+static AjamiScene* last_state = NULL;
 static int last_changed = S_NONE;
 
 static GList* history = NULL;
@@ -160,7 +159,7 @@ void s_set_value_ui(int id, float value) {
         s_history_add(
             g_strdup_printf("%s = %f", s_description[id], s_value[id]));
     }
-    last_state->value[id] = value;
+    last_state->values[id] = value;
 
 #if 0
     /* This code is confusing in use, so I've removed it - swh */
@@ -217,17 +216,17 @@ void s_clear_history() {
     history = NULL;
     s_history_add("Initial state");
     undo_pos = history->next;
-    s_restore_state((s_state*)history->data);
+    s_restore_state((void *) history->data);
     last_changed = S_LOAD;
 }
 
 void s_history_add(const char* description) {
-    s_state* ns;
+    AjamiScene* ns;
     GList* it;
 
-    ns = malloc(sizeof(s_state));
-    ns->description = (char*)description;
-    memcpy(ns->value, s_value, S_SIZE * sizeof(float));
+    ns = ajami_scene_new();
+    ns->name = (char*) description;
+    memcpy(ns->values, s_value, S_SIZE * sizeof(float));
 
     if (undo_pos) {
         it = undo_pos->next;
@@ -244,13 +243,13 @@ void s_history_add(const char* description) {
     last_state = ns;
 }
 
-void s_history_add_state(s_state state) {
-    s_state* ns;
+void s_history_add_state(void* state) {
+    AjamiScene* ns;
     GList* it;
 
-    ns = malloc(sizeof(s_state));
-    ns->description = (char*)state.description;
-    memcpy(ns->value, state.value, S_SIZE * sizeof(float));
+    ns = ajami_scene_new();
+    ns->name = (char*) ((AjamiScene*) state)->name;
+    memcpy(ns->values, ((AjamiScene*) state)->values, S_SIZE * sizeof(float));
 
     if (undo_pos) {
         it = undo_pos->next;
@@ -267,7 +266,7 @@ void s_history_add_state(s_state state) {
     last_state = ns;
 }
 
-static unsigned int compute_state_crc(s_state* state) {
+static unsigned int compute_state_crc(AjamiScene* scene) {
     unsigned int checksum, i;
     unsigned char* buf;
     unsigned int crc_table[256] = {
@@ -317,20 +316,20 @@ static unsigned int compute_state_crc(s_state* state) {
 
     checksum = ~0;
 
-    buf = (unsigned char*)state->value;
+    buf = (unsigned char*) scene->values;
 
     for (i = 0; i < S_SIZE * sizeof(float); i++)
         checksum = crc_table[(checksum ^ buf[i]) & 0xff] ^ (checksum >> 8);
 
     checksum ^= ~0;
 
-    return (checksum);
+    return checksum;
 }
 
 void s_undo() {
     GList* undo_next;
     int scene, crc[2];
-    s_state* st[2];
+    AjamiScene* st[2];
 
     if (!undo_pos) {
         return;
@@ -340,18 +339,18 @@ void s_undo() {
         return;
     }
     undo_pos = undo_next;
-    s_restore_state((s_state*)undo_pos->data);
+    s_restore_state((void*) undo_pos->data);
 
-    scene = get_previous_scene_num();
+    scene = ajami_scenes_get_prev_scene(w_scenes);
     if (scene >= 0) {
-        st[0] = get_scene(scene);
-        st[1] = (s_state*)undo_pos->data;
+        st[0] = ajami_scenes_get_scene(w_scenes, scene);
+        st[1] = (AjamiScene*) undo_pos->data;
 
         crc[0] = compute_state_crc(st[0]);
         crc[1] = compute_state_crc(st[1]);
 
         if (crc[0] == crc[1])
-            set_scene_button(scene);
+            ajami_scenes_set_scene_button(w_scenes, scene);
     }
 
     set_EQ_curve_values(0, 0.0);
@@ -361,7 +360,7 @@ void s_undo() {
 void s_redo() {
     gboolean restore;
     int scene, crc[2];
-    s_state* st[2];
+    AjamiScene* st[2];
 
     restore = FALSE;
     if (undo_pos) {
@@ -376,20 +375,20 @@ void s_redo() {
     }
 
     if (restore) {
-        s_restore_state((s_state*)undo_pos->data);
+        s_restore_state((void*) undo_pos->data);
 
-        scene = get_previous_scene_num();
+        scene = ajami_scenes_get_prev_scene(w_scenes);
         if (scene >= 0) {
-            st[0] = get_scene(scene);
-            st[1] = (s_state*)undo_pos->data;
+            st[0] = ajami_scenes_get_scene(w_scenes, scene);
+            st[1] = (AjamiScene*) undo_pos->data;
 
             crc[0] = compute_state_crc(st[0]);
             crc[1] = compute_state_crc(st[1]);
 
             if (crc[0] == crc[1]) {
-                set_scene_button(scene);
+                ajami_scenes_set_scene_button(w_scenes, scene);
             } else {
-                set_scene_warning_button(scene);
+                ajami_scenes_set_scene_state(w_scenes, scene, AJAMI_SCENE_STATE_WARNING);
             }
         }
         set_EQ_curve_values(0, 0.0);
@@ -399,7 +398,7 @@ void s_redo() {
 /*  Negative time will use the default "crossfade time" which may come from the
     command line -c option.  */
 
-void s_crossfade_to_state(s_state* state, float time) {
+void s_crossfade_to_state(void* state, float time) {
     int i, duration, milliseconds;
 
     if (time < 0.0)
@@ -415,14 +414,14 @@ void s_crossfade_to_state(s_state* state, float time) {
     for (i = 0; i < S_SIZE; i++) {
         /* set the target and duration for crosssfade, but set the controls to
          * the endpoint */
-        s_target[i] = state->value[i];
+        s_target[i] = ((AjamiScene *) state)->values[i];
         s_duration[i] = duration;
-        s_set_events(i, state->value[i]);
+        s_set_events(i, ((AjamiScene *) state)->values[i]);
     }
     suppress_feedback--;
 }
 
-void s_restore_state(s_state* state) { s_crossfade_to_state(state, 0.003); }
+void s_restore_state(void* state) { s_crossfade_to_state(state, 0.003); }
 
 static void s_set_events(int id, float value) {
     if (s_callback[id]) {
@@ -471,9 +470,8 @@ void s_save_session(const gchar* fname) {
         free(errstr);
     }
 
-    /*  Need to save this scene number.  */
-
-    curr_scene = get_current_scene();
+    /* Need to save this scene number. */
+    curr_scene = ajami_scenes_get_current_scene(w_scenes);
 
     xmlSetCompressMode(5);
     doc = xmlNewDoc((const unsigned char*)"1.0");
@@ -549,8 +547,8 @@ void s_save_session(const gchar* fname) {
 
     /* Save scenes */
 
-    for (j = 0; j < NUM_SCENES; j++) {
-        s_state* st = get_scene(j);
+    for (j = 0; j < 20; j++) {
+        AjamiScene* st = ajami_scenes_get_scene(w_scenes, j);
         sc_node = xmlNewDocRawNode(doc, NULL, (xmlChar*)"scene", NULL);
         snprintf(tmp, 255, "%d", j);
         xmlSetProp(sc_node, (xmlChar*)"number", (xmlChar*)tmp);
@@ -560,7 +558,7 @@ void s_save_session(const gchar* fname) {
             xmlAddChild(rootnode, node);
             continue;
         }
-        xmlSetProp(sc_node, (xmlChar*)"name", (xmlChar*)get_scene_name(j));
+        xmlSetProp(sc_node, (xmlChar*)"name", (xmlChar*) ajami_scenes_get_scene_name(w_scenes, j));
         if (curr_scene == j) {
             xmlSetProp(sc_node, (xmlChar*)"active", (xmlChar*)"true");
             xmlSetProp(sc_node, (xmlChar*)"changed", (xmlChar*)"false");
@@ -576,7 +574,7 @@ void s_save_session(const gchar* fname) {
 
         for (i = 0; i < S_SIZE; i++) {
             node = xmlNewDocRawNode(doc, NULL, (xmlChar*)"parameter", NULL);
-            snprintf(tmp, 255, "%g", st->value[i]);
+            snprintf(tmp, 255, "%g", st->values[i]);
             xmlSetProp(node, (xmlChar*)"name", (xmlChar*)s_symbol[i]);
             xmlSetProp(node, (xmlChar*)"value", (xmlChar*)tmp);
             xmlAddChild(sc_node, node);
@@ -614,7 +612,7 @@ void s_load_session(const gchar* fname) {
     gchar* session_filename;
 
     saved_scene = -1;
-    unset_scene_buttons();
+    ajami_scenes_unset_scene_buttons(w_scenes);
 
     if (fname) {
         s_set_session_filename(fname);
@@ -678,8 +676,7 @@ void s_load_session(const gchar* fname) {
     }
 
     /* run the SAX parser */
-    scene_init();
-    xmlSAXUserParseFile(handler, &gp, (const char*)session_filename);
+    xmlSAXUserParseFile(handler, &gp, (const char*) session_filename);
 
     if (gp.scene == LOAD_ERROR) {
         errstr = g_strdup_printf("Loading file '%s' failed", session_filename);
@@ -737,9 +734,9 @@ void s_load_session(const gchar* fname) {
     /*  This is the active scene.  */
 
     if (saved_scene < 100) {
-        set_scene(saved_scene);
+        ajami_scenes_set_scene(w_scenes, saved_scene);
     } else {
-        set_num_scene_warning_button(saved_scene);
+        ajami_scenes_set_scene_state(w_scenes, saved_scene, AJAMI_SCENE_STATE_WARNING);
     }
 
     if (!fname) {
@@ -814,16 +811,16 @@ void s_startElement(void* user_data, const xmlChar* name,
 
         if (active) {
             saved_scene = gp->scene;
-            set_scene(gp->scene);
+            ajami_scenes_set_scene(w_scenes, gp->scene);
         }
         if (changed) {
             saved_scene = gp->scene;
-            set_num_scene_warning_button(gp->scene);
+            ajami_scenes_set_scene_state(w_scenes, gp->scene, AJAMI_SCENE_STATE_WARNING);
         }
 
         if (sname && gp->scene > -1) {
-            set_scene(gp->scene);
-            set_scene_name(gp->scene, sname);
+            ajami_scenes_set_scene(w_scenes, gp->scene);
+            ajami_scenes_set_scene_name(w_scenes, gp->scene, sname);
         }
 
         return;
@@ -946,9 +943,9 @@ void s_startElement(void* user_data, const xmlChar* name,
                 s_set_events(i, s_value[i]);
                 suppress_feedback--;
             } else {
-                s_state* st = get_scene(gp->scene);
+                AjamiScene* st = ajami_scenes_get_scene(w_scenes, gp->scene);
                 if (st) {
-                    st->value[i] = atof(value);
+                    st->values[i] = atof(value);
                 } else {
                     errstr =
                         g_strdup_printf("Bad scene number %d\n", gp->scene);

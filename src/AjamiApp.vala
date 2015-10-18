@@ -65,7 +65,6 @@ namespace Ajami {
             CAjami.Limiter.bind();
             CAjami.Compressor.bind();
             CAjami.Stereo.bind();
-            CAjami.Scenes.bind();
 
             CAjami.State.clear_history();
 

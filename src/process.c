@@ -28,13 +28,13 @@
 #include "limiter.h"
 #include "limiter-ui.h"
 #include "geq.h"
-#include "scenes.h"
 #include "intrim.h"
 #include "io.h"
 #include "db.h"
 #include "denormal-kill.h"
 #include "rms.h"
 #include "plugin.h"
+#include "ajamiobjects.h"
 
 
 #define BIQUAD_TYPE double
@@ -933,7 +933,7 @@ void process_set_spec_mode(int mode)
 {
     spectrum_mode = mode;
 
-    set_scene_warning_button();
+    ajami_scenes_current_set_warning(w_scenes);
 }
 
 int process_get_spec_mode()
@@ -1211,5 +1211,5 @@ void process_set_limiter_logscale(float value)
 {
     logscale_pending = value;
 
-    set_scene_warning_button();
+    ajami_scenes_current_set_warning(w_scenes);
 }
