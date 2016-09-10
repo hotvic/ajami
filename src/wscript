@@ -11,30 +11,29 @@ def configure(cnf):
         cnf.env.CFLAGS += ['-g3', '-O0', '-Wall']
 
 def build(bld):
-    valaobjs = bld(
-        features         = 'c cstlib',
+    bld(
+        features='c cstlib',
+        vala_target_glib = '2.44',
+        packages         = 'json-glib-1.0 gtk+-3.0 posix cajami',
         target           = 'ajamiobjects',
-        vala_target_glib = '2.38',
-        install_binding  = False,
-        packages         = 'gtk+-3.0 posix cajami',
-        uselib           = 'GTK',
+        uselib           = 'JSON GTK JACK LIBXML FFTW OSC M DL GMODULE',
+        vala_resources   = '../data/ajami.gresource.xml',
         use              = 'hvmeter',
+        vapi_dirs        = '.',
+        includes         = '.',
+        source           = 'Ajami.vala AjamiApp.vala AjamiWindow.vala AjamiState.vala AjamiScenes.vala AjamiCompressor.vala Stereo.vala InTrim.vala'
+                           ' AjamiSpectrum.vala AjamiHelp.vala AjamiLimiter.vala LimiterBackend.vala AjamiArgs.vala AjamiGEQ.vala AjamiPreferences.vala'
+    )
+    ajami = bld(
+        features         = 'c cprogram glib2',
+        vala_target_glib = '2.44',
+        packages         = 'json-glib-1.0 gtk+-3.0 posix cajami',
+        target           = 'ajami',
+        uselib           = 'JSON GTK JACK LIBXML FFTW OSC M DL GMODULE',
+        use              = 'hvmeter ajamiobjects',
         vala_resources   = '../data/ajami.gresource.xml',
         vapi_dirs        = '.',
         includes         = '.',
+        source           = '../data/ajami.gresource.xml io.c rms.c process.c'
+                           ' hdeq.c plugin.c compressor-ui.c preferences.c spline.c geq.c'
     )
-    valaobjs.source = 'Ajami.vala AjamiApp.vala AjamiWindow.vala AjamiScenes.vala AjamiCompressor.vala'
-    valaobjs.source += ' AjamiHelp.vala AjamiLimiter.vala AjamiArgs.vala AjamiGEQ.vala'
-    valaobjs.source += ' AjamiSpectrum.vala AjamiPreferences.vala'
-
-    ajami = bld(
-        features       = 'c cprogram glib2',
-        target         = 'ajami',
-        uselib         = 'GTK JACK LIBXML FFTW OSC M DL GMODULE',
-        use            = 'ajamiobjects hvmeter',
-        includes       = '.',
-        source         = '../data/ajami.gresource.xml'
-    )
-    ajami.source += ' io.c limiter-ui.c rms.c process.c state.c'
-    ajami.source += ' hdeq.c plugin.c compressor-ui.c intrim.c preferences.c'
-    ajami.source += ' spline.c geq.c stereo.c'

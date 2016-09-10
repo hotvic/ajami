@@ -22,7 +22,6 @@
 #include "support.h"
 #include "main.h"
 #include "multiout-ui.h"
-#include "state.h"
 #include "db.h"
 
 //extern int global_gui;

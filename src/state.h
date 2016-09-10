@@ -4,6 +4,7 @@
 /* This is a generated file DO NOT EDIT, see state-vars.txt */
 
 #include <gtk/gtk.h>
+#include "ajamiobjects.h"
 
 typedef void (*s_callback_func) (int id, float value);
 
@@ -12,81 +13,7 @@ typedef struct {
     float value;
 } s_entry;
 
-void state_init();
-void s_set_value_ui(int id, float value);
-void s_set_value(int id, float value, int time);
-void s_set_value_block(float *values, int base, int count);
-void s_set_value_no_history(int id, float value);
-void s_set_description(int id, const char *desc);
-void s_clear_history();
-void s_set_callback(int id, s_callback_func callback);
-void s_set_adjustment(int id, GtkAdjustment * adjustment);
-void s_history_add(const char *description);
-void s_undo();
-void s_redo();
-void s_save_session_from_ui(GtkWidget * w, gpointer user_data);
-void s_save_session(const char *fname);
-void s_load_session_from_ui(GtkWidget * w, gpointer user_data);
-void s_load_session(const char *fname);
-void s_set_session_filename(const gchar * fname);
-void s_crossfade(const int nframes);
-void s_crossfade_ui();
-void s_suppress_push();
-void s_set_crossfade_time(float ct);
-float s_get_crossfade_time();
-void s_suppress_pop();
-int s_have_session_filename();
-gchar *s_get_session_filename();
-void s_set_override_limiter_default();
-
-
-
-#define S_NONE -1
-#define S_LOAD 0
-#define S_IN_GAIN 1
-#define S_OUT_GAIN 2
-#define S_IN_PAN 3
-#define S_EQ_GAIN(n) (4 + n)
-#define S_XOVER_FREQ(n) (1028 + n)
-#define S_COMP_ATTACK(n) (1030 + n)
-#define S_COMP_RELEASE(n) (1033 + n)
-#define S_COMP_THRESH(n) (1036 + n)
-#define S_COMP_RATIO(n) (1039 + n)
-#define S_COMP_KNEE(n) (1042 + n)
-#define S_COMP_MAKEUP(n) (1045 + n)
-#define S_STEREO_WIDTH(n) (1048 + n)
-#define S_LIM_INPUT 1051
-#define S_LIM_TIME 1052
-#define S_LIM_LIMIT 1053
-#define S_BOOST 1054
-#define S_LIM_LOGSCALE 1055
-#define S_NOTCH_GAIN(n) (1056 + n)
-#define S_NOTCH_FREQ(n) (1061 + n)
-#define S_NOTCH_Q(n) (1066 + n)
-#define S_NOTCH_FLAG(n) (1071 + n)
-#define S_SIZE 1076
-
-void s_restore_state(void* state);
-void s_crossfade_to_state(void* state, float time);
-void s_history_add_state(void* state);
-
-extern float s_value[S_SIZE];
-
-/* fetch currently used value */
-
-inline static float s_get_value(int id)
-{
-    return s_value[id];
-}
-
-/* set value with no side effects */
-
-inline static void s_set_value_ns(int id, float value)
-{
-    s_value[id] = value;
-}
-
-static const char *const s_description[S_SIZE] = {
+static const char *const s_description[AJAMI_STATE_FLAGS_SIZE] = {
     "Load file", "Input gain", "Output gain", "Input pan", "EQ Gain 1",
 	"EQ Gain 2", "EQ Gain 3", "EQ Gain 4", "EQ Gain 5", "EQ Gain 6",
 	"EQ Gain 7", "EQ Gain 8", "EQ Gain 9", "EQ Gain 10", "EQ Gain 11",
@@ -363,7 +290,7 @@ static const char *const s_description[S_SIZE] = {
 	"Notch active flag 3", "Notch active flag 4", "Notch active flag 5"
 };
 
-static const char *const s_symbol[S_SIZE] = {
+static const char *const s_symbol[AJAMI_STATE_FLAGS_SIZE] = {
     "load", "in-gain", "out-gain", "in-pan", "eq-gain0", "eq-gain1",
 	"eq-gain2", "eq-gain3", "eq-gain4", "eq-gain5", "eq-gain6",
 	"eq-gain7", "eq-gain8", "eq-gain9", "eq-gain10", "eq-gain11",

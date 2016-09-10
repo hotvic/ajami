@@ -50,11 +50,6 @@
 #define XO_HIGH 2
 #define XO_NBANDS 3
 
-
-#define LIM_PEAK_IN  0
-#define LIM_PEAK_OUT 1
-
-
 /*  Important note - definition of spectrum mode is in the same order as
     the combo box buttons.  Don't add to or rearrange the spectrum modes unless
     you set the combo box entries to match.  */
@@ -96,8 +91,6 @@ extern volatile int global_multiout_gui;
 extern const jack_nframes_t dsp_block_size;
 extern float sample_rate;
 extern float eq_coefs[];
-extern float in_peak[], out_peak[], rms_peak[];
-extern float lim_peak[];
 
 /* taken from mplayer */
 static const int16_t ac3_window[256] = {

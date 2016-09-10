@@ -26,9 +26,7 @@
 #include "process.h"
 #include "compressor.h"
 #include "limiter.h"
-#include "limiter-ui.h"
 #include "geq.h"
-#include "intrim.h"
 #include "io.h"
 #include "db.h"
 #include "denormal-kill.h"
@@ -57,7 +55,6 @@ comp_settings compressors[XO_NBANDS];
 lim_settings limiter[2];
 int limiter_plugin = FAST;
 float eq_coefs[BINS]; /* Linear gain of each FFT bin */
-float lim_peak[2];
 
 static int iir_xover = 0;
 static unsigned int delay_mask;
@@ -86,8 +83,6 @@ static int delay[XO_NBANDS] = {0, 0, 0};
 
 static int delay_pending[XO_NBANDS] = {0, 0, 0};
 
-
-float in_peak[NCHANNELS], out_peak[NCHANNELS], rms_peak[NCHANNELS];
 static rms *r[2] = {NULL, NULL};
 static gboolean rms_ready = FALSE;
 
@@ -549,7 +544,7 @@ int process_signal(jack_nframes_t nframes,
     plugin_connect_port(lim_plugin[limiter_plugin], limiter[limiter_plugin].handle, LIM_OUT_2, out[CHANNEL_R]);
 
     /* Crossfade parameter values from current to target */
-    s_crossfade(nframes);
+    ajami_state_crossfade(ajami_get_state(), nframes);
 
     if (iir_xover)
     {
@@ -583,7 +578,7 @@ int process_signal(jack_nframes_t nframes,
 
         for (port = 0; port < nchannels; port++)
         {
-            in_buf[port][in_ptr] = in[port][pos] * in_gain[port];
+            in_buf[port][in_ptr] = in[port][pos] * ajami_in_trim_get_in_gain(port);
             denormal_kill(&in_buf[port][in_ptr]);
             if (in_buf[port][in_ptr] > 100.0f)
             {
@@ -617,9 +612,9 @@ int process_signal(jack_nframes_t nframes,
             }
 #endif
             amp = fabs(in_buf[port][in_ptr]);
-            if (amp > in_peak[port])
+            if (amp > ajami_get_limiter()->in_peak[port])
             {
-                in_peak[port] = amp;
+                ajami_get_limiter()->in_peak[port] = amp;
             }
 
             if (iir_xover)
@@ -785,9 +780,9 @@ int process_signal(jack_nframes_t nframes,
             /* Check for peaks */
             if ( port < 2 )
             {
-                if (out[port][pos] > lim_peak[LIM_PEAK_IN])
+                if (out[port][pos] > ajami_get_limiter()->lim_peak[AJAMI_LIMITER_PEAK_FLAGS_IN])
                 {
-                    lim_peak[LIM_PEAK_IN] = out[port][pos];
+                    ajami_get_limiter()->lim_peak[AJAMI_LIMITER_PEAK_FLAGS_IN] = out[port][pos];
                 }
             }
         }
@@ -800,7 +795,7 @@ int process_signal(jack_nframes_t nframes,
                                            a > M_PI*0.5 ? 1.0 : sinf(1.0 * a));
         for (pos = 0; pos < nframes; pos++)
         {
-            const float x = out[port][pos] * out_gain;
+            const float x = out[port][pos] * ajami_in_trim_get_out_gain();
             out[port][pos] = LERP(ws_boost_wet, x, sinf(x * a)) * gain_corr;
         }
     }
@@ -854,13 +849,13 @@ int process_signal(jack_nframes_t nframes,
         {
             const float oa = fabs(out[port][pos]);
 
-            if (oa > lim_peak[LIM_PEAK_OUT])
+            if (oa > ajami_get_limiter()->lim_peak[AJAMI_LIMITER_PEAK_FLAGS_OUT])
             {
-                lim_peak[LIM_PEAK_OUT] = oa;
+                ajami_get_limiter()->lim_peak[AJAMI_LIMITER_PEAK_FLAGS_OUT] = oa;
             }
-            if (oa > out_peak[port])
+            if (oa > ajami_get_limiter()->out_peak[port])
             {
-                out_peak[port] = oa;
+                ajami_get_limiter()->out_peak[port] = oa;
             }
         }
     }
@@ -872,7 +867,7 @@ int process_signal(jack_nframes_t nframes,
     {
         for (port = 0 ; port < nchannels ; port++)
         {
-            rms_peak[port] = rms_run_buffer (r[port], out[port], nframes);
+            ajami_get_limiter()->rms_peak[port] = rms_run_buffer (r[port], out[port], nframes);
         }
     }
 
@@ -968,14 +963,14 @@ void process_set_limiter_plugin(int id)
 
     if (limiter_plugin_pending == FOO)
     {
-        limiter_logscale_set_state (TRUE);
+        ajami_limiter_logscale_set_state(ajami_get_limiter_widget(), TRUE);
     }
     else
     {
-        limiter_logscale_set_state (FALSE);
+        ajami_limiter_logscale_set_state(ajami_get_limiter_widget(), FALSE);
     }
 
-    limiter_set_label (limiter_plugin_pending);
+    ajami_limiter_set_label(ajami_get_limiter_widget(), limiter_plugin_pending);
 }
 
 int process_get_limiter_plugin()
@@ -985,11 +980,11 @@ int process_get_limiter_plugin()
 
     if (limiter_plugin_pending != limiter_plugin)
     {
-        return (limiter_plugin_pending);
+        return limiter_plugin_pending;
     }
     else
     {
-        return (limiter_plugin);
+        return limiter_plugin;
     }
 }
 

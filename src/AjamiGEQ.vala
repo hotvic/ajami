@@ -17,9 +17,7 @@
  * along with Ajami.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 using Gtk;
-
 
 namespace Ajami {
     public class GraphicEQ : Gtk.Box {

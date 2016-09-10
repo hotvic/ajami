@@ -1,20 +1,30 @@
 using Gtk;
 
 
-namespace Ajami {
+namespace Ajami
+{
     [GtkTemplate (ui="/org/ajami/ajami/gtk/limiter.ui")]
     public class Limiter : Gtk.Box {
         [GtkChild]
+        private Adjustment _adj_in;
+
+        [GtkChild]
+        private Adjustment _adj_lim;
+
+        [GtkChild]
+        private Adjustment _adj_rel;
+
+        [GtkChild]
+        private Adjustment _adj_inmeter;
+
+        [GtkChild]
+        private Adjustment _adj_outmeter;
+
+        [GtkChild]
+        private Adjustment _adj_relmeter;
+
+        [GtkChild]
         private Frame frame;
-
-        [GtkChild]
-        private Scale in_scale;
-
-        [GtkChild]
-        private Scale lim_scale;
-
-        [GtkChild]
-        private Scale rel_scale;
 
         [GtkChild]
         private HV.Meter inmeter;
@@ -32,17 +42,12 @@ namespace Ajami {
         [GtkChild]
         private Label lbl_rel_val;
 
-        public Scale w_s_in {
-            get { return in_scale; }
-        }
-
-        public Scale w_s_lim {
-            get { return lim_scale; }
-        }
-
-        public Scale w_s_rel {
-            get { return rel_scale; }
-        }
+        public Adjustment adj_in { get { return _adj_in; } }
+        public Adjustment adj_lim { get { return _adj_lim; } }
+        public Adjustment adj_rel { get { return _adj_rel; } }
+        public Adjustment adj_inmeter { get { return _adj_inmeter; } }
+        public Adjustment adj_outmeter { get { return _adj_outmeter; } }
+        public Adjustment adj_relmeter { get { return _adj_relmeter; } }
 
         public Adjustment w_adj_inmeter {
             get { return inmeter.adjustment; }
@@ -56,8 +61,9 @@ namespace Ajami {
             get { return outmeter.adjustment; }
         }
 
-        public void set_label(string text) {
-            frame.label = text;
+        public void set_label(int id)
+        {
+            frame.label = id == 0 ? "<b>Foo-limiter (Savolainen)</b>" : "<b>Fast-lookahead-limiter (Harris)</b>";
             (frame.label_widget as Label).use_markup = true;
         }
 
@@ -81,24 +87,32 @@ namespace Ajami {
             outmeter.reset_peak();
         }
 
-        [GtkCallback]
-        public void in_changed() {
-            CAjami.State.set_value_ui(CAjami.State.LIM_INPUT, (float) in_scale.adjustment.value);
+        public void logscale_set_state(bool state)
+        {
+            stdout.printf("Limiter: logscale_set_state: not implemented yet!\n");
+        }
 
-            /* Value label update */
-            in_scale.value_changed.connect(() => {
-                lbl_in_val.label = "%.1f dB".printf(in_scale.adjustment.value);
+        [GtkCallback]
+        public void in_changed()
+        {
+            _state.set_value_ui(StateFlags.LIM_INPUT, _adj_in.value);
+
+            // Value label update
+            _adj_in.value_changed.connect(() => {
+                lbl_in_val.label = "%.1f dB".printf(_adj_in.value);
             });
         }
 
         [GtkCallback]
-        public void lim_changed() {
-            CAjami.State.set_value_ui(CAjami.State.LIM_LIMIT, (float) lim_scale.adjustment.value);
+        public void lim_changed()
+        {
+            _state.set_value_ui(StateFlags.LIM_LIMIT, _adj_lim.value);
         }
 
         [GtkCallback]
-        public void rel_changed() {
-            CAjami.State.set_value_ui(CAjami.State.LIM_TIME, (float) rel_scale.adjustment.value);
+        public void rel_changed()
+        {
+            _state.set_value_ui(StateFlags.LIM_TIME, _adj_lim.value);
         }
     }
 }

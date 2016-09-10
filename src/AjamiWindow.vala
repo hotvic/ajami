@@ -39,8 +39,8 @@ namespace Ajami {
     }
 
     public enum MeterSide {
-        METER_L,
-        METER_R
+        L,
+        R
     }
 
     [GtkTemplate (ui="/org/ajami/ajami/gtk/appwindow.ui")]
@@ -64,13 +64,13 @@ namespace Ajami {
         private Compressor compressor_high;
 
         [GtkChild]
-        private Scale in_amp_scale;
+        private Adjustment _in_gain_adj;
 
         [GtkChild]
-        private Scale in_stereo_scale;
+        private Adjustment _in_balance_adj;
 
         [GtkChild]
-        private Scale out_amp_scale;
+        private Adjustment _out_gain_adj;
 
         [GtkChild]
         private Meter inmeter_l;
@@ -134,23 +134,24 @@ namespace Ajami {
             get { return cross_high_scale; }
         }
 
-        public Scale w_in_amp {
-            get { return in_amp_scale; }
-        }
+        public Adjustment in_gain_adj { get { return _in_gain_adj; } }
 
-        public Scale w_in_stereo {
-            get { return in_stereo_scale; }
-        }
+        public Adjustment in_balance_adj { get { return _in_balance_adj; } }
 
-        public Scale w_out_amp {
-            get { return out_amp_scale; }
-        }
+        public Adjustment out_gain_adj { get { return _out_gain_adj; } }
 
         public GraphicEQ w_geq {
             get { return geq; }
         }
 
-        construct {
+        class construct
+        {
+            typeof(HV.Meter).ensure();
+            typeof(GraphicEQ).ensure();
+        }
+
+        construct
+        {
             w_scenes = scenes;
         }
 
@@ -165,8 +166,6 @@ namespace Ajami {
 
             CAjami.HDEQ.crossover_init();
         }
-
-
 
         public Limiter get_limiter_widget() {
             return limiter;
@@ -207,7 +206,7 @@ namespace Ajami {
 
         /* INTRIM */
         public void set_inmeter_value(MeterSide side, double value) {
-            if (side == MeterSide.METER_L) {
+            if (side == MeterSide.L) {
                 this.inmeter_l_adj.value = value;
             } else {
                 this.inmeter_r_adj.value = value;
@@ -215,7 +214,7 @@ namespace Ajami {
         }
 
         public void set_outmeter_value(MeterSide side, double value) {
-            if (side == MeterSide.METER_L) {
+            if (side == MeterSide.L) {
                 this.outmeter_l_adj.value = value;
             } else {
                 this.outmeter_r_adj.value = value;
@@ -223,7 +222,7 @@ namespace Ajami {
         }
 
         public void set_rmsmeter_value(MeterSide side, double value) {
-            if (side == MeterSide.METER_L) {
+            if (side == MeterSide.L) {
                 this.rmsmeter_l_adj.value = value;
             } else {
                 this.rmsmeter_r_adj.value = value;
@@ -231,7 +230,7 @@ namespace Ajami {
         }
 
         public void set_out_text(MeterSide side, string text) {
-            if (side == MeterSide.METER_L) {
+            if (side == MeterSide.L) {
                 this.out_out_l_entry.set_text(text);
             } else {
                 this.out_out_r_entry.set_text(text);
@@ -239,29 +238,29 @@ namespace Ajami {
         }
 
         public void set_rmsout_text(MeterSide side, string text) {
-            if (side == MeterSide.METER_L) {
+            if (side == MeterSide.L) {
                 this.out_rms_l_entry.set_text(text);
             } else {
                 this.out_rms_r_entry.set_text(text);
             }
         }
 
-        public float get_inmeter_peak(MeterSide side) {
-            if (side == MeterSide.METER_L)
+        public double get_inmeter_peak(MeterSide side) {
+            if (side == MeterSide.L)
                 return this.inmeter_l.peak;
 
             return this.inmeter_r.peak;
         }
 
-        public float get_outmeter_peak(MeterSide side) {
-            if (side == MeterSide.METER_L)
+        public double get_outmeter_peak(MeterSide side) {
+            if (side == MeterSide.L)
                 return this.outmeter_l.peak;
 
             return this.outmeter_r.peak;
         }
 
-        public float get_rmsmeter_peak(MeterSide side) {
-            if (side == MeterSide.METER_L)
+        public double get_rmsmeter_peak(MeterSide side) {
+            if (side == MeterSide.L)
                 return this.rmsmeter_l.peak;
 
             return this.rmsmeter_r.peak;
@@ -282,17 +281,20 @@ namespace Ajami {
             this.rmsmeter_r.reset_peak();
         }
 
-        public void set_inmeter_warn_point(float point) {
+        public void set_inmeter_warn_point(double point)
+        {
             inmeter_l.warn_point = point;
             inmeter_r.warn_point = point;
         }
 
-        public void set_outmeter_warn_point(float point) {
+        public void set_outmeter_warn_point(double point)
+        {
             outmeter_l.warn_point = point;
             outmeter_r.warn_point = point;
         }
 
-        public void set_rmsmeter_warn_point(float point) {
+        public void set_rmsmeter_warn_point(double point)
+        {
             rmsmeter_l.warn_point = point;
             rmsmeter_r.warn_point = point;
         }
@@ -307,17 +309,32 @@ namespace Ajami {
         }
 
         [GtkCallback]
-        public void in_gain_changed() {
-            CAjami.State.set_value_ui(CAjami.State.IN_GAIN, (float) in_amp_scale.adjustment.value);
+        public void in_gain_changed()
+        {
+            _state.set_value_ui(StateFlags.IN_GAIN, _in_gain_adj.value);
         }
 
         [GtkCallback]
-        public void low2mid_changed() {
+        public void in_balance_changed()
+        {
+            _state.set_value_ui(StateFlags.IN_PAN, _in_balance_adj.value);
+        }
+
+        [GtkCallback]
+        public void out_gain_changed()
+        {
+            _state.set_value_ui(StateFlags.OUT_GAIN, _out_gain_adj.value);
+        }
+
+        [GtkCallback]
+        public void low2mid_changed()
+        {
             CAjami.HDEQ.low2mid_set((Gtk.Range) cross_low_scale);
         }
 
         [GtkCallback]
-        public void mid2high_changed() {
+        public void mid2high_changed()
+        {
             CAjami.HDEQ.mid2high_set((Gtk.Range) cross_high_scale);
         }
     }

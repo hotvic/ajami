@@ -13,5 +13,7 @@
     <file preprocess="to-pixdata">pixmaps/LED_green_on.xpm</file>
     <file preprocess="to-pixdata">pixmaps/LED_red.xpm</file>
     <file preprocess="to-pixdata">pixmaps/LED_yellow.xpm</file>
+    <!-- Presets -->
+    <file>presets/flat.json</file>
   </gresource>
 </gresources>

@@ -17,7 +17,7 @@
 #ifndef GEQ_H
 #define GEQ_H
 
-#define EQ_BANDS 30
+#define EQ_BANDS 31
 
 #include <gtk/gtk.h>
 

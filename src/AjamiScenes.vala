@@ -41,7 +41,12 @@ namespace Ajami {
         public SceneState state;
         public EventBox   ev;
         public Image      img;
-        public double     values[CAjami.State.SIZE];
+        public double[]   values;
+
+        public Scene()
+        {
+            values = new double[StateFlags.SIZE];
+        }
     }
 
     [GtkTemplate (ui="/org/ajami/ajami/gtk/scenes.ui")]
@@ -68,17 +73,17 @@ namespace Ajami {
                 scenes[i].ev     = new Gtk.EventBox();
 
                 /* initialize values */
-                for (int j = 0 ; j < CAjami.State.SIZE ; j++) {
+                for (int j = 0 ; j < StateFlags.SIZE ; j++) {
                     scenes[i].values[j] = 0.0;
                 }
-                scenes[i].values[CAjami.State.NOTCH_Q(1)]    = 5.0;
-                scenes[i].values[CAjami.State.NOTCH_Q(2)]    = 5.0;
-                scenes[i].values[CAjami.State.NOTCH_Q(3)]    = 5.0;
-                scenes[i].values[CAjami.State.NOTCH_FREQ(0)] = 29.0;
-                scenes[i].values[CAjami.State.NOTCH_FREQ(1)] = 131.0;
-                scenes[i].values[CAjami.State.NOTCH_FREQ(2)] = 710.0;
-                scenes[i].values[CAjami.State.NOTCH_FREQ(3)] = 3719.0;
-                scenes[i].values[CAjami.State.NOTCH_FREQ(4)] = 16903.0;
+                scenes[i].values[StateFlags.NOTCH_Q(1)]    = 5.0;
+                scenes[i].values[StateFlags.NOTCH_Q(2)]    = 5.0;
+                scenes[i].values[StateFlags.NOTCH_Q(3)]    = 5.0;
+                scenes[i].values[StateFlags.NOTCH_FREQ(0)] = 29.0;
+                scenes[i].values[StateFlags.NOTCH_FREQ(1)] = 131.0;
+                scenes[i].values[StateFlags.NOTCH_FREQ(2)] = 710.0;
+                scenes[i].values[StateFlags.NOTCH_FREQ(3)] = 3719.0;
+                scenes[i].values[StateFlags.NOTCH_FREQ(4)] = 16903.0;
 
                 scenes[i].ev.add(scenes[i].img);
 
@@ -144,8 +149,8 @@ namespace Ajami {
             }
 
             /* Grab the current state. */
-            for (int i = 0 ; i < CAjami.State.SIZE ; i++)
-                scenes[current_scene].values[i] = CAjami.State.get_value(i);
+            for (int i = 0 ; i < StateFlags.SIZE; i++)
+                scenes[current_scene].values[i] = _state.get_value(i);
 
             scenes[current_scene].loaded = true;
 

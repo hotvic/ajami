@@ -2,18 +2,19 @@
 <interface domain="ajami">
     <requires lib="gtk+" version="3.12"/>
     <!-- Adjustments -->
-    <object class="GtkAdjustment" id="in_amp_adj">
+    <object class="GtkAdjustment" id="_in_gain_adj">
         <property name="value">0</property>
         <property name="lower">-12</property>
         <property name="upper">12</property>
         <property name="step-increment">1</property>
         <signal name="value_changed" handler="in_gain_changed" />
     </object>
-    <object class="GtkAdjustment" id="in_stereo_adj">
+    <object class="GtkAdjustment" id="_in_balance_adj">
         <property name="value">0</property>
         <property name="lower">-6</property>
         <property name="upper">6</property>
         <property name="step-increment">1</property>
+        <signal name="value_changed" handler="in_balance_changed" />
     </object>
     <object class="GtkAdjustment" id="cross_low_adj">
         <property name="value">2.22462</property>
@@ -41,11 +42,12 @@
         <property name="upper">6</property>
         <property name="step-increment">0.25</property>
     </object>
-    <object class="GtkAdjustment" id="out_amp_adj">
+    <object class="GtkAdjustment" id="_out_gain_adj">
         <property name="value">0</property>
         <property name="lower">-50</property>
         <property name="upper">0</property>
         <property name="step-increment">1</property>
+        <signal name="value_changed" handler="out_gain_changed" />
     </object>
     <object class="GtkAdjustment" id="rmsmeter_l_adj">
         <property name="value">0</property>
@@ -103,9 +105,9 @@
                                                             <object class="GtkBox" id="input_innerbox">
                                                                 <property name="orientation">horizontal</property>
                                                                 <child>
-                                                                    <object class="GtkScale" id="in_amp_scale">
+                                                                    <object class="GtkScale" id="in_gain_scale">
                                                                         <property name="vexpand">true</property>
-                                                                        <property name="adjustment">in_amp_adj</property>
+                                                                        <property name="adjustment">_in_gain_adj</property>
                                                                         <property name="orientation">vertical</property>
                                                                         <property name="inverted">true</property>
                                                                     </object>
@@ -140,8 +142,8 @@
                                                             </object>
                                                         </child>
                                                         <child>
-                                                            <object class="GtkScale" id="in_stereo_scale">
-                                                                <property name="adjustment">in_stereo_adj</property>
+                                                            <object class="GtkScale" id="in_balance_scale">
+                                                                <property name="adjustment">_in_balance_adj</property>
                                                                 <property name="orientation">horizontal</property>
                                                                 <property name="inverted">true</property>
                                                                 <property name="has-origin">false</property>
@@ -379,9 +381,9 @@
                                             <object class="GtkBox" id="out_hbox">
                                                 <property name="orientation">horizontal</property>
                                                 <child>
-                                                    <object class="GtkScale" id="out_amp_scale">
+                                                    <object class="GtkScale" id="out_gain_scale">
                                                         <property name="vexpand">true</property>
-                                                        <property name="adjustment">out_amp_adj</property>
+                                                        <property name="adjustment">_out_gain_adj</property>
                                                         <property name="orientation">vertical</property>
                                                         <property name="inverted">true</property>
                                                     </object>

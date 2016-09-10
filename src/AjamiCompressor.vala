@@ -23,8 +23,6 @@ using HV;
 
 
 /* C functions */
-extern void s_set_callback(int state_id, void *cb);
-extern void s_set_adjustment(int state_id, Adjustment adj);
 extern void at_changed(int id, float value);
 extern void re_changed(int id, float value);
 extern void th_changed(int id, float value);
@@ -69,24 +67,6 @@ namespace Ajami {
         private Adjustment adj_ma;
 
         [GtkChild]
-        private Scale attack_scale;
-
-        [GtkChild]
-        private Scale release_scale;
-
-        [GtkChild]
-        private Scale threshold_scale;
-
-        [GtkChild]
-        private Scale ratio_scale;
-
-        [GtkChild]
-        private Scale knee_scale;
-
-        [GtkChild]
-        private Scale makeup_scale;
-
-        [GtkChild]
         private ToggleButton makeup_auto;
 
         [GtkChild]
@@ -94,9 +74,6 @@ namespace Ajami {
 
         [GtkChild]
         private Meter comp_ga;
-
-        construct {
-        }
 
         public void set_text(string label) {
             (this.label_widget as Label).use_markup = true;
@@ -176,38 +153,38 @@ namespace Ajami {
         }
 
         public ulong connect_at(int state_id) {
-            s_set_callback(state_id, (void *) at_changed);
-            s_set_adjustment(state_id, adj_at);
+            _state.set_callback(state_id, (StateCallbackFunc) at_changed);
+            _state.set_adjustment(state_id, adj_at);
             return Signal.connect(adj_at, "value-changed", (GLib.Callback) adj_cb, state_id.to_pointer());
         }
 
         public ulong connect_re(int state_id) {
-            s_set_callback(state_id, (void *) re_changed);
-            s_set_adjustment(state_id, adj_re);
+            _state.set_callback(state_id, (StateCallbackFunc) re_changed);
+            _state.set_adjustment(state_id, adj_re);
             return Signal.connect(adj_re, "value-changed", (GLib.Callback) adj_cb, state_id.to_pointer());
         }
 
         public ulong connect_th(int state_id) {
-            s_set_callback(state_id, (void *) th_changed);
-            s_set_adjustment(state_id, adj_th);
+            _state.set_callback(state_id, (StateCallbackFunc) th_changed);
+            _state.set_adjustment(state_id, adj_th);
             return Signal.connect(adj_th, "value-changed", (GLib.Callback) adj_cb, state_id.to_pointer());
         }
 
         public ulong connect_ra(int state_id) {
-            s_set_callback(state_id, (void *) ra_changed);
-            s_set_adjustment(state_id, adj_ra);
+            _state.set_callback(state_id, (StateCallbackFunc) ra_changed);
+            _state.set_adjustment(state_id, adj_ra);
             return Signal.connect(adj_ra, "value-changed", (GLib.Callback) adj_cb, state_id.to_pointer());
         }
 
         public ulong connect_kn(int state_id) {
-            s_set_callback(state_id, (void *) kn_changed);
-            s_set_adjustment(state_id, adj_kn);
+            _state.set_callback(state_id, (StateCallbackFunc) kn_changed);
+            _state.set_adjustment(state_id, adj_kn);
             return Signal.connect(adj_kn, "value-changed", (GLib.Callback) adj_cb, state_id.to_pointer());
         }
 
         public ulong connect_ma(int state_id) {
-            s_set_callback(state_id, (void *) ma_changed);
-            s_set_adjustment(state_id, adj_ma);
+            _state.set_callback(state_id, (StateCallbackFunc) ma_changed);
+            _state.set_adjustment(state_id, adj_ma);
             return Signal.connect(adj_ma, "value-changed", (GLib.Callback) adj_cb, state_id.to_pointer());
         }
     }

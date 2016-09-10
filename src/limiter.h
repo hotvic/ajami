@@ -31,34 +31,34 @@
 #define LIM_LOGSCALE      9
 
 typedef struct {
-	float ingain;
-	float limit;
-	float release;
-	float attenuation;
-	float latency;
-        float logscale;
-	LADSPA_Handle handle;
+    float ingain;
+    float limit;
+    float release;
+    float attenuation;
+    float latency;
+    float logscale;
+    LADSPA_Handle handle;
 } lim_settings;
 
-static inline void lim_connect(plugin *p, lim_settings *s, float *left, float
-		*right) {
-	plugin_connect_port(p, s->handle, LIM_INGAIN, &(s->ingain));
-	plugin_connect_port(p, s->handle, LIM_LIMIT, &(s->limit));
-	plugin_connect_port(p, s->handle, LIM_RELEASE, &(s->release));
-	plugin_connect_port(p, s->handle, LIM_ATTENUATION, &(s->attenuation));
-	plugin_connect_port(p, s->handle, LIM_IN_1, left);
-	plugin_connect_port(p, s->handle, LIM_IN_2, right);
-	plugin_connect_port(p, s->handle, LIM_OUT_1, left);
-	plugin_connect_port(p, s->handle, LIM_OUT_2, right);
-	plugin_connect_port(p, s->handle, LIM_LATENCY, &(s->latency));
-        plugin_connect_port(p, s->handle, LIM_LOGSCALE, &(s->logscale));
+static inline void lim_connect(plugin *p, lim_settings *s, float *left, float *right)
+{
+    plugin_connect_port(p, s->handle, LIM_INGAIN, &(s->ingain));
+    plugin_connect_port(p, s->handle, LIM_LIMIT, &(s->limit));
+    plugin_connect_port(p, s->handle, LIM_RELEASE, &(s->release));
+    plugin_connect_port(p, s->handle, LIM_ATTENUATION, &(s->attenuation));
+    plugin_connect_port(p, s->handle, LIM_IN_1, left);
+    plugin_connect_port(p, s->handle, LIM_IN_2, right);
+    plugin_connect_port(p, s->handle, LIM_OUT_1, left);
+    plugin_connect_port(p, s->handle, LIM_OUT_2, right);
+    plugin_connect_port(p, s->handle, LIM_LATENCY, &(s->latency));
+    plugin_connect_port(p, s->handle, LIM_LOGSCALE, &(s->logscale));
 
-	/* Make sure that it is set to something */
-	s->ingain = 0.0f;
-	s->limit = 0.0f;
-	s->release = 0.01f;
-	s->attenuation = 0.0f;
-        s->logscale = 0.75f;
+    /* Make sure that it is set to something */
+    s->ingain = 0.0f;
+    s->limit = 0.0f;
+    s->release = 0.01f;
+    s->attenuation = 0.0f;
+    s->logscale = 0.75f;
 }
 
 #endif

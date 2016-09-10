@@ -26,7 +26,6 @@
 #include "support.h"
 #include "main.h"
 #include "db.h"
-#include "state.h"
 #include "ajamiobjects.h"
 #include "help.h"
 

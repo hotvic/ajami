@@ -35,6 +35,8 @@ def configure(cnf):
     cnf.check(lib='m', mandatory=True)
     cnf.check(lib='dl', mandatory=True)
     cnf.check(lib='pthread', mandatory=True)
+    cnf.check(header_name='ladspa.h', mandatory=True)
+    cnf.check_cfg(package='json-glib-1.0', uselib_store='JSON', args='--cflags --libs', mandatory=True)
     cnf.check_cfg(package='gtk+-3.0', uselib_store='GTK', args='--cflags --libs', mandatory=True)
     cnf.check_cfg(package='gmodule-export-2.0', uselib_store='GMODULE', args='--libs', mandatory=True)
     cnf.check_cfg(package='jack', uselib_store='JACK', args='--cflags --libs', mandatory=True)

@@ -33,12 +33,9 @@
 #include "geq.h"
 #include "main.h"
 #include "help.h"
-#include "interface.h"
-#include "intrim.h"
 #include "support.h"
 #include "process.h"
 #include "compressor-ui.h"
-#include "state.h"
 #include "spectrum.h"
 #include "ajamiobjects.h"
 
@@ -352,42 +349,38 @@ void set_color(GdkRGBA* color, unsigned short red, unsigned short green,
 /*  Pop up the EQ options dialog.  */
 
 void popup_pref_dialog(int updown) {
-    /*  Pop up on 1.  */
+    // if (updown) {
+    //     gtk_widget_show(pref_dialog);
+    // }
 
-    if (updown) {
-        gtk_widget_show(pref_dialog);
-    }
-
-    /*  Pop down on 0.  */
-
-    else {
-        gtk_widget_hide(pref_dialog);
-    }
+    // else {
+    //     gtk_widget_hide(pref_dialog);
+    // }
 }
 
 /*  Pop up the color dialog.  */
 
 void popup_color_dialog(int id) {
-    GdkRGBA* ptr;
+    // GdkRGBA* ptr;
 
-    /*  We don't want to do this until after the colors combo box has been set
-     * the first time.  */
+    // /*  We don't want to do this until after the colors combo box has been set
+    //  * the first time.  */
 
-    if (initialized) {
-        color_id = id;
+    // if (initialized) {
+    //     color_id = id;
 
-        ptr = &color[id];
+    //     ptr = &color[id];
 
-        gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(colorsel), ptr);
+    //     gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(colorsel), ptr);
 
-        gtk_widget_show(color_dialog);
-    }
+    //     gtk_widget_show(color_dialog);
+    // }
 }
 
 void pref_force_color_change() {
-    static GdkRectangle rect;
+    // static GdkRectangle rect;
 
-    repaint_gang_labels();
+    // repaint_gang_labels();
     // draw_EQ_curve ();
 
     /*  Force all compressor curves.  */
@@ -404,39 +397,39 @@ void pref_force_color_change() {
     // gtk_meter_set_color (METER_PEAK_COLOR);
 
     /*  Force an expose to change the text color.  */
-    GtkAllocation* allocation = g_new0(GtkAllocation, 1);
-    gtk_widget_get_allocation(GTK_WIDGET(main_window), allocation);
+    // GtkAllocation* allocation = g_new0(GtkAllocation, 1);
+    // gtk_widget_get_allocation(GTK_WIDGET(main_window), allocation);
 
-    rect.x = allocation->x;
-    rect.y = allocation->y;
-    rect.width = allocation->width;
-    rect.height = allocation->height;
+    // rect.x = allocation->x;
+    // rect.y = allocation->y;
+    // rect.width = allocation->width;
+    // rect.height = allocation->height;
 
-    g_free(allocation);
+    // g_free(allocation);
 
-    gdk_window_invalidate_rect(gtk_widget_get_window(main_window), &rect, TRUE);
-    gdk_window_process_updates(gtk_widget_get_window(main_window), TRUE);
+    // gdk_window_invalidate_rect(gtk_widget_get_window(main_window), &rect, TRUE);
+    // gdk_window_process_updates(gtk_widget_get_window(main_window), TRUE);
 }
 
-static void color_ok_callback(GtkWidget* w, gpointer user_data) {
-    GdkRGBA l_color;
+// static void color_ok_callback(GtkWidget* w, gpointer user_data) {
+//     // GdkRGBA l_color;
 
-    gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(colorsel), &l_color);
+//     // gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(colorsel), &l_color);
 
-    set_color(&color[color_id], l_color.red, l_color.green, l_color.blue);
+//     // set_color(&color[color_id], l_color.red, l_color.green, l_color.blue);
 
-    pref_force_color_change();
+//     // pref_force_color_change();
 
-    gtk_widget_hide(color_dialog);
-}
+//     // gtk_widget_hide(color_dialog);
+// }
 
-static void color_cancel_callback(GtkWidget* w, gpointer user_data) {
-    gtk_widget_hide(color_dialog);
-}
+// static void color_cancel_callback(GtkWidget* w, gpointer user_data) {
+//     // gtk_widget_hide(color_dialog);
+// }
 
-static void color_help_callback(GtkWidget* w, gpointer user_data) {
-    message(GTK_MESSAGE_INFO, color_help);
-}
+// static void color_help_callback(GtkWidget* w, gpointer user_data) {
+//     ajami_message(GTK_MESSAGE_INFO, color_help);
+// }
 
 /*  We're only writing out GUI colors so that people can edit the colors in the
    defaults file

@@ -26,11 +26,27 @@ extern void io_init(Ajami.Args args);
 
 
 namespace Ajami {
+    private State? _state = null;
+    private InTrim? _intrim = null;
+    private Stereo _stereo = null;
+    private LimiterBackend? _limiter = null;
+
     /* Directories */
     public string config_dir      = null;
     public string default_session = null;
+    
+    public State? get_state()
+    {
+        return _state;
+    }
 
-    void setup_environment() {
+    public LimiterBackend? get_limiter()
+    {
+        return _limiter;
+    }
+
+    void setup_environment()
+    {
         var app_name = Environment.get_application_name().down();
 
         config_dir = "%s/%s".printf(Environment.get_user_config_dir(), app_name);
@@ -38,23 +54,29 @@ namespace Ajami {
 
         /* default session file detecting */
         var curr_data_session = "examples/default.jam";
-        if (File.new_for_path(curr_data_session).query_exists()) {
+        if (File.new_for_path(curr_data_session).query_exists())
+        {
             default_session = curr_data_session;
         }
 
-        if (default_session == null) {
+        if (default_session == null)
+        {
             var user_data_session = "%s/examples/default.jam".printf(Environment.get_user_data_dir());
 
-            if (File.new_for_path(user_data_session).query_exists()) {
+            if (File.new_for_path(user_data_session).query_exists())
+            {
                 default_session = curr_data_session;
             }
         }
 
-        if (default_session == null) {
-            foreach (string path in Environment.get_system_data_dirs()) {
+        if (default_session == null)
+        {
+            foreach (string path in Environment.get_system_data_dirs())
+            {
                 var sys_data_session = "%s/examples/default.jam".printf(path);
 
-                if (File.new_for_path(sys_data_session).query_exists()) {
+                if (File.new_for_path(sys_data_session).query_exists())
+                {
                     default_session = sys_data_session;
                     break;
                 }
@@ -80,5 +102,15 @@ namespace Ajami {
         // CAjami.IO.cleanup();
 
         return status;
+    }
+
+    public static double lin2db(double val)
+    {
+        return 20.0 * Math.log(val);
+    }
+
+    public static double db2lin(double val)
+    {
+        return Math.pow(10.0, val * 0.05);
     }
 }

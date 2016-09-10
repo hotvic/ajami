@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <glib.h>
 
 #define SPLINE_COL  53
 #define SPLINE_ROW  3
@@ -45,7 +46,7 @@
 *                                                                           * 
 \***************************************************************************/
 
-void spline_cof (float *x, float *y, int pos, float *coeffs)
+void spline_cof (gdouble *x, gdouble *y, int pos, float *coeffs)
 {
     int        index, posval, inv_index;
     float      array_a[SPLINE_COL][SPLINE_ROW], array_d[SPLINE_COL], 
@@ -143,7 +144,7 @@ void spline_cof (float *x, float *y, int pos, float *coeffs)
 *                                                                           * 
 \***************************************************************************/
 
-void spline (float *x, float *y, int pos, float x_pos, float *y_pos, float *ater)
+void spline (gdouble *x, gdouble *y, int pos, float x_pos, float *y_pos, float *ater)
 {
     int            endloop1, endloop2;
     float          coeffs[SPLINE_ROW + 1][SPLINE_COL];
@@ -347,16 +348,14 @@ void spline (float *x, float *y, int pos, float x_pos, float *y_pos, float *ater
 \***************************************************************************/
 
 void interpolate (float interval, int length_x, float start_xinterp, float end_xinterp, 
-                  int *length_xinterp, float *x, float *y, float *x_interp, 
-                  float *y_interp)
+                  int *length_xinterp, gdouble *x, gdouble *y, gdouble *x_interp, 
+                  gdouble *y_interp)
 {
     int   num_segments, count, length2, endloop, index, seg_points, flag1,
           flag2, last_x, first_x, spline_length, current_x, new_last_x,
           new_first_x;
             
-    float ater, x_pos, y_pos;   
-
-    void spline (float *, float *, int, float, float *, float *);
+    float ater, x_pos, y_pos;
 
 
     /*  Compute length of interpolated data.                            */

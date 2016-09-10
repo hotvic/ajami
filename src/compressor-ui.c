@@ -91,12 +91,12 @@ void bind_compressors()
         gang_kn[i] = FALSE;
         gang_ma[i] = FALSE;
 
-        ajami_compressor_connect_at(w_comp[i], S_COMP_ATTACK(i));
-        ajami_compressor_connect_re(w_comp[i], S_COMP_RELEASE(i));
-        ajami_compressor_connect_th(w_comp[i], S_COMP_THRESH(i));
-        ajami_compressor_connect_ra(w_comp[i], S_COMP_RATIO(i));
-        ajami_compressor_connect_kn(w_comp[i], S_COMP_KNEE(i));
-        ajami_compressor_connect_ma(w_comp[i], S_COMP_MAKEUP(i));
+        ajami_compressor_connect_at(w_comp[i], ajami_state_flags_COMP_ATTACK(i));
+        ajami_compressor_connect_re(w_comp[i], ajami_state_flags_COMP_RELEASE(i));
+        ajami_compressor_connect_th(w_comp[i], ajami_state_flags_COMP_THRESH(i));
+        ajami_compressor_connect_ra(w_comp[i], ajami_state_flags_COMP_RATIO(i));
+        ajami_compressor_connect_kn(w_comp[i], ajami_state_flags_COMP_KNEE(i));
+        ajami_compressor_connect_ma(w_comp[i], ajami_state_flags_COMP_MAKEUP(i));
 
         auto_gain[i] = 0;
     }
@@ -104,7 +104,7 @@ void bind_compressors()
 
 gboolean adj_cb(GtkAdjustment *adj, gpointer p)
 {
-    s_set_value_ui(GPOINTER_TO_INT(p), gtk_adjustment_get_value(adj));
+    ajami_state_set_value_ui(ajami_get_state(), GPOINTER_TO_INT(p), gtk_adjustment_get_value(adj));
 
     return FALSE;
 }
@@ -114,7 +114,7 @@ void at_changed(int id, float value)
     int i, j;
     gdouble diff, new_value;
 
-    i = id - S_COMP_ATTACK(0);
+    i = id - ajami_state_flags_COMP_ATTACK(0);
 
     if (!suspend_gang && gang_at[i])
     {
@@ -152,7 +152,7 @@ void re_changed(int id, float value)
     int i, j;
     gdouble diff, new_value;
 
-    i = id - S_COMP_RELEASE(0);
+    i = id - ajami_state_flags_COMP_RELEASE(0);
 
     if (!suspend_gang && gang_re[i])
     {
@@ -190,7 +190,7 @@ void th_changed(int id, float value)
     int i, j;
     gdouble diff, new_value;
 
-    i = id - S_COMP_THRESH(0);
+    i = id - ajami_state_flags_COMP_THRESH(0);
 
     if (!suspend_gang && gang_th[i])
     {
@@ -244,7 +244,7 @@ void ra_changed(int id, float value)
     int i, j;
     gdouble diff, new_value;
 
-    i = id - S_COMP_RATIO(0);
+    i = id - ajami_state_flags_COMP_RATIO(0);
 
     if (!suspend_gang && gang_ra[i])
     {
@@ -298,7 +298,7 @@ void kn_changed(int id, float value)
     int i, j;
     gdouble diff, new_value;
 
-    i = id - S_COMP_KNEE(0);
+    i = id - ajami_state_flags_COMP_KNEE(0);
 
     if (!suspend_gang && gang_kn[i])
     {
@@ -337,7 +337,7 @@ void ma_changed(int id, float value)
     gdouble diff, new_value;
     char *val;
 
-    i = id - S_COMP_MAKEUP(0);
+    i = id - ajami_state_flags_COMP_MAKEUP(0);
 
     if (!suspend_gang && gang_ma[i])
     {
@@ -383,7 +383,7 @@ void calc_auto_gain(int i)
 {
     if (adj_ma[i] && adj_th[i] && adj_ra[i])
     {
-        s_set_value_no_history(S_COMP_MAKEUP(i),
+        ajami_state_set_value_no_history(ajami_get_state(), ajami_state_flags_COMP_MAKEUP(i),
                                (gtk_adjustment_get_value(adj_th[i]) /
                                 gtk_adjustment_get_value(adj_ra[i]) -
                                 gtk_adjustment_get_value(adj_th[i])) *

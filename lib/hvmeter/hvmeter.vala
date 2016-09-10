@@ -24,8 +24,8 @@ namespace HV
         private Gtk.Adjustment  _adjustment  = null;
         private Gtk.Orientation _orientation = Gtk.Orientation.VERTICAL;
         private bool            _inverted   = false;
-        private float           _warn_point = 0.0f;
-        private float           _peak       = 0.0f;
+        private double          _warn_point = 0.0f;
+        private double          _peak       = 0.0f;
 
         /* Properties */
         public Gtk.Adjustment adjustment {
@@ -62,7 +62,7 @@ namespace HV
             set { _inverted = value; queue_draw(); }
         }
 
-        public float warn_point {
+        public double warn_point {
             get { return _warn_point; }
             set {
                 _warn_point = value;
@@ -76,13 +76,13 @@ namespace HV
             }
         }
 
-        public float peak {
+        public double peak {
             get { return _peak; }
         }
 
-        private float iec_lower;
-        private float iec_upper;
-        private float amber_frac;
+        private double iec_lower;
+        private double iec_upper;
+        private double amber_frac;
 
         construct {
             if (_adjustment == null || !(_adjustment is Gtk.Adjustment))
@@ -143,10 +143,10 @@ namespace HV
             cr.set_source(pat);
             cr.fill();
 
-            var val = iec_scale((float) _adjustment.value);
+            var val = iec_scale(_adjustment.value);
             var frac = (val - iec_lower) / (iec_upper - iec_lower);
 
-            float g_h, a_h, r_h;
+            double g_h, a_h, r_h;
             if (frac < amber_frac)
             {
                 g_h = frac * (ylen - 4);
@@ -313,9 +313,9 @@ namespace HV
             return true;
         }
 
-        private void draw_notch(Cairo.Context cr, float db, int mark, int xlen, int ylen)
+        private void draw_notch(Cairo.Context cr, double db, int mark, int xlen, int ylen)
         {
-            float pos;
+            double pos;
 
             if (_orientation == Gtk.Orientation.VERTICAL)
             {
@@ -341,7 +341,7 @@ namespace HV
             cr.fill();
         }
 
-        private void draw_peak(Cairo.Context cr, float xlen, float ylen)
+        private void draw_peak(Cairo.Context cr, double xlen, double ylen)
         {
             var pos = (ylen - 2) * (iec_scale(_peak) - iec_lower) / (iec_upper - iec_lower);
 
@@ -366,8 +366,8 @@ namespace HV
 
         public void adjustment_changed()
         {
-            iec_lower = iec_scale((float) _adjustment.lower);
-            iec_upper = iec_scale((float) _adjustment.upper);
+            iec_lower = iec_scale(_adjustment.lower);
+            iec_upper = iec_scale(_adjustment.upper);
 
             queue_draw();
         }
@@ -375,21 +375,21 @@ namespace HV
         public void adjustment_value_changed()
         {
             if (_peak < _adjustment.value)
-                _peak = (float) _adjustment.value;
+                _peak = _adjustment.value;
 
             queue_draw();
         }
 
         public void reset_peak()
         {
-            _peak = (float) adjustment.lower;
+            _peak = adjustment.lower;
 
             queue_draw();
         }
 
-        private float iec_scale(float db)
+        private double iec_scale(double db)
         {
-            float def = 0.0f;       /* Meter deflection %age */
+            double def = 0.0f;       /* Meter deflection %age */
 
             if (db < -70.0f) {
                 def = 0.0f;

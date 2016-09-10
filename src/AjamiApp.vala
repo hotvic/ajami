@@ -24,11 +24,14 @@ using Gtk;
 extern void preferences_init();
 
 
-namespace Ajami {
-    public class Ajami : Gtk.Application {
+namespace Ajami
+{
+    public class Ajami : Gtk.Application
+    {
         private uint _to_count = 1;
 
-        public Ajami() {
+        public Ajami()
+        {
             Object(application_id: "org.ajami.ajami", flags: 0);
 
             Environment.set_application_name("Ajami");
@@ -36,52 +39,53 @@ namespace Ajami {
             add_actions();
         }
 
-        public static Ajami get_app() {
+        public static Ajami get_app()
+        {
             return GLib.Application.get_default() as Ajami;
         }
 
-        public override void activate() {
+        public override void activate()
+        {
             main_window.show_all();
             main_window.destroy.connect(() => {
                 this.quit();
             });
         }
 
-        public override void startup() {
+        public override void startup()
+        {
             base.startup();
-
-            /* Workaround for now */
-            Type meter = typeof(HV.Meter);
-            Type geg   = typeof(GraphicEQ);
 
             main_window = new MainWindow(this);
 
-            CAjami.State.init();
+            _state = new State();
             preferences_init();
 
             CAjami.GraphicEQ.bind();
             CAjami.HDEQ.bind();
-            CAjami.INTrim.bind();
-            CAjami.Limiter.bind();
+            _intrim = new InTrim();
+            _limiter = new LimiterBackend();
             CAjami.Compressor.bind();
-            CAjami.Stereo.bind();
+            _stereo = new Stereo();
 
-            CAjami.State.clear_history();
+            _state.history_clear();
 
             CAjami.IO.activate();
 
-            CAjami.State.load_session(null);
+            _state.load_preset("flat");
 
-            Timeout.add(40, CAjami.INTrim.update_meters);
+            Timeout.add(40, _intrim.update_meters);
         }
 
-        public override void shutdown() {
+        public override void shutdown()
+        {
             base.shutdown();
 
             CAjami.IO.cleanup();
         }
 
-        public void add_actions() {
+        public void add_actions()
+        {
             var quit = new SimpleAction("quit", null);
             var preferences = new SimpleAction("preferences", null);
 
@@ -95,7 +99,8 @@ namespace Ajami {
             this.add_action(preferences);
         }
 
-        public void act_preferences() {
+        public void act_preferences()
+        {
             var prefs = new Preferences();
 
             prefs.show_all();

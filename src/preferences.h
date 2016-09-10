@@ -17,6 +17,8 @@
 #ifndef PREFERENCES_H
 #define PREFERENCES_H
 
+#include <gtk/gtk.h>
+
 
 /*  Important note - definition of colors is in the same order as
     the combo box buttons.  Don't add to or rearrange the colors unless

@@ -78,9 +78,7 @@
 #include "hdeq.h"
 #include "main.h"
 #include "geq.h"
-#include "interface.h"
 #include "support.h"
-#include "intrim.h"
 #include "compressor-ui.h"
 #include "state.h"
 #include "db.h"
@@ -108,8 +106,8 @@
 
 #define NOTCH_PASS_WIDTH 75
 
-void interpolate(float, int, float, float, int*, float*, float*, float*,
-                 float*);
+void interpolate(float, int, float, float, int*, gdouble*, gdouble*, gdouble*,
+                 gdouble*);
 
 /* vi:set ts=8 sts=4 sw=4: */
 
@@ -136,7 +134,7 @@ static cairo_surface_t *EQ_surface, *comp_surface[3];
 static PangoContext *comp_pc[3], *EQ_pc;
 static GtkAdjustment* l_low2mid_adj;
 static GdkRGBA* color;
-static float EQ_curve_range_x, EQ_curve_range_y, EQ_curve_width,
+static gdouble EQ_curve_range_x, EQ_curve_range_y, EQ_curve_width,
     EQ_curve_height, EQ_xinterp[EQ_INTERP + 1], EQ_start, EQ_end, EQ_interval,
     EQ_yinterp[EQ_INTERP + 1],
         *EQ_xinput = NULL, *EQ_yinput = NULL, l_geq_freqs[EQ_BANDS],
@@ -201,10 +199,6 @@ void clean_quit() {
     /*  Write out the defaults file in case we've changed something.  */
 
     pref_write_jamin_defaults();
-
-    /* free global session filename */
-
-    s_set_session_filename(NULL);
 
     gtk_main_quit();
 }
@@ -276,7 +270,7 @@ void hdeq_low2mid_set(GtkRange* range) {
 
     value = gtk_range_get_value(range);
     other_value = gtk_range_get_value((GtkRange*) l_mid2high);
-    s_set_value_ui(S_XOVER_FREQ(0), value);
+    ajami_state_set_value_ui(ajami_get_state(), ajami_state_flags_XOVER_FREQ(0), value);
 
     /*  Don't let the two sliders cross each other and desensitize the mid
         band compressor if they are the same value.  */
@@ -285,13 +279,13 @@ void hdeq_low2mid_set(GtkRange* range) {
         /*  This tells the state functions (state.c) not to do anything even
             though we're going to move a GUI control.  */
 
-        s_suppress_push();
+        ajami_state_suppress_push(ajami_get_state());
 
         gtk_range_set_value((GtkRange*) l_mid2high, value);
 
         /*  This lets the state functions behave normally again.  */
 
-        s_suppress_pop();
+        ajami_state_suppress_pop(ajami_get_state());
         ajami_compressor_set_disabled(l_comp[1], TRUE);
     } else {
         ajami_compressor_set_disabled(l_comp[1], FALSE);
@@ -375,7 +369,7 @@ void hdeq_mid2high_set(GtkRange* range) {
 
     value = gtk_range_get_value(range);
     other_value = gtk_range_get_value((GtkRange*)l_low2mid);
-    s_set_value_ui(S_XOVER_FREQ(1), value);
+    ajami_state_set_value_ui(ajami_get_state(), ajami_state_flags_XOVER_FREQ(1), value);
 
     /*  Don't let the two sliders cross each other and desensitize the mid
         band compressor if they are the same value.  */
@@ -383,13 +377,13 @@ void hdeq_mid2high_set(GtkRange* range) {
     if (value <= other_value) {
         /*  Suppress state functionality.  */
 
-        s_suppress_push();
+        ajami_state_suppress_push(ajami_get_state());
 
-        gtk_range_set_value((GtkRange*)l_low2mid, value);
+        gtk_range_set_value((GtkRange*) l_low2mid, value);
 
         /*  Unsuppress state functionality.  */
 
-        s_suppress_pop();
+        ajami_state_suppress_pop(ajami_get_state());
         ajami_compressor_set_disabled(l_comp[1], TRUE);
     } else {
         ajami_compressor_set_disabled(l_comp[1], FALSE);
@@ -475,14 +469,14 @@ void hdeq_mid2high_button(int active) {
 /*  Initialize the low to mid crossover adjustment state.  */
 
 void hdeq_low2mid_init() {
-    s_set_adjustment(S_XOVER_FREQ(0),
+    ajami_state_set_adjustment(ajami_get_state(), ajami_state_flags_XOVER_FREQ(0),
                      gtk_range_get_adjustment(GTK_RANGE(l_low2mid)));
 }
 
 /*  Initialize the mid to high crossover adjustment state.  */
 
 void hdeq_mid2high_init() {
-    s_set_adjustment(S_XOVER_FREQ(1),
+    ajami_state_set_adjustment(ajami_get_state(), ajami_state_flags_XOVER_FREQ(1),
                      gtk_range_get_adjustment(GTK_RANGE(l_mid2high)));
 }
 
@@ -591,14 +585,15 @@ void draw_EQ_spectrum_curve(float single_levels[]) {
 /*  Set the graphic EQ (geq) sliders and the full set of EQ coefficients
     based on the hand drawn EQ curve.  */
 
-static void set_EQ() {
-    float *x = NULL, interval;
+static void set_EQ()
+{
+    gdouble *x = NULL, interval;
     int i, size;
 
     /*  Make sure we have enough space.  */
 
     size = EQ_length * sizeof(float);
-    x = (float*)realloc(x, size);
+    x = (gdouble *) realloc(x, size);
 
     if (x == NULL) {
         perror(_("Allocating x in set_EQ"));
@@ -619,10 +614,10 @@ static void set_EQ() {
     if (x)
         free(x);
 
-    /*  Set EQ coefficients based on the hand-drawn curve.  */
+    /* Set EQ coefficients based on the hand-drawn curve. */
     geq_set_coefs(EQ_length, EQ_freq_xinterp, EQ_freq_yinterp);
 
-    /*  Set the graphic EQ sliders based on the hand-drawn curve.  */
+    /* Set the graphic EQ sliders based on the hand-drawn curve. */
     geq_set_sliders(EQ_length, EQ_freq_xinterp, EQ_freq_yinterp);
 
     // printf("%f, %f, %f\n",EQ_length, EQ_freq_xinterp, EQ_freq_yinterp);
@@ -639,7 +634,7 @@ void reset_hdeq() {
 
     for (i = 0; i < EQ_length; i++)
         EQ_y_notched[i] = EQ_yinterp[i] = 0.0;
-    s_set_value_block(EQ_yinterp, S_EQ_GAIN(0), EQ_length);
+    ajami_state_set_value_block(ajami_get_state(), EQ_yinterp, EQ_length, ajami_state_flags_EQ_GAIN(0));
 
     /*  Setting the notches (and state).  */
 
@@ -657,12 +652,12 @@ void reset_hdeq() {
 
         /*  Set the state so that we can save the scene if we need to.  */
 
-        s_set_description(S_NOTCH_GAIN(i),
+        ajami_state_history_set_description(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i),
                           g_strdup_printf("Reset notch %d", i));
-        s_set_value_ns(S_NOTCH_GAIN(i), EQ_notch_gain[i]);
-        s_set_value_ns(S_NOTCH_FREQ(i), EQ_notch_default[i]);
-        s_set_value_ns(S_NOTCH_FLAG(i), (float)EQ_notch_flag[i]);
-        s_set_value_ns(S_NOTCH_Q(i), (float)EQ_notch_width[i]);
+        ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i), EQ_notch_gain[i]);
+        ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_FREQ(i), EQ_notch_default[i]);
+        ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_FLAG(i), (float)EQ_notch_flag[i]);
+        ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_Q(i), (float)EQ_notch_width[i]);
     }
 
     /*  Set the GEQ.  */
@@ -894,7 +889,7 @@ void draw_EQ_curve(cairo_t* EQ_cr) {
 
         /*  Save state of the EQ curve (for scene changes, etc).  */
 
-        s_set_value_block(EQ_yinterp, S_EQ_GAIN(0), EQ_length);
+        ajami_state_set_value_block(ajami_get_state(), EQ_yinterp, ajami_state_flags_EQ_GAIN(0), EQ_length);
 
         /*  Reset all of the shelves/notches.  */
 
@@ -918,13 +913,12 @@ void draw_EQ_curve(cairo_t* EQ_cr) {
         /*  Save the state.  */
 
         for (i = 0; i < NOTCHES; i++) {
-            s_set_description(S_NOTCH_GAIN(i),
-                              g_strdup_printf("Reset notch %d", i));
-            s_set_value_ns(S_NOTCH_GAIN(i), EQ_notch_gain[i]);
-            s_set_value_ns(S_NOTCH_Q(i), (float)EQ_notch_width[i]);
-            s_set_value_ns(S_NOTCH_FREQ(i),
+            ajami_state_history_set_description(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i), g_strdup_printf("Reset notch %d", i));
+            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i), EQ_notch_gain[i]);
+            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_Q(i), (float)EQ_notch_width[i]);
+            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_FREQ(i),
                            powf(10.0f, EQ_x_notched[EQ_notch_index[i]]));
-            s_set_value_ns(S_NOTCH_FLAG(i), (float)EQ_notch_flag[i]);
+            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_FLAG(i), (float)EQ_notch_flag[i]);
         }
     }
 
@@ -1125,7 +1119,7 @@ void hdeq_curve_init(GtkWidget* widget) {
 
     /*  Setting a callback based on notch gain changes.  */
 
-    s_set_callback(S_NOTCH_GAIN(0), set_EQ_curve_values);
+    ajami_state_set_callback(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(0), set_EQ_curve_values);
 
     EQ_realized = 1;
 }
@@ -1317,8 +1311,8 @@ void hdeq_curve_motion(GdkEventMotion* event) {
                     //      color->blue);
 
                     size = (EQ_input_points + 1) * sizeof(float);
-                    EQ_xinput = (float*)realloc(EQ_xinput, size);
-                    EQ_yinput = (float*)realloc(EQ_yinput, size);
+                    EQ_xinput = (gdouble*)realloc(EQ_xinput, size);
+                    EQ_yinput = (gdouble*)realloc(EQ_yinput, size);
 
                     if (EQ_yinput == NULL) {
                         perror(_("Allocating EQ_yinput in callbacks.c"));
@@ -1386,14 +1380,12 @@ void hdeq_curve_motion(GdkEventMotion* event) {
 
                             /*  Save state.  */
 
-                            s_set_description(
-                                S_NOTCH_GAIN(i),
-                                g_strdup_printf("Move notch %d", i));
-                            s_set_value_ns(S_NOTCH_GAIN(i), EQ_notch_gain[i]);
-                            s_set_value_ns(S_NOTCH_FREQ(i), freq);
-                            s_set_value_ns(S_NOTCH_FLAG(i),
+                            ajami_state_history_set_description(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i), g_strdup_printf("Move notch %d", i));
+                            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i), EQ_notch_gain[i]);
+                            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_FREQ(i), freq);
+                            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_FLAG(i),
                                            (float)EQ_notch_flag[i]);
-                            s_set_value_ns(S_NOTCH_Q(i),
+                            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_Q(i),
                                            (float)EQ_notch_width[i]);
 
                             break;
@@ -1423,15 +1415,13 @@ void hdeq_curve_motion(GdkEventMotion* event) {
 
                                 /*  Save state.  */
 
-                                s_set_description(
-                                    S_NOTCH_GAIN(i),
-                                    g_strdup_printf("Move notch %d", i));
-                                s_set_value_ns(S_NOTCH_GAIN(i),
+                                ajami_state_history_set_description(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i), g_strdup_printf("Move notch %d", i));
+                                ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i),
                                                EQ_notch_gain[i]);
-                                s_set_value_ns(S_NOTCH_FREQ(i), freq);
-                                s_set_value_ns(S_NOTCH_FLAG(i),
+                                ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_FREQ(i), freq);
+                                ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_FLAG(i),
                                                (float)EQ_notch_flag[i]);
-                                s_set_value_ns(S_NOTCH_Q(i),
+                                ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_Q(i),
                                                (float)EQ_notch_width[i]);
                             }
                             break;
@@ -1462,14 +1452,12 @@ void hdeq_curve_motion(GdkEventMotion* event) {
 
                             /*  Save state.  */
 
-                            s_set_description(
-                                S_NOTCH_GAIN(i),
-                                g_strdup_printf("Move notch %d", i));
-                            s_set_value_ns(S_NOTCH_GAIN(i), EQ_notch_gain[i]);
-                            s_set_value_ns(S_NOTCH_FREQ(i), freq);
-                            s_set_value_ns(S_NOTCH_FLAG(i),
+                            ajami_state_history_set_description(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i), g_strdup_printf("Move notch %d", i));
+                            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i), EQ_notch_gain[i]);
+                            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_FREQ(i), freq);
+                            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_FLAG(i),
                                            (float)EQ_notch_flag[i]);
-                            s_set_value_ns(S_NOTCH_Q(i),
+                            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_Q(i),
                                            (float)EQ_notch_width[i]);
                         }
                         break;
@@ -1665,7 +1653,7 @@ void hdeq_curve_motion(GdkEventMotion* event) {
     the function to see what's actually happening.  */
 
 void hdeq_curve_button_press(GdkEventButton* event) {
-    float *x = NULL, *y = NULL;
+    gdouble* x = NULL, *y = NULL;
     int diffx_l2m, diffx_m2h, diff_notch[2], i, j,
         i_start = 0, i_end = 0, size, ex, ey, *temp_x = NULL, *temp_y = NULL;
     static int interp_pad = 5;
@@ -1744,13 +1732,11 @@ void hdeq_curve_button_press(GdkEventButton* event) {
 
                             /*  Save state.  */
 
-                            s_set_description(
-                                S_NOTCH_GAIN(i),
-                                g_strdup_printf("Reset notch %d", i));
-                            s_set_value_ns(S_NOTCH_GAIN(i), EQ_notch_gain[i]);
-                            s_set_value_ns(S_NOTCH_Q(i),
+                            ajami_state_history_set_description(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i), g_strdup_printf("Reset notch %d", i));
+                            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i), EQ_notch_gain[i]);
+                            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_Q(i),
                                            (float)EQ_notch_width[i]);
-                            s_set_value_ns(S_NOTCH_FLAG(i),
+                            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_FLAG(i),
                                            (float)EQ_notch_flag[i]);
 
                             /*  Recompute the "notched" curves and redraw.  */
@@ -1809,8 +1795,8 @@ void hdeq_curve_button_press(GdkEventButton* event) {
                         changes.  */
 
                     size = (EQ_input_points + 1) * sizeof(float);
-                    EQ_xinput = (float*)realloc(EQ_xinput, size);
-                    EQ_yinput = (float*)realloc(EQ_yinput, size);
+                    EQ_xinput = (gdouble*)realloc(EQ_xinput, size);
+                    EQ_yinput = (gdouble*)realloc(EQ_yinput, size);
 
                     if (EQ_yinput == NULL) {
                         perror(_("Allocating EQ_yinput in callbacks.c"));
@@ -1910,8 +1896,8 @@ void hdeq_curve_button_press(GdkEventButton* event) {
             j = 0;
             for (i = 0; i < i_start; i++) {
                 size = (j + 1) * sizeof(float);
-                x = (float*)realloc(x, size);
-                y = (float*)realloc(y, size);
+                x = (gdouble*)realloc(x, size);
+                y = (gdouble*)realloc(y, size);
 
                 if (y == NULL) {
                     perror(_("Allocating y in callbacks.c"));
@@ -1927,8 +1913,8 @@ void hdeq_curve_button_press(GdkEventButton* event) {
 
             for (i = 0; i < EQ_input_points; i++) {
                 size = (j + 1) * sizeof(float);
-                x = (float*)realloc(x, size);
-                y = (float*)realloc(y, size);
+                x = (gdouble*)realloc(x, size);
+                y = (gdouble*)realloc(y, size);
 
                 if (y == NULL) {
                     perror(_("Allocating y in callbacks.c"));
@@ -1945,8 +1931,8 @@ void hdeq_curve_button_press(GdkEventButton* event) {
 
             for (i = i_end; i < EQ_length; i++) {
                 size = (j + 1) * sizeof(float);
-                x = (float*)realloc(x, size);
-                y = (float*)realloc(y, size);
+                x = (gdouble*)realloc(x, size);
+                y = (gdouble*)realloc(y, size);
 
                 x[j] = EQ_xinterp[i];
                 y[j] = EQ_yinterp[i];
@@ -1966,7 +1952,7 @@ void hdeq_curve_button_press(GdkEventButton* event) {
 
             /*  Save state of the EQ curve.  */
 
-            s_set_value_block(EQ_yinterp, S_EQ_GAIN(0), EQ_length);
+            ajami_state_set_value_block(ajami_get_state(), EQ_yinterp, ajami_state_flags_EQ_GAIN(0), EQ_length);
 
             EQ_input_points = 0;
 
@@ -2092,7 +2078,7 @@ void hdeq_popup(int action) {
 
         for (i = 0; i < EQ_length; i++)
             EQ_yinterp[i] = EQ_y_notched[i];
-        s_set_value_block(EQ_yinterp, S_EQ_GAIN(0), EQ_length);
+        ajami_state_set_value_block(ajami_get_state(), EQ_yinterp, ajami_state_flags_EQ_GAIN(0), EQ_length);
 
         for (i = 1; i < NOTCHES - 1; i++) {
             EQ_notch_gain[i] = 0.0;
@@ -2104,12 +2090,11 @@ void hdeq_popup(int action) {
 
             /*  Set the state so that we can save the scene if we need to.  */
 
-            s_set_description(S_NOTCH_GAIN(i),
-                              g_strdup_printf("Reset notch %d", i));
-            s_set_value_ns(S_NOTCH_GAIN(i), EQ_notch_gain[i]);
-            s_set_value_ns(S_NOTCH_FREQ(i), EQ_notch_default[i]);
-            s_set_value_ns(S_NOTCH_FLAG(i), (float)EQ_notch_flag[i]);
-            s_set_value_ns(S_NOTCH_Q(i), (float)EQ_notch_width[i]);
+            ajami_state_history_set_description(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i), g_strdup_printf("Reset notch %d", i));
+            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i), EQ_notch_gain[i]);
+            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_FREQ(i), EQ_notch_default[i]);
+            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_FLAG(i), (float)EQ_notch_flag[i]);
+            ajami_state_set_value_ns(ajami_get_state(), ajami_state_flags_NOTCH_Q(i), (float)EQ_notch_width[i]);
         }
 
         /*  Just in case we were drawing something.  */
@@ -2166,15 +2151,15 @@ void set_EQ_curve_values(int id, float value) {
     int i;
 
     for (i = 0; i < EQ_INTERP; i++) {
-        EQ_yinterp[i] = s_get_value(S_EQ_GAIN(0) + i);
+        EQ_yinterp[i] = ajami_state_get_value(ajami_get_state(), ajami_state_flags_EQ_GAIN(0) + i);
     }
 
     for (i = 0; i < NOTCHES; i++) {
-        EQ_notch_flag[i] = NINT(s_get_value(S_NOTCH_FLAG(i)));
+        EQ_notch_flag[i] = NINT(ajami_state_get_value(ajami_get_state(), ajami_state_flags_NOTCH_FLAG(i)));
 
-        EQ_notch_width[i] = NINT(s_get_value(S_NOTCH_Q(i)));
-        EQ_notch_index[i] = nearest_x(s_get_value(S_NOTCH_FREQ(i)));
-        EQ_notch_gain[i] = s_get_value(S_NOTCH_GAIN(i));
+        EQ_notch_width[i] = NINT(ajami_state_get_value(ajami_get_state(), ajami_state_flags_NOTCH_Q(i)));
+        EQ_notch_index[i] = nearest_x(ajami_state_get_value(ajami_get_state(), ajami_state_flags_NOTCH_FREQ(i)));
+        EQ_notch_gain[i] = ajami_state_get_value(ajami_get_state(), ajami_state_flags_NOTCH_GAIN(i));
     }
 
     /*  Replace shelf and notch areas.  */
@@ -2199,8 +2184,8 @@ void set_EQ_curve_values(int id, float value) {
 /*  Reset the crossovers.  */
 
 void hdeq_set_xover() {
-    process_set_low2mid_xover((float)pow(10.0, s_get_value(S_XOVER_FREQ(0))));
-    process_set_mid2high_xover((float)pow(10.0, s_get_value(S_XOVER_FREQ(1))));
+    process_set_low2mid_xover((float)pow(10.0, ajami_state_get_value(ajami_get_state(), ajami_state_flags_XOVER_FREQ(0))));
+    process_set_mid2high_xover((float)pow(10.0, ajami_state_get_value(ajami_get_state(), ajami_state_flags_XOVER_FREQ(1))));
 
     hdeq_low2mid_init();
     hdeq_mid2high_init();

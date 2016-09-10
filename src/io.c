@@ -81,7 +81,6 @@
 #include "io.h"
 #include "transport.h"
 #include "jackstatus.h"
-#include "state.h"
 #include "spectrum.h"
 #include "preferences.h"
 #include "debug.h"
@@ -751,7 +750,7 @@ void io_init() {
         process_set_limiter_plugin(1);
     else
         process_set_limiter_plugin(0);
-    s_set_override_limiter_default();
+    //TODO: s_set_override_limiter_default();
 
     /* TODO: verbose flag
     debug_level += 1;       // increment output level
@@ -764,7 +763,7 @@ void io_init() {
         } */
 
     ajami_spectrum_set_frequency(spectrum_freq);
-    s_set_crossfade_time(crossfade_time);
+    ajami_state_set_crossfade_time(crossfade_time);
 
     if (connect_ports) {
         /* check for input and output port names of each channel */
@@ -816,13 +815,13 @@ void io_init() {
  *
  *  returns:    0 if successful, error code otherwise.
  */
-int io_create_dsp_thread() {
+int io_create_dsp_thread()
+{
     int rc;
     int policy;
     struct sched_param rt_param;
     pthread_attr_t attributes;
     pthread_attr_init(&attributes);
-    struct sched_param my_param;
 
     /* Set priority and scheduling parameters based on the attributes
      * of the JACK client thread. */
@@ -870,6 +869,7 @@ int io_create_dsp_thread() {
  *  DSP_STOPPED <unchanged>     do nothing if engine already stopped
  */
 void io_activate() {
+    printf("Io Activate\n");
     int chan;
     size_t bufsize;
 

@@ -1,57 +1,7 @@
-/*
- *  Copyright (C) 2003 Steve Harris
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  $Id: state.c,v 1.73 2008/02/04 14:23:34 esaracco Exp $
- */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include <libgen.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <gtk/gtk.h>
-#include <libxml/parser.h>
-
-#include "config.h"
-#include "main.h"
-#include "geq.h"
-#include "spectrum.h"
-#include "intrim.h"
-#include "state.h"
-#include "io.h"
-#include "process.h"
-#include "hdeq.h"
-#include "compressor-ui.h"
-#include "help.h"
-#include "preferences.h"
-#include "ajamiobjects.h"
-
-/* A scene value to indicate that loading failed */
-#define LOAD_ERROR -2
-
-/* The smallest value that counts as a change, should be approximately
- * epsilon+delta */
-#define MIN_CHANGE (FLT_EPSILON + FLT_EPSILON)
 
 float s_value[S_SIZE];
-static float s_target[S_SIZE];
-static int s_duration[S_SIZE];
 static int s_changed[S_SIZE];
-static GtkAdjustment* s_adjustment[S_SIZE];
 static s_callback_func s_callback[S_SIZE];
 static char* errstr = NULL;
 
@@ -66,16 +16,9 @@ static int saved_scene;
 static float crossfade_time = 1.0;
 static gboolean override_limiter_default = FALSE;
 
-static void s_set_events(int id, float value);
-void s_update_title();
-void s_history_add(const char* description);
-void s_save_global_int(xmlDocPtr doc, char* symbol, int value);
-void s_save_global_float(xmlDocPtr doc, char* symbol, float value);
-void s_save_global_gang(xmlDocPtr doc, char* p, int band, gboolean value);
 
 gchar* session_filename = NULL;
 
-/* global session parameters read from the XML file */
 
 typedef struct {
     int scene;
@@ -161,30 +104,10 @@ void s_set_value_ui(int id, float value) {
     }
     last_state->values[id] = value;
 
-#if 0
-    /* This code is confusing in use, so I've removed it - swh */
-
-    if (value - MIN_CHANGE < last_state->value[id] &&
-            value + MIN_CHANGE > last_state->value[id]) {
-        last_changed = S_NONE;
-    } else {
-        last_changed = id;
-    }
-#else
     last_changed = id;
-#endif
 
     if (s_callback[id]) {
         (*s_callback[id])(id, value);
-    }
-}
-
-void s_set_value(int id, float value, int duration) {
-    /* We dont want to call this yet... s_set_value_ui(id, value); */
-    s_duration[id] = duration;
-    s_target[id] = value;
-    if (s_adjustment[id]) {
-        gtk_adjustment_set_value(s_adjustment[id], value);
     }
 }
 
@@ -1001,8 +924,6 @@ void s_crossfade(const int nframes) {
 
     for (i = 0; i < S_SIZE; i++) {
         if (s_duration[i] != 0) {
-            /* debug crap if (i == S_IN_GAIN) printf("%d\t%f\n", s_duration[i],
-             * s_value[i]); */
             s_duration[i] -= nframes;
             if (s_duration[i] > nframes) {
                 s_value[i] += ((float)nframes / (float)s_duration[i]) *

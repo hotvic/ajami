@@ -25,8 +25,6 @@
 #include "support.h"
 #include "main.h"
 #include "multiout-ui.h"
-//#include "gtkmeter.h"
-#include "state.h"
 #include "db.h"
 
 
